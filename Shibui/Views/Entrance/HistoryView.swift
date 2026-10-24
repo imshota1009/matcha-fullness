@@ -37,7 +37,6 @@ struct HistoryView: View {
                 StatRow(label: "抹茶をたてた回数", value: "\(record.servings.count)杯")
                 StatRow(label: "たてた日", value: "\(record.servedDays.count)日")
                 StatRow(label: "今週", value: "\(record.daysThisWeek())日")
-                StatRow(label: "スマホから離れて集中した時間", value: EntranceView.hours(record.groundSeconds))
                 StatRow(label: "集中度の自己ベスト", value: "\(record.bestScore)")
 
                 SectionHeader("これまでの記録")
@@ -144,15 +143,6 @@ struct SettingsView: View {
                     .padding(.top, Theme.Spacing.s)
 
                 SectionHeader("デモ")
-                Toggle(isOn: $store.isFastMode) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("早送り").font(.dsBody).foregroundStyle(Theme.Palette.text)
-                        Text("集中25分を10秒に縮めます").font(.dsCaption).foregroundStyle(Theme.Palette.secondaryText)
-                    }
-                }
-                .tint(Theme.Palette.matcha)
-                .frame(minHeight: Theme.Size.minTouch)
-                .padding(.top, Theme.Spacing.s)
                 Button {
                     dismiss()
                     openURL(URL(string: "shibui://sns")!)

@@ -219,7 +219,7 @@ enum OnboardingContent {
     static let values: [(symbol: String, title: String, detail: String)] = [
         ("drop", "ししおどしで、区切る", "SNSを見すぎたら「カコン」と鳴ってお知らせします。"),
         ("hand.wave", "抹茶をたてる", "指か、スマホを振って抹茶をたてる。うまさが点数になります。"),
-        ("timer", "うら返して、集中する", "スマホをうら返している間が集中タイム。終わったら、また一杯。"),
+        ("scroll", "やることを、かけじくに", "たて終わったら、次にやることを一言。かけじくになります。"),
     ]
     static let readyTitle = "どうぞ、お入りください"
     static let readyMessage = "まずは、おもてなしの一杯から。"

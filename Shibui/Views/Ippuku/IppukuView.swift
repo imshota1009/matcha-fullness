@@ -96,7 +96,7 @@ struct IppukuView: View {
             let smooth = step == .settle ? min(1, settleElapsed / settleSeconds) : 0
             VStack(spacing: Theme.Spacing.l) {
                 Spacer(minLength: 0)
-                Text(store.record.matchaCups > 0 ? "自分でひいた抹茶で、たてましょう" : "おもてなしの一杯を、たてましょう")
+                Text("抹茶を一杯、たてましょう")
                     .font(.dsCaption)
                     .foregroundStyle(Theme.Palette.secondaryText)
 
@@ -224,18 +224,18 @@ struct IppukuView: View {
         VStack(spacing: Theme.Spacing.l) {
             Spacer()
             KakejikuView(text: ichiji.trimmingCharacters(in: .whitespaces), height: 340, unrolls: true)
-            Text("スマホをうら返して置くと、集中タイムが始まります")
+            Text("では、やることに向かいましょう")
                 .font(.dsBody)
                 .foregroundStyle(Theme.Palette.text)
             Spacer()
-            PrimaryButton("集中をはじめる", systemImage: "timer") { go(.ishiusu) }
+            PrimaryButton("おわる") { go(.entrance) }
                 .padding(.horizontal, Theme.Spacing.screen)
                 .padding(.bottom, Theme.Spacing.s)
         }
         .task {
-            // 一事を決めたら自動で集中へ(F6)
-            try? await Task.sleep(for: .seconds(1.0 + Double(ichiji.count) * 0.55 + 2.0))
-            if step == .kakejiku { go(.ishiusu) }
+            // 文字を書き終えて少し見せたら、ホームへ戻る
+            try? await Task.sleep(for: .seconds(1.0 + Double(ichiji.count) * 0.55 + 3.0))
+            if step == .kakejiku { go(.entrance) }
         }
     }
 }

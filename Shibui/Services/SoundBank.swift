@@ -5,7 +5,7 @@ import AVFoundation
 /// - 茶筅: 振るたびに短い「シャッ」
 /// - 松風: 釜の湯が沸く「ゴー」(呼吸に合わせて強弱をつける)
 /// - 水琴窟: 挽き上がりの「キーン」
-/// - 鳥のさえずり(録音、CC BY-SA 4.0。App/Sounds/CREDITS.txt): 点前と集中タイムの間に流す。出入りはフェードで
+/// - 鳥のさえずり(録音、CC BY-SA 4.0。App/Sounds/CREDITS.txt): 抹茶をたてる間に流す。出入りはフェードで
 @MainActor
 final class SoundBank {
     static let shared = SoundBank()
@@ -14,7 +14,7 @@ final class SoundBank {
     private let oneShots = (0..<4).map { _ in AVAudioPlayerNode() }
     private var nextShot = 0
     private let matsukazeNode = AVAudioPlayerNode()
-    /// 鳥のさえずり(自然の音)。点前と集中タイムの間、うしろで静かに流す
+    /// 鳥のさえずり(自然の音)。抹茶をたてる間、うしろで静かに流す
     private let ambientNode = AVAudioPlayerNode()
     private var ambientBuffer: AVAudioPCMBuffer?
     private var fades: [ObjectIdentifier: Task<Void, Never>] = [:]

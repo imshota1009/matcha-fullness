@@ -6,7 +6,6 @@ enum Stage: Equatable {
     case entrance
     case sns
     case ippuku
-    case ishiusu
 }
 
 /// アプリの土台。いまの場面を切り替えて見せる。どの場面からも入口へ戻れる(脱出性)。
@@ -25,23 +24,20 @@ struct RootView: View {
                 SNSView(go: go)
             case .ippuku:
                 IppukuView(motion: motion, go: go)
-            case .ishiusu:
-                IshiusuScreen(motion: motion, go: go)
             }
         }
         .transition(.opacity)
         .animation(.easeInOut(duration: 0.5), value: scene)
         .onOpenURL { url in if url.host() == "sns" { go(.sns) } }
-        // 抹茶をたてる間と集中タイムの間だけ、鳥のさえずりを流す(フェードで出入り)
+        // 抹茶をたてている間だけ、鳥のさえずりを流す(フェードで出入り)
         .onChange(of: scene, initial: true) { _, now in
-            if now == .ippuku || now == .ishiusu { SoundBank.shared.startAmbient() } else { SoundBank.shared.stopAmbient() }
+            if now == .ippuku { SoundBank.shared.startAmbient() } else { SoundBank.shared.stopAmbient() }
         }
-        // 起動引数 `-scene sns|ippuku|ishiusu` で場面を指定して開ける(画面確認・デモ準備用)
+        // 起動引数 `-scene sns|ippuku` で場面を指定して開ける(画面確認・デモ準備用)
         .task {
             switch UserDefaults.standard.string(forKey: "scene") {
             case "sns": scene = .sns
             case "ippuku": scene = .ippuku
-            case "ishiusu": scene = .ishiusu
             default: break
             }
         }
@@ -53,7 +49,7 @@ struct RootView: View {
 }
 
 /// ホーム。やることは1つ「抹茶をたてて、集中する」だけ。
-/// 上に今日の集中時間と今週の記録、ランクを小さく。くわしい記録は左上から(段階的に見せる)。
+/// 上に今日たてた杯数と今週の記録、ランクを小さく。くわしい記録は左上から(段階的に見せる)。
 struct EntranceView: View {
     @Environment(TeaStore.self) private var store
     let go: (Stage) -> Void
@@ -64,20 +60,21 @@ struct EntranceView: View {
         NavigationStack {
             DSScreen("おてまえ") {
                 let record = store.record
-                // 今日の集中時間(いちばん大事な数字)
+                // 今日たてた杯数(いちばん大事な数字)と、今日いちばんの集中度
+                let today = record.servings.filter { Calendar.current.isDateInToday($0.date) }
                 VStack(spacing: Theme.Spacing.xs) {
-                    Text("今日の集中")
+                    Text("今日たてた抹茶")
                         .font(.dsCaption)
                         .foregroundStyle(Theme.Palette.secondaryText)
                     HStack(alignment: .firstTextBaseline, spacing: Theme.Spacing.xs) {
-                        Text("\(Int(record.focusToday) / 60)")
+                        Text("\(today.count)")
                             .font(.dsHero)
                             .contentTransition(.numericText())
-                        Text("分")
+                        Text("杯")
                             .font(.headline)
                     }
                     .foregroundStyle(Theme.Palette.text)
-                    Text("抹茶 \(record.cupsToday())杯")
+                    Text(today.isEmpty ? "今日はまだです" : "今日いちばんの集中度 \(today.map(\.score).max() ?? 0)")
                         .font(.dsCaption)
                         .foregroundStyle(Theme.Palette.secondaryText)
                 }
@@ -110,7 +107,7 @@ struct EntranceView: View {
                     .padding(.vertical, Theme.Spacing.m)
                 }
             } bottom: {
-                PrimaryButton("抹茶をたてて、集中する", systemImage: "cup.and.saucer") { go(.ippuku) }
+                PrimaryButton("抹茶をたてる", systemImage: "cup.and.saucer") { go(.ippuku) }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

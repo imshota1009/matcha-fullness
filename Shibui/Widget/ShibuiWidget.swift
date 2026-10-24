@@ -54,7 +54,7 @@ struct ShibuiWidgetView: View {
                     .font(.caption2)
                     .foregroundStyle(Theme.Palette.secondaryText)
                 Spacer(minLength: 0)
-                Text(entry.matchaCups > 0 ? "ひいた抹茶 \(entry.matchaCups)杯" : "抹茶をどうぞ")
+                Text("抹茶をどうぞ")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Theme.Palette.matcha)
             }

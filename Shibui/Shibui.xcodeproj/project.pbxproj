@@ -31,7 +31,6 @@
 		9B2558AA5DB67CA65C0CBA86 /* birds.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 8843D1711B2BFB5AB74F45E6 /* birds.m4a */; };
 		9F3852126C490F704DF960E9 /* chasen_tines_outer.obj in Resources */ = {isa = PBXBuildFile; fileRef = F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */; };
 		B746FAC4F7581B11CFC27263 /* EntranceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4172681D23BFDB7E396D23 /* EntranceView.swift */; };
-		C0BE525245676357992E290C /* IshiusuScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1610BEA1F0D1A4BF6B9D07F3 /* IshiusuScreen.swift */; };
 		C398012896ACFEE343B98226 /* TeaScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B1D0CA450A1A864D89FA0E /* TeaScene.swift */; };
 		C5D684D49BD093E2AE8C0239 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD4A1B4A3972F79F98B3C4D /* WidgetKit.framework */; };
 		C60D0AAA04C8E51EA3E1C59E /* YujiSyuku.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 446300BCCCC1914F083565E3 /* YujiSyuku.ttf */; };
@@ -71,7 +70,6 @@
 /* Begin PBXFileReference section */
 		015ECE37B3000AF30755A09E /* ShibuiWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShibuiWidget.swift; sourceTree = "<group>"; };
 		0B3DE3DAB9D6556F6F596B35 /* rikyu.riv */ = {isa = PBXFileReference; path = rikyu.riv; sourceTree = "<group>"; };
-		1610BEA1F0D1A4BF6B9D07F3 /* IshiusuScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IshiusuScreen.swift; sourceTree = "<group>"; };
 		19794A5048322D5107B86A91 /* TeaArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaArt.swift; sourceTree = "<group>"; };
 		1E1C5545C96633203177CA3E /* chasen_thread.obj */ = {isa = PBXFileReference; path = chasen_thread.obj; sourceTree = "<group>"; };
 		24C4AD58D13F998189C1CB78 /* MotionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionService.swift; sourceTree = "<group>"; };
@@ -278,14 +276,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		EA7F4BC6FF598E5BC592433D /* Ishiusu */ = {
-			isa = PBXGroup;
-			children = (
-				1610BEA1F0D1A4BF6B9D07F3 /* IshiusuScreen.swift */,
-			);
-			path = Ishiusu;
-			sourceTree = "<group>";
-		};
 		EAF2F3B5BB77D3562D7FED28 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -299,7 +289,6 @@
 			children = (
 				DD36840371E9B80C3C67F0F2 /* Entrance */,
 				82084F437B721EBADE4BB379 /* Ippuku */,
-				EA7F4BC6FF598E5BC592433D /* Ishiusu */,
 				3D30C94316839AB2BCCCD82D /* Onboarding */,
 				12D62C613792FB6B9C2AA551 /* Parts */,
 				81B0554663346BE6A679157F /* SNS */,
@@ -443,7 +432,6 @@
 				B746FAC4F7581B11CFC27263 /* EntranceView.swift in Sources */,
 				F74E753F6BEA48EEF13E025F /* HistoryView.swift in Sources */,
 				2F62FAB594940440F866A95F /* IppukuView.swift in Sources */,
-				C0BE525245676357992E290C /* IshiusuScreen.swift in Sources */,
 				9701D091EB35AC5A60816B2C /* MockData.swift in Sources */,
 				F1F6A1C22771A6A4C2C5C10B /* MotionService.swift in Sources */,
 				0DD227DFBD83ED515FD39875 /* OnboardingView.swift in Sources */,
@@ -514,7 +502,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -609,7 +597,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
