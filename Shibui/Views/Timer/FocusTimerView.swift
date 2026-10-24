@@ -174,7 +174,7 @@ struct FocusTimerView: View {
 
 /// ししおどしと水たまり。
 /// - 水たまり: 地面に置いた円を斜めから見た形(奥行きのある楕円)。残り時間を藍の輪で示し、文字も同じ平面に置く
-/// - ししおどし: 御茶ノ水駅のししおどしのような、2本の支柱に竹筒をのせた形(岩などの囲いはなし)。
+/// - ししおどし: 御茶ノ水駅のししおどしのような、2本の支柱に竹筒をのせた形(岩などの囲いはなし)。Unity で作った 3D。
 ///   かけい(上の細い竹)から水が落ちて竹筒に溜まり(中の水位が見える)、満ちると傾いて水たまりへ水を落とす
 struct ShishiOdoshiPond: View {
     let remainingFraction: Double
@@ -209,52 +209,11 @@ struct ShishiOdoshiPond: View {
                     .rotation3DEffect(.degrees(62), axis: (x: 1, y: 0, z: 0), anchor: .center, perspective: 0.45)
                     .position(x: w * 0.56, y: h * 0.66)
 
-                Canvas { ctx, size in
-                    let pivot = CGPoint(x: w * 0.30, y: h * 0.26)
-                    // 支柱2本と横木
-                    for dx in [-14.0, 14.0] {
-                        ctx.fill(Path(roundedRect: CGRect(x: pivot.x + dx - 5, y: pivot.y - 4, width: 10, height: h * 0.16), cornerRadius: 3), with: .color(wood))
-                    }
-                    // かけい(水を送る細い竹)と、落ちる水
-                    let spoutEnd = CGPoint(x: pivot.x + 70, y: pivot.y - 92)
-                    ctx.fill(Path(roundedRect: CGRect(x: spoutEnd.x - 4, y: spoutEnd.y - 8, width: 120, height: 12), cornerRadius: 6), with: .color(bambooDark))
-                    if !pouring {
-                        var stream = Path()
-                        stream.move(to: CGPoint(x: spoutEnd.x + 2, y: spoutEnd.y + 4))
-                        stream.addLine(to: CGPoint(x: spoutEnd.x + 2, y: pivot.y - 48))
-                        ctx.stroke(stream, with: .color(water), style: StrokeStyle(lineWidth: 2.5, lineCap: .round, dash: [6, 5], dashPhase: CGFloat(-elapsed * 40)))
-                    }
-                    // 竹筒(しっぽ → 口)。受けるときは口が上、満ちると口が下がる
-                    let restAngle = -32.0 * .pi / 180, pourAngle = 28.0 * .pi / 180
-                    let angle = restAngle + (pourAngle - restAngle) * tip
-                    var c = ctx
-                    c.translateBy(x: pivot.x, y: pivot.y)
-                    c.rotate(by: .radians(angle))
-                    let tube = CGRect(x: -60, y: -13, width: 150, height: 26)
-                    c.fill(Path(roundedRect: tube, cornerRadius: 12), with: .color(bamboo))
-                    // 中に溜まった水(口の側から見える。水位は fill)
-                    let level = CGFloat(fill) * 0.9
-                    c.fill(Path(roundedRect: CGRect(x: 90 - 70 * level - 8, y: -8, width: 70 * level + 6, height: 16), cornerRadius: 6),
-                           with: .color(water.opacity(pouring ? 1 - pourT : 0.95)))
-                    // 節と、斜めに切った口
-                    c.fill(Path(CGRect(x: 18, y: -13, width: 3, height: 26)), with: .color(bambooDark))
-                    var mouth = Path()
-                    mouth.move(to: CGPoint(x: 90, y: -13)); mouth.addLine(to: CGPoint(x: 78, y: 13))
-                    c.stroke(mouth, with: .color(bambooDark), lineWidth: 3)
-                    // 軸
-                    ctx.fill(Path(ellipseIn: CGRect(x: pivot.x - 5, y: pivot.y - 5, width: 10, height: 10)), with: .color(wood))
-                    // 傾いたとき、口から水たまりへ落ちる水
-                    if pouring, pourT > 0.25, pourT < 0.8 {
-                        let mouthPt = CGPoint(x: pivot.x + cos(angle) * 88, y: pivot.y + sin(angle) * 88)
-                        let target = CGPoint(x: w * 0.42, y: h * 0.47)
-                        var arc = Path()
-                        arc.move(to: mouthPt)
-                        arc.addQuadCurve(to: target, control: CGPoint(x: target.x - 10, y: mouthPt.y + 10))
-                        ctx.stroke(arc, with: .color(water), style: StrokeStyle(lineWidth: 6, lineCap: .round))
-                    }
-                }
-                .scaleEffect(1.3, anchor: UnitPoint(x: 0.30, y: 0.26))
-                .allowsHitTesting(false)
+                // ししおどし(Unity で作った 3D)。水たまりの左上に立ち、傾くと水たまりへ水を落とす
+                ShishiOdoshi3DView(fill: fill, tip: tip, pouring: pouring)
+                    .frame(width: w, height: h * 0.72)
+                    .position(x: w * 0.5, y: h * 0.36)
+                    .allowsHitTesting(false)
             }
         }
         .frame(height: 560)

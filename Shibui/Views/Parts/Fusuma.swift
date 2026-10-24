@@ -22,6 +22,7 @@ struct FusumaOpening: View {
             let hold = UserDefaults.standard.double(forKey: "fusumaHold")
             try? await Task.sleep(for: .milliseconds(350 + Int(hold * 1000)))
             Haptics.selection()
+            SoundBank.shared.fusuma()
             withAnimation(.timingCurve(0.45, 0, 0.25, 1, duration: 1.1)) { open = true }
             try? await Task.sleep(for: .milliseconds(1150))
             onOpened()

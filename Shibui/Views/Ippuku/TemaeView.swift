@@ -6,7 +6,7 @@ import SwiftUI
 /// 1. 点てる: 指を縦にまっすぐ往復。往復ごとに振動。泡は採点(泡スコア)に合わせてリアルタイムに変わる
 /// 2. 仕上げ: ゆっくり小さく「くるっ」と約300°回して、指を離す
 /// 3. 回す: 茶碗を持ち上げ、時計回りに 90° ずつ 2回(合計 180°)まわす(0.5秒止めると1回)。液面は空間に固定して回さない
-/// 机に置いていないときは入力を止め、朱色で知らせる。茶碗・茶筅は Unity のモデル、液面は LiquidSurface。
+/// 【変更 10/25】机に置いていなくても点てられる(水平の条件は外した)。茶碗・茶筅は Unity のモデル、液面は LiquidSurface。
 struct TemaeView: View {
     let motion: MotionService
     let onFinish: (TemaeResult) -> Void
@@ -31,19 +31,7 @@ struct TemaeView: View {
             }
             guide
                 .padding(.bottom, Theme.Spacing.s)
-            if model.showsDeskWarning {
-                Label("机に置いてから点てましょう", systemImage: "iphone.gen3")
-                    .font(.headline)
-                    .foregroundStyle(Theme.Palette.shiro)
-                    .padding(.horizontal, Theme.Spacing.l)
-                    .padding(.vertical, Theme.Spacing.m)
-                    .background(Theme.Palette.vermilion, in: .capsule)
-                    .frame(maxHeight: .infinity, alignment: .center)
-                    .transition(.opacity)
-                    .allowsHitTesting(false)
-            }
         }
-        .animation(.easeInOut(duration: 0.3), value: model.showsDeskWarning)
         .animation(.easeInOut(duration: 0.4), value: model.phase)
         .onAppear {
             model.start(style: style, motion: motion, onFinish: onFinish)
@@ -84,7 +72,6 @@ final class TemaeModel {
     private(set) var strokeCount = 0
     /// 点てている最中の泡スコア(直近 20 ストローク)
     private(set) var liveFoam = 0.0
-    private(set) var showsDeskWarning = false
     /// 回す: いま回している角度(度、時計回りが正)と、成立した回の角度
     private(set) var turnAngle = 0.0
     private(set) var turns: [Double] = []
@@ -123,13 +110,11 @@ final class TemaeModel {
         case .rotate:
             if counterClockwise { "時計回りに回します ↻" }
             else if turnAngle - (turns.last.map { _ in turns.reduce(0, +) } ?? 0) > TemaeConstants.rotateTarget + TemaeConstants.rotateTolerance { "少し戻しましょう" }
-            else { turns.isEmpty ? "茶碗を持ち上げて、時計回りに90°ずつ2回まわしましょう" : "もう1回、時計回りに" }
+            else { turns.isEmpty ? "茶碗(スマホ)を、時計回りに90°ずつ2回まわしましょう" : "もう1回、時計回りに" }
         case .done: "どうぞ"
         }
     }
 
-    /// 机に置いていない(センサーがないシミュレーターでは常に置いている扱い)
-    private var onDesk: Bool { motion.map { !$0.isAvailable || $0.isOnDesk } ?? true }
 
     func start(style: ChawanStyle, motion: MotionService, onFinish: @escaping (TemaeResult) -> Void) {
         guard scene == nil else { return }
@@ -170,7 +155,7 @@ final class TemaeModel {
     func touchMoved(_ p: CGPoint?) {
         guard phase == .whisk || phase == .finish else { return }
         guard let p else { endTouch(); return }
-        guard onDesk, let w = worldPoint(p) else { tipWorld = nil; return }
+        guard let w = worldPoint(p) else { tipWorld = nil; return }
         tipWorld = w
         let q = SIMD2(Double(w.x), Double(w.y)) / Double(TeaScene.liquidRadius)
         touchSamples.append(.init(p: q, t: CACurrentMediaTime()))
@@ -252,8 +237,6 @@ final class TemaeModel {
         let dt = Float(min(0.05, now - last))
         last = now
         guard let scene else { return }
-        let desk = onDesk
-        showsDeskWarning = !desk && (phase == .whisk || phase == .finish)
 
         // 茶筅は指を少し遅れて追い、動く方向に少し傾く
         let target = tipWorld ?? chasenPos
@@ -285,11 +268,8 @@ final class TemaeModel {
         guard let motion, let scene else { return }
         let angle: Double
         if motion.isAvailable {
-            // 持ち上げを検知したら、判定を始める
-            if baseYaw == nil {
-                guard !motion.isOnDesk else { return }
-                baseYaw = motion.yaw
-            }
+            // 回す手順に入ったときの向きを 0 にする(持ち上げなくても回せる)
+            if baseYaw == nil { baseYaw = motion.yaw }
             angle = (motion.yaw - (baseYaw ?? 0)) * 180 / .pi * TemaeConstants.clockwiseSign
             // 液面は回さない: iPhone が回った分だけ、逆向きに回して打ち消す
             scene.setLiquidRotation(Float(-(motion.yaw - (baseYaw ?? 0))))

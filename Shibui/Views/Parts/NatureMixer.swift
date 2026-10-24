@@ -4,9 +4,9 @@ import SwiftUI
 /// 自然の音の3本の音量バー(川・風・鳥)。人によって好みが違うので、種類ごとに 0〜100% を決められる。
 /// 設定とタイマー画面で同じものを使う。
 struct NatureMixer: View {
-    @AppStorage(SoundBank.Nature.river.volumeKey) private var river = 0.6
-    @AppStorage(SoundBank.Nature.wind.volumeKey) private var wind = 0.6
-    @AppStorage(SoundBank.Nature.birds.volumeKey) private var birds = 0.6
+    @AppStorage(SoundBank.Nature.river.volumeKey) private var river = SoundBank.Nature.defaultVolume
+    @AppStorage(SoundBank.Nature.wind.volumeKey) private var wind = SoundBank.Nature.defaultVolume
+    @AppStorage(SoundBank.Nature.birds.volumeKey) private var birds = SoundBank.Nature.defaultVolume
 
     var body: some View {
         VStack(spacing: 0) {

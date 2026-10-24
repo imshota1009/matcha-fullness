@@ -10,8 +10,10 @@
 		01E17A6C98EA974C57049C90 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA78D9BDB9607A57D4CF72A /* MainTabView.swift */; };
 		0B59B282650E5868981C81ED /* CREDITS.txt in Resources */ = {isa = PBXBuildFile; fileRef = 631A45B922E68836FEE6CB8A /* CREDITS.txt */; };
 		0DD227DFBD83ED515FD39875 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4E0134F33017E59CDC489E /* OnboardingView.swift */; };
+		0EC4BFAAC124A5C716B8D4FA /* shishi_tube.obj in Resources */ = {isa = PBXBuildFile; fileRef = 585E7A1B6C8B2A435EA215E1 /* shishi_tube.obj */; };
 		171F1940FE0A1247F1DE7EE1 /* SettingsScrollTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5690F6AA9C6DB755D8919EF /* SettingsScrollTests.swift */; };
 		1BD043BFB46FB85A6F8E7CF1 /* SoundBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */; };
+		21BE5DA3BA5CD8B443F3D3CA /* shishi_axle.obj in Resources */ = {isa = PBXBuildFile; fileRef = 667159C1532F648C33091383 /* shishi_axle.obj */; };
 		254BC8A104C78A980716F0C1 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D905260C023C259E8FED4969 /* ReviewView.swift */; };
 		27342E2854EC59C08CD6F18F /* chasen_tines_inner.obj in Resources */ = {isa = PBXBuildFile; fileRef = BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */; };
 		2F62FAB594940440F866A95F /* IppukuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29CD8030EDFE4B138CF0D65E /* IppukuView.swift */; };
@@ -19,6 +21,7 @@
 		36CC081133F9E4DF3EF9D3F9 /* river.m4a in Resources */ = {isa = PBXBuildFile; fileRef = A2E90426BF18D4E0860DA1FC /* river.m4a */; };
 		387D1D8EA0BB0326157B2F7F /* WhiteSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D2A2CE20F21D8CEAADFB45 /* WhiteSlider.swift */; };
 		3EE95BD613E009BFC690F78E /* NatureMixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570E7C1C60396A60C47A55C4 /* NatureMixer.swift */; };
+		41C9249353F1C67EBD995EAA /* shishi_nodes.obj in Resources */ = {isa = PBXBuildFile; fileRef = BDC942E45EF78DA7C5FE52E7 /* shishi_nodes.obj */; };
 		43A0F73DEF28312C28BDC789 /* Records.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242ECD94824029EA6F2F7C85 /* Records.swift */; };
 		4E8BAF01B55371002535256B /* chasen_handle.obj in Resources */ = {isa = PBXBuildFile; fileRef = D6085C317848DE5EF3811E52 /* chasen_handle.obj */; };
 		515C13F1C660C35C043DFD7B /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEE805E42620D02DC2C3931 /* Messages.swift */; };
@@ -30,12 +33,15 @@
 		6EE43B272095A54ED26EFAA1 /* chasen_thread.obj in Resources */ = {isa = PBXBuildFile; fileRef = 1E1C5545C96633203177CA3E /* chasen_thread.obj */; };
 		72A158DA9E079BDB9C124607 /* FocusTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71A1B44AE379668366256BA /* FocusTimerView.swift */; };
 		76139F034221DEDFC8903FA8 /* wind.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 23A863ABFEB7D40ECCAAA2DE /* wind.m4a */; };
+		7A7D472248FFCA7FECA1E8D4 /* shishi_water.obj in Resources */ = {isa = PBXBuildFile; fileRef = 561B9B0F5A35BF01E14E8D15 /* shishi_water.obj */; };
 		8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */ = {isa = PBXBuildFile; fileRef = 68D816B2DD6715A530FF2740 /* chawan.obj */; };
 		877DF850A26B69616077A289 /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4765AD634CC4D538F24439CB /* OnboardingTests.swift */; };
+		8D1D8EE9840A1A895914F941 /* shishi_kakei.obj in Resources */ = {isa = PBXBuildFile; fileRef = 1BD728F756BE9E129909A92C /* shishi_kakei.obj */; };
 		8ECA4F5040D72427422946CE /* rikyu.riv in Resources */ = {isa = PBXBuildFile; fileRef = 0B3DE3DAB9D6556F6F596B35 /* rikyu.riv */; };
 		9B2558AA5DB67CA65C0CBA86 /* birds.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 8843D1711B2BFB5AB74F45E6 /* birds.m4a */; };
 		9CDF2E51E818ABD4FE6088A9 /* TemaeConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8222BAE0B36963A54C3BE782 /* TemaeConstants.swift */; };
 		9F3852126C490F704DF960E9 /* chasen_tines_outer.obj in Resources */ = {isa = PBXBuildFile; fileRef = F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */; };
+		B31498FF37C96116F118DE84 /* ShishiOdoshi3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2161FFE382713B1A97B738 /* ShishiOdoshi3D.swift */; };
 		B99DD37D5142E62BB5BCBF7D /* ReminderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B2FCA889D41046A8A6D5CB2 /* ReminderTests.swift */; };
 		C398012896ACFEE343B98226 /* TeaScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B1D0CA450A1A864D89FA0E /* TeaScene.swift */; };
 		C62C75D7BA235351798725F0 /* shishiodoshi.m4a in Resources */ = {isa = PBXBuildFile; fileRef = BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */; };
@@ -47,6 +53,7 @@
 		E9800038EE98926552AB8CA3 /* ShibuiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */; };
 		EFF68298DF8762074127A073 /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 0DB94AD0C965CDC1CD53B003 /* RiveRuntime */; };
 		F1F6A1C22771A6A4C2C5C10B /* MotionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C4AD58D13F998189C1CB78 /* MotionService.swift */; };
+		F6B5E4ED2D3DB750E33D2421 /* shishi_posts.obj in Resources */ = {isa = PBXBuildFile; fileRef = C81010B4BAACD399F17DFA61 /* shishi_posts.obj */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +70,7 @@
 		0B3DE3DAB9D6556F6F596B35 /* rikyu.riv */ = {isa = PBXFileReference; path = rikyu.riv; sourceTree = "<group>"; };
 		175ED488074D9EC320169462 /* Rank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rank.swift; sourceTree = "<group>"; };
 		19794A5048322D5107B86A91 /* TeaArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaArt.swift; sourceTree = "<group>"; };
+		1BD728F756BE9E129909A92C /* shishi_kakei.obj */ = {isa = PBXFileReference; path = shishi_kakei.obj; sourceTree = "<group>"; };
 		1E1C5545C96633203177CA3E /* chasen_thread.obj */ = {isa = PBXFileReference; path = chasen_thread.obj; sourceTree = "<group>"; };
 		1FA78D9BDB9607A57D4CF72A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		23A863ABFEB7D40ECCAAA2DE /* wind.m4a */ = {isa = PBXFileReference; path = wind.m4a; sourceTree = "<group>"; };
@@ -75,9 +83,13 @@
 		35D2A2CE20F21D8CEAADFB45 /* WhiteSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteSlider.swift; sourceTree = "<group>"; };
 		41F6E5D876C58859D10DFBDC /* Shibui.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shibui.entitlements; sourceTree = "<group>"; };
 		4765AD634CC4D538F24439CB /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
+		561B9B0F5A35BF01E14E8D15 /* shishi_water.obj */ = {isa = PBXFileReference; path = shishi_water.obj; sourceTree = "<group>"; };
 		570E7C1C60396A60C47A55C4 /* NatureMixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NatureMixer.swift; sourceTree = "<group>"; };
+		585E7A1B6C8B2A435EA215E1 /* shishi_tube.obj */ = {isa = PBXFileReference; path = shishi_tube.obj; sourceTree = "<group>"; };
+		5B2161FFE382713B1A97B738 /* ShishiOdoshi3D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShishiOdoshi3D.swift; sourceTree = "<group>"; };
 		631A45B922E68836FEE6CB8A /* CREDITS.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CREDITS.txt; sourceTree = "<group>"; };
 		64B1D0CA450A1A864D89FA0E /* TeaScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaScene.swift; sourceTree = "<group>"; };
+		667159C1532F648C33091383 /* shishi_axle.obj */ = {isa = PBXFileReference; path = shishi_axle.obj; sourceTree = "<group>"; };
 		68D816B2DD6715A530FF2740 /* chawan.obj */ = {isa = PBXFileReference; path = chawan.obj; sourceTree = "<group>"; };
 		7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShibuiApp.swift; sourceTree = "<group>"; };
 		8222BAE0B36963A54C3BE782 /* TemaeConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemaeConstants.swift; sourceTree = "<group>"; };
@@ -90,9 +102,11 @@
 		AA6BDE7082D250853FA01848 /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
 		BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */ = {isa = PBXFileReference; path = chasen_tines_inner.obj; sourceTree = "<group>"; };
 		BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */ = {isa = PBXFileReference; path = shishiodoshi.m4a; sourceTree = "<group>"; };
+		BDC942E45EF78DA7C5FE52E7 /* shishi_nodes.obj */ = {isa = PBXFileReference; path = shishi_nodes.obj; sourceTree = "<group>"; };
 		BF36C1BEC8F23FBB4BFD248A /* Scoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scoring.swift; sourceTree = "<group>"; };
 		C1E46B566A7DEE89C3554B6E /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DesignSystem; path = ../DesignSystem; sourceTree = SOURCE_ROOT; };
 		C80D9182EA02986A07E8C589 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C81010B4BAACD399F17DFA61 /* shishi_posts.obj */ = {isa = PBXFileReference; path = shishi_posts.obj; sourceTree = "<group>"; };
 		CC09D44EEFF2D2BC8DC81F75 /* RikyuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RikyuView.swift; sourceTree = "<group>"; };
 		D5690F6AA9C6DB755D8919EF /* SettingsScrollTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScrollTests.swift; sourceTree = "<group>"; };
 		D6085C317848DE5EF3811E52 /* chasen_handle.obj */ = {isa = PBXFileReference; path = chasen_handle.obj; sourceTree = "<group>"; };
@@ -126,6 +140,12 @@
 				BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */,
 				F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */,
 				68D816B2DD6715A530FF2740 /* chawan.obj */,
+				667159C1532F648C33091383 /* shishi_axle.obj */,
+				1BD728F756BE9E129909A92C /* shishi_kakei.obj */,
+				BDC942E45EF78DA7C5FE52E7 /* shishi_nodes.obj */,
+				C81010B4BAACD399F17DFA61 /* shishi_posts.obj */,
+				585E7A1B6C8B2A435EA215E1 /* shishi_tube.obj */,
+				561B9B0F5A35BF01E14E8D15 /* shishi_water.obj */,
 			);
 			path = Models3D;
 			sourceTree = "<group>";
@@ -283,6 +303,7 @@
 			isa = PBXGroup;
 			children = (
 				E71A1B44AE379668366256BA /* FocusTimerView.swift */,
+				5B2161FFE382713B1A97B738 /* ShishiOdoshi3D.swift */,
 			);
 			path = Timer;
 			sourceTree = "<group>";
@@ -388,6 +409,12 @@
 				8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */,
 				8ECA4F5040D72427422946CE /* rikyu.riv in Resources */,
 				36CC081133F9E4DF3EF9D3F9 /* river.m4a in Resources */,
+				21BE5DA3BA5CD8B443F3D3CA /* shishi_axle.obj in Resources */,
+				8D1D8EE9840A1A895914F941 /* shishi_kakei.obj in Resources */,
+				41C9249353F1C67EBD995EAA /* shishi_nodes.obj in Resources */,
+				F6B5E4ED2D3DB750E33D2421 /* shishi_posts.obj in Resources */,
+				0EC4BFAAC124A5C716B8D4FA /* shishi_tube.obj in Resources */,
+				7A7D472248FFCA7FECA1E8D4 /* shishi_water.obj in Resources */,
 				C62C75D7BA235351798725F0 /* shishiodoshi.m4a in Resources */,
 				76139F034221DEDFC8903FA8 /* wind.m4a in Resources */,
 			);
@@ -417,6 +444,7 @@
 				D1B7C0F77E4727A6FBB4BBB4 /* Scoring.swift in Sources */,
 				C668CC69836B916CE1B19961 /* SettingsView.swift in Sources */,
 				E9800038EE98926552AB8CA3 /* ShibuiApp.swift in Sources */,
+				B31498FF37C96116F118DE84 /* ShishiOdoshi3D.swift in Sources */,
 				1BD043BFB46FB85A6F8E7CF1 /* SoundBank.swift in Sources */,
 				E6B84020FBF579F2BDA39529 /* TeaArt.swift in Sources */,
 				C398012896ACFEE343B98226 /* TeaScene.swift in Sources */,
@@ -482,7 +510,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 26;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -595,7 +623,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 26;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

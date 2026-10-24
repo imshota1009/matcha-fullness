@@ -1,7 +1,7 @@
 import AVFoundation
 
 /// 音(10/25 開発者の依頼で復活)。
-/// - 茶筅: 往復ごとに、和紙をなでるような やわらかい「さら…」(音量 1 の基準。コードで合成)
+/// - 茶筅: 往復ごとに「シャッ」(音量 1 の基準。コードで合成)
 /// - 自然の音は3種類(川・風・鳥)。種類ごとに音量(0〜100%)を決められる。人によって好みが違うため
 ///   - 点てるとき(設定でオン/オフ): 茶筅の 0.5 くらいに抑え、ときどきししおどし
 ///   - タイマー中: ずっと流れ、5分ごとにししおどしが「カコン」
@@ -32,9 +32,11 @@ final class SoundBank {
             }
         }
         var volumeKey: String { "volume_\(rawValue)" }
+        /// 音量バーの初期値(にぎやかにならないよう控えめに)
+        static let defaultVolume = 0.4
         /// その種類の音量(0〜1)。初期値は 0.6
         var volume: Float {
-            Float(UserDefaults.standard.object(forKey: volumeKey) as? Double ?? 0.6)
+            Float(UserDefaults.standard.object(forKey: volumeKey) as? Double ?? Self.defaultVolume)
         }
     }
 
@@ -87,6 +89,45 @@ final class SoundBank {
         node.play()
     }
 
+    // MARK: 襖
+
+    private lazy var fusumaBuffer = makeFusuma()
+    private let fusumaNode = AVAudioPlayerNode()
+    private var fusumaReady = false
+
+    /// 襖が開く音。木の敷居の上を、紙の戸がすーっと滑る音(コードで合成)
+    func fusuma() {
+        if !engine.isRunning { try? engine.start() }
+        if !fusumaReady {
+            engine.attach(fusumaNode)
+            engine.connect(fusumaNode, to: engine.mainMixerNode, format: format)
+            fusumaReady = true
+        }
+        fusumaNode.volume = 0.9
+        fusumaNode.scheduleBuffer(fusumaBuffer, at: nil, options: .interrupts)
+        fusumaNode.play()
+    }
+
+    /// 低めのざらつき(すべる音)を、ゆっくり立ち上げて消し、最後に戸当たりの小さな「とん」
+    private func makeFusuma() -> AVAudioPCMBuffer {
+        var brown = 0.0, low = 0.0, band = 0.0
+        let length = 1.35
+        return buffer(seconds: length) { t in
+            brown = (brown + Double.random(in: -0.03...0.03)) * 0.997
+            low += (brown - low) * 0.06
+            band += (brown - band) * 0.35
+            let slide = (band - low)                       // すべる音(中くらいの高さ)
+            let x = min(1, t / 1.1)
+            let env = t < 1.1 ? pow(sin(.pi * x), 1.4) * (0.75 + 0.25 * sin(t * 23)) : 0
+            // 敷居の継ぎ目の小さな凸凹
+            let bump = t < 1.1 && Int(t * 9) % 3 == 0 ? 1.15 : 1.0
+            // 戸当たりの「とん」(低い短い音)
+            let knockT = t - 1.12
+            let knock = knockT > 0 ? exp(-knockT * 30) * sin(2 * .pi * 180 * knockT) * 0.35 : 0
+            return slide * env * bump * 9 + knock
+        }
+    }
+
     // MARK: 背景の自然の音
 
     /// 自然の音(川・風・鳥)を流しはじめる。`shishiEvery` 秒ごとにししおどし。
@@ -94,7 +135,8 @@ final class SoundBank {
     func startAmbient(shishiEvery: Double, forTimer: Bool) {
         if !engine.isRunning { try? engine.start() }
         isAmbientPlaying = true
-        level = forTimer ? 1 : Self.bedLevel
+        // 全体を控えめに(騒がしくならないように)。タイマーでも 0.6、点てるときは茶筅の半分の 0.5 をさらに 0.6 倍
+        level = (forTimer ? 1 : Self.bedLevel) * 0.6
         for (node, name) in [(riverNode, "river"), (windNode, "wind")] where !node.isPlaying {
             guard let buf = buffers[name] else { continue }
             node.volume = 0
@@ -135,16 +177,16 @@ final class SoundBank {
     func applyVolume(fade seconds: Double = 0.15, birdsFade: Double? = nil) {
         guard isAmbientPlaying else { return }
         fade(riverNode, to: Nature.river.volume * level, seconds: seconds)
-        fade(windNode, to: Nature.wind.volume * level, seconds: seconds)
+        fade(windNode, to: Nature.wind.volume * level * 0.6, seconds: seconds)
         // 鳥は 0 → 100 ではなく、なだらかに大きくなりはじめる(ゆっくりした曲線)
-        fade(birdNode, to: Nature.birds.volume * level * 0.8, seconds: birdsFade ?? seconds, gentle: birdsFade != nil)
+        fade(birdNode, to: Nature.birds.volume * level * 0.55, seconds: birdsFade ?? seconds, gentle: birdsFade != nil)
     }
 
     /// ししおどしの「カコン」(録音)。タイマーでは水たまりの絵と合わせて呼ぶ
     func kakon() {
         guard let buf = buffers["shishiodoshi"] else { return }
         shishiNode.stop()
-        shishiNode.volume = 0.8 * level
+        shishiNode.volume = 0.9 * level
         shishiNode.scheduleBuffer(buf, at: nil, options: .interrupts)
         shishiNode.play()
     }
@@ -190,11 +232,12 @@ final class SoundBank {
         return buf
     }
 
-    /// 録音を読み、終わりと始まりを重ねてつなぎ目のないループにする(3秒のクロスフェード)
+    /// 録音を読み、終わりと始まりを重ねてつなぎ目のないループにする(8秒の等パワークロスフェード)
     private static func loadLoop(_ name: String) -> AVAudioPCMBuffer? {
         guard let src = load(name), let data = src.floatChannelData else { return nil }
         let rate = src.format.sampleRate
-        let total = Int(src.frameLength), x = Int(rate * 3)
+        // 重ねる長さは 8 秒(録音が短いときは、その 4 分の 1)
+        let total = Int(src.frameLength), x = min(Int(rate * 8), Int(src.frameLength) / 4)
         guard total > x * 2, let out = AVAudioPCMBuffer(pcmFormat: src.format, frameCapacity: AVAudioFrameCount(total - x)),
               let o = out.floatChannelData else { return nil }
         out.frameLength = AVAudioFrameCount(total - x)
@@ -202,8 +245,9 @@ final class SoundBank {
             for i in 0..<(total - x) {
                 var v = data[ch][i]
                 if i < x {
-                    let t = Float(i) / Float(x)
-                    v = v * t + data[ch][total - x + i] * (1 - t)
+                    // 等パワーのクロスフェード(重なりの真ん中で音が小さくならない)
+                    let t = Float(i) / Float(x) * .pi / 2
+                    v = v * sin(t) + data[ch][total - x + i] * cos(t)
                 }
                 o[ch][i] = v
             }
@@ -222,19 +266,18 @@ final class SoundBank {
         return buf
     }
 
-    /// 茶筅の音: 和紙をなでるような、やわらかい「さら…」。高い音を落とした低めのノイズを、ゆっくり立ち上げてゆっくり消す。
-    /// 耳ざわりな高音(前の「シャッ」)は使わない
+    /// 茶筅の「シャッ」。高い音だけを残したノイズを、短く山なりに
+    /// 【10/25】やわらかい音にしたが、前の音のほうがよいとのことで戻した
     private func makeChasen() -> AVAudioPCMBuffer {
-        var brown = 0.0, low = 0.0
-        let length = 0.22
-        return buffer(seconds: length) { t in
-            // ブラウンノイズ(低めのざらつき)を、さらに高い音を落として丸くする
-            brown = (brown + Double.random(in: -0.02...0.02)) * 0.995
-            low += (brown - low) * 0.18
-            let x = t / length
-            let env = sin(.pi * x) * sin(.pi * x)
-            return low * env * 5.5
+        var last = 0.0
+        return buffer(seconds: 0.09) { t in
+            let white = Double.random(in: -1...1)
+            let high = white - last
+            last = white
+            let env = sin(.pi * min(1, t / 0.09))
+            return high * env * 0.5
         }
     }
+
 
 }
