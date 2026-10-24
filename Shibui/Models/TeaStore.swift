@@ -51,6 +51,7 @@ final class TeaStore {
     @discardableResult
     func grind(seconds: Double) -> Bool {
         record.groundSeconds += seconds
+        record.focusByDay[TeaRecord.dayKey(), default: 0] += seconds
         record.grindProgress += seconds / focusSeconds
         var finished = false
         if record.grindProgress >= 1 {

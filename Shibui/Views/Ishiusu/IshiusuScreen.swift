@@ -21,7 +21,7 @@ struct IshiusuScreen: View {
             HStack {
                 BackToEntrance(go: go)
                 Spacer()
-                Text(finished ? "ひき終わりました" : "石うす")
+                Text(finished ? "おつかれさまでした" : "集中タイム")
                     .font(.headline)
                     .foregroundStyle(Theme.Palette.text)
                 Spacer()
@@ -50,7 +50,7 @@ struct IshiusuScreen: View {
             Spacer()
 
             if finished {
-                PrimaryButton("ひいた抹茶で、次の一杯をたてる", systemImage: "cup.and.saucer") { go(.ippuku) }
+                PrimaryButton("もう一杯たてて、続ける", systemImage: "cup.and.saucer") { go(.ippuku) }
                     .padding(.horizontal, Theme.Spacing.screen)
                     .padding(.bottom, Theme.Spacing.s)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -75,8 +75,8 @@ struct IshiusuScreen: View {
     }
 
     private var message: String {
-        if finished { return "抹茶が一杯ぶんひけました。\nひと休みしましょう。" }
-        if grinding { return "石うすが回っています。\nこのまま、やることに向かいましょう。" }
-        return "スマホをうら返すと、石うすが回ります。\n手に取っている間は止まるだけ。ひいた分は残ります。"
+        if finished { return "集中できました。抹茶が一杯ぶんひけました。\nひと休みしましょう。" }
+        if grinding { return "集中しています。\nこのまま、やることに向かいましょう。" }
+        return "スマホをうら返して置くと、集中タイムが始まります。\n手に取ると止まるだけで、それまでの分は残ります。"
     }
 }

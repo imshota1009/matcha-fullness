@@ -37,7 +37,7 @@ struct HistoryView: View {
                 StatRow(label: "抹茶をたてた回数", value: "\(record.servings.count)杯")
                 StatRow(label: "たてた日", value: "\(record.servedDays.count)日")
                 StatRow(label: "今週", value: "\(record.daysThisWeek())日")
-                StatRow(label: "石うすを回した時間", value: EntranceView.hours(record.groundSeconds))
+                StatRow(label: "スマホから離れて集中した時間", value: EntranceView.hours(record.groundSeconds))
                 StatRow(label: "集中度の自己ベスト", value: "\(record.bestScore)")
 
                 SectionHeader("これまでの記録")
@@ -129,6 +129,7 @@ struct SettingsView: View {
     @AppStorage(WhiskMode.storageKey) private var mode = WhiskMode.gyro
     @AppStorage("didOnboard") private var didOnboard = true
     @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         @Bindable var store = store
@@ -152,6 +153,15 @@ struct SettingsView: View {
                 .tint(Theme.Palette.matcha)
                 .frame(minHeight: Theme.Size.minTouch)
                 .padding(.top, Theme.Spacing.s)
+                Button {
+                    dismiss()
+                    openURL(URL(string: "shibui://sns")!)
+                } label: {
+                    Label("SNSを見ているところから試す", systemImage: "play")
+                        .font(.dsBody)
+                        .foregroundStyle(Theme.Palette.text)
+                        .frame(maxWidth: .infinity, minHeight: Theme.Size.minTouch, alignment: .leading)
+                }
 
                 SectionHeader("そのほか")
                 Button {

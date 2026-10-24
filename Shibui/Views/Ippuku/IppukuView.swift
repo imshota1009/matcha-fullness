@@ -224,11 +224,11 @@ struct IppukuView: View {
         VStack(spacing: Theme.Spacing.l) {
             Spacer()
             KakejikuView(text: ichiji.trimmingCharacters(in: .whitespaces), height: 340, unrolls: true)
-            Text("スマホをうら返すと、石うすが回りはじめます")
+            Text("スマホをうら返して置くと、集中タイムが始まります")
                 .font(.dsBody)
                 .foregroundStyle(Theme.Palette.text)
             Spacer()
-            PrimaryButton("石うすへ", systemImage: "circle.dotted") { go(.ishiusu) }
+            PrimaryButton("集中をはじめる", systemImage: "timer") { go(.ishiusu) }
                 .padding(.horizontal, Theme.Spacing.screen)
                 .padding(.bottom, Theme.Spacing.s)
         }

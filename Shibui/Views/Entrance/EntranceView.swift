@@ -48,7 +48,8 @@ struct RootView: View {
     }
 }
 
-/// 茶室の入口(ホーム)。今日取り戻した杯数・茶壺・最新の掛け軸。
+/// ホーム。やることは1つ「抹茶をたてて、集中する」だけ。
+/// 上に今日の集中時間と今週の記録、ランクを小さく。くわしい記録は左上から(段階的に見せる)。
 struct EntranceView: View {
     @Environment(TeaStore.self) private var store
     let go: (Stage) -> Void
@@ -58,21 +59,21 @@ struct EntranceView: View {
     var body: some View {
         NavigationStack {
             DSScreen("おてまえ") {
+                let record = store.record
+                // 今日の集中時間(いちばん大事な数字)
                 VStack(spacing: Theme.Spacing.xs) {
-                    Text("今日は")
+                    Text("今日の集中")
                         .font(.dsCaption)
                         .foregroundStyle(Theme.Palette.secondaryText)
                     HStack(alignment: .firstTextBaseline, spacing: Theme.Spacing.xs) {
-                        Text("抹茶")
-                            .font(.headline)
-                        Text("\(store.record.cupsToday())")
+                        Text("\(Int(record.focusToday) / 60)")
                             .font(.dsHero)
                             .contentTransition(.numericText())
-                        Text("杯ぶん")
+                        Text("分")
                             .font(.headline)
                     }
                     .foregroundStyle(Theme.Palette.text)
-                    Text("取り戻しました")
+                    Text("抹茶 \(record.cupsToday())杯")
                         .font(.dsCaption)
                         .foregroundStyle(Theme.Palette.secondaryText)
                 }
@@ -80,46 +81,32 @@ struct EntranceView: View {
                 .padding(.top, Theme.Spacing.xl)
                 .accessibilityElement(children: .combine)
 
+                // 今週(月〜日)。たてた日に色がつく。休んでも何も減らない
                 Button { showsHistory = true } label: {
-                    RankProgress(total: store.record.totalPoints)
-                        .padding(.horizontal, Theme.Spacing.l)
-                        .padding(.top, Theme.Spacing.l)
-                }
-                .buttonStyle(.plain)
-
-                SectionHeader("抹茶の入れもの")
-                HStack(spacing: Theme.Spacing.m) {
-                    ChawanView(foam: 0, size: 44)
-                    VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                        Text(store.record.matchaCups > 0 ? "自分でひいた抹茶が \(store.record.matchaCups)杯" : "次の一杯は、おもてなしの一杯")
-                            .font(.dsBody)
-                            .foregroundStyle(Theme.Palette.text)
-                        Text("これまで石うすを回した時間 \(Self.hours(store.record.groundSeconds))")
-                            .font(.dsCaption)
-                            .foregroundStyle(Theme.Palette.secondaryText)
+                    VStack(spacing: Theme.Spacing.m) {
+                        WeekRow(days: record.servedDays)
+                        RankProgress(total: record.totalPoints)
                     }
-                    Spacer()
+                    .padding(Theme.Spacing.m)
+                    .background(Theme.Palette.surface, in: .rect(cornerRadius: Theme.Radius.m))
+                    .contentShape(.rect)
                 }
-                .padding(.vertical, Theme.Spacing.m)
-                .accessibilityElement(children: .combine)
+                .buttonStyle(PressScaleStyle())
+                .padding(.top, Theme.Spacing.xl)
+                .accessibilityHint("押すと、くわしい記録が見られます")
 
-                if let ichiji = store.record.latestIchiji {
-                    SectionHeader("最近のかけじく")
+                // 今日決めた「やること」があれば、かけじくで
+                if let last = record.servings.last, Calendar.current.isDateInToday(last.date), !last.ichiji.isEmpty {
+                    SectionHeader("今日やること")
                     HStack {
                         Spacer()
-                        KakejikuView(text: ichiji, height: 220)
+                        KakejikuView(text: last.ichiji, height: 200)
                         Spacer()
                     }
                     .padding(.vertical, Theme.Spacing.m)
                 }
             } bottom: {
-                VStack(spacing: Theme.Spacing.s) {
-                    PrimaryButton("抹茶をたてる", systemImage: "cup.and.saucer") { go(.ippuku) }
-                    Button("SNSを見ているところから試す") { go(.sns) }
-                        .font(.dsCaption.weight(.medium))
-                        .foregroundStyle(Theme.Palette.secondaryText)
-                        .frame(minHeight: Theme.Size.minTouch)
-                }
+                PrimaryButton("抹茶をたてて、集中する", systemImage: "cup.and.saucer") { go(.ippuku) }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -127,7 +114,7 @@ struct EntranceView: View {
                         Image(systemName: "chart.bar")
                             .frame(width: Theme.Size.minTouch, height: Theme.Size.minTouch)
                     }
-                    .accessibilityLabel("茶の記録")
+                    .accessibilityLabel("記録")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showsSettings = true } label: {
@@ -168,5 +155,38 @@ struct BackToEntrance: View {
                 .contentShape(.rect)
         }
         .accessibilityLabel("入口へ戻る")
+    }
+}
+
+/// 今週の7日(月〜日)。たてた日は抹茶色、今日は輪で示す
+struct WeekRow: View {
+    let days: Set<Date>
+
+    var body: some View {
+        var cal = Calendar.current
+        cal.firstWeekday = 2
+        let today = cal.startOfDay(for: .now)
+        let start = cal.dateInterval(of: .weekOfYear, for: today)?.start ?? today
+        let labels = ["月", "火", "水", "木", "金", "土", "日"]
+        return HStack {
+            ForEach(0..<7, id: \.self) { d in
+                let date = cal.date(byAdding: .day, value: d, to: start) ?? start
+                let done = days.contains(date)
+                VStack(spacing: Theme.Spacing.xs) {
+                    Text(labels[d])
+                        .font(.caption2)
+                        .foregroundStyle(Theme.Palette.secondaryText)
+                    ZStack {
+                        Circle().fill(done ? Theme.Palette.matcha : Theme.Palette.separator.opacity(date > today ? 0.4 : 1))
+                        if done { Image(systemName: "checkmark").font(.caption2.weight(.bold)).foregroundStyle(Theme.Palette.shiro) }
+                    }
+                    .frame(width: 26, height: 26)
+                    .overlay { if date == today { Circle().stroke(Theme.Palette.text, lineWidth: 1.5).padding(-3) } }
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
+        .accessibilityElement()
+        .accessibilityLabel("今週は \(days.filter { $0 >= start }.count) 日、抹茶をたてました")
     }
 }

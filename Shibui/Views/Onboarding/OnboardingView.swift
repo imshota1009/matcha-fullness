@@ -196,7 +196,7 @@ enum OnboardingContent {
     static let values: [(symbol: String, title: String, detail: String)] = [
         ("drop", "ししおどしで、区切る", "SNSを見すぎたら「カコン」。茶室へご案内します。"),
         ("hand.wave", "振って、抹茶をたてる", "スマホを振って抹茶をたて、ひと息ついて、次にやることを決める。"),
-        ("circle.dotted", "うら返して、石うすを回す", "うら返している間だけ抹茶がひける。ひいた抹茶で次の一杯を。"),
+        ("timer", "うら返して、集中する", "スマホをうら返している間が集中タイム。終わったら、また一杯。"),
     ]
     static let readyTitle = "どうぞ、お入りください"
     static let readyMessage = "まずは、おもてなしの一杯から。"

@@ -102,6 +102,8 @@ struct TeaRecord: Codable, Hashable {
     var servings: [Serving] = []
     /// 挽き上げた回数(集中をやり切った回数)
     var focusSessions = 0
+    /// 日ごとの集中した時間(秒)。キーは "yyyy-MM-dd"
+    var focusByDay: [String: Double] = [:]
 
     /// 集中1回をやり切ると増える茶点
     static let focusPoints = 30
@@ -118,7 +120,16 @@ struct TeaRecord: Codable, Hashable {
         groundSeconds = try c.decodeIfPresent(Double.self, forKey: .groundSeconds) ?? 0
         servings = try c.decodeIfPresent([Serving].self, forKey: .servings) ?? []
         focusSessions = try c.decodeIfPresent(Int.self, forKey: .focusSessions) ?? 0
+        focusByDay = try c.decodeIfPresent([String: Double].self, forKey: .focusByDay) ?? [:]
     }
+
+    static func dayKey(_ date: Date = .now) -> String {
+        let c = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        return String(format: "%04d-%02d-%02d", c.year ?? 0, c.month ?? 0, c.day ?? 0)
+    }
+
+    /// 今日、集中した時間(秒)
+    var focusToday: Double { focusByDay[Self.dayKey()] ?? 0 }
 
     func cupsToday(now: Date = .now) -> Int {
         servings.filter { Calendar.current.isDate($0.date, inSameDayAs: now) }.count
