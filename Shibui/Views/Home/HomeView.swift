@@ -6,6 +6,7 @@ struct HomeView: View {
     @Environment(EntryStore.self) private var store
     @State private var selected: Record?
     @State private var stamped = false
+    @AppStorage("didOnboard") private var didOnboard = true
 
     var body: some View {
         DSScreen("Shibui") {
@@ -20,6 +21,17 @@ struct HomeView: View {
             VStack(spacing: Theme.Spacing.s) {
                 if store.lastDeleted != nil { undoBar }
                 PrimaryButton("記録する", systemImage: "plus") { addSample() }
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button("はじめの説明をもう一度見る", systemImage: "book") { didOnboard = false }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .frame(width: Theme.Size.minTouch, height: Theme.Size.minTouch)
+                }
+                .accessibilityLabel("その他")
             }
         }
         .sheet(item: $selected) { entry in

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0DD227DFBD83ED515FD39875 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4E0134F33017E59CDC489E /* OnboardingView.swift */; };
 		11259A8A192510232E6EA59E /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D9E9ED1A02940D7F74FE12 /* HomeView.swift */; };
 		418BF3996D03A8D1191B43BE /* ShibuiWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A50B316535C1E8D8BB68D313 /* ShibuiWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		421F4D32349C10A02FBA474A /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8665F7910DB623C1AB4AF262 /* SwiftUI.framework */; };
@@ -63,6 +64,7 @@
 		C1E46B566A7DEE89C3554B6E /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DesignSystem; path = ../DesignSystem; sourceTree = SOURCE_ROOT; };
 		D92576DC66D3E244DECC4749 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		E1D9E9ED1A02940D7F74FE12 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		ED4E0134F33017E59CDC489E /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		ED6C5C8FDAC76C8C34BB3644 /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
 		FEE59A74ACD8615401187F4E /* Shibui.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Shibui.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -127,6 +129,14 @@
 				DE3457BB96512DE1FDA3E848 /* Frameworks */,
 				B3B1C64DEB41A25F80FE0E96 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		3D30C94316839AB2BCCCD82D /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				ED4E0134F33017E59CDC489E /* OnboardingView.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 		516B91CEB3439E9521DD5B7F /* Home */ = {
@@ -194,6 +204,7 @@
 			children = (
 				19A1910C121C1EC541843F17 /* Detail */,
 				516B91CEB3439E9521DD5B7F /* Home */,
+				3D30C94316839AB2BCCCD82D /* Onboarding */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -314,6 +325,7 @@
 				7B05D31A00CD0F2460A7AF90 /* EntryStore.swift in Sources */,
 				11259A8A192510232E6EA59E /* HomeView.swift in Sources */,
 				9701D091EB35AC5A60816B2C /* MockData.swift in Sources */,
+				0DD227DFBD83ED515FD39875 /* OnboardingView.swift in Sources */,
 				756B3AF16F6BC0852D324AF8 /* SharedStore.swift in Sources */,
 				E9800038EE98926552AB8CA3 /* ShibuiApp.swift in Sources */,
 			);
