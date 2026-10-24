@@ -25,7 +25,6 @@ struct TemaeView: View {
                 // 茶碗は、上のダイナミックアイランドにかからない範囲で最大(左右ははみ出してよい)
                 TeaSceneView(model: model)
                     .padding(.top, 8)
-                SeasonLayer(count: 5).ignoresSafeArea()
                 guide
                     .padding(.bottom, Theme.Spacing.s)
                 // 机に置いてほしい場面で、スマホが水平でなければ知らせる

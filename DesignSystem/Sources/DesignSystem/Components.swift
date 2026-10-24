@@ -16,23 +16,32 @@ public struct DSScreen<Content: View, Bottom: View>: View {
     }
 
     public var body: some View {
+        // 下に置くものがないときは、下の余白(safeAreaInset)を付けない。
+        // 付けると、シートの中で中身より下の白い余白までスクロールできてしまう
+        if Bottom.self == EmptyView.self {
+            scroll
+        } else {
+            scroll.safeAreaInset(edge: .bottom) {
+                bottom
+                    .padding(.horizontal, Theme.Spacing.screen)
+                    .padding(.bottom, Theme.Spacing.s)
+            }
+        }
+    }
+
+    private var scroll: some View {
         ScrollView {
-            // 中身を1つの VStack にまとめる(まとめないと、シートの中で白い余白までスクロールできてしまう)
+            // 中身を1つの VStack にまとめる
             VStack(alignment: .leading) { content }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, Theme.Spacing.screen)
                 .padding(.bottom, Theme.Spacing.l)
         }
-        // 中身が画面に収まるときは、引っぱってもスクロールしない(白い余白まで行かない)
+        // 中身が画面に収まるときは、引っぱってもスクロールしない
         .scrollBounceBehavior(.basedOnSize)
         .background(Theme.Palette.background)
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
-        .safeAreaInset(edge: .bottom) {
-            bottom
-                .padding(.horizontal, Theme.Spacing.screen)
-                .padding(.bottom, Theme.Spacing.s)
-        }
     }
 }
 

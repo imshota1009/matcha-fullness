@@ -467,7 +467,7 @@ struct BreathView: View {
     }
 }
 
-/// ひと息(たて終わったあと)。りきゅうさんがお茶を飲むしぐさをくり返し、その間だけ鳥のさえずりと季節の音が聞こえる。
+/// ひと息(たて終わったあと)。りきゅうさんがお茶を飲むしぐさをくり返し、その間だけ鳥のさえずりが聞こえる。
 /// 30秒で次へ進む。「つづける」でいつでも抜けられる。
 struct HitoikiView: View {
     let onFinish: () -> Void
@@ -478,9 +478,6 @@ struct HitoikiView: View {
         VStack(spacing: Theme.Spacing.l) {
             Spacer()
             RikyuView(size: 300, mood: 4)
-            Text(Season.current.line)
-                .font(.dsCaption)
-                .foregroundStyle(Theme.Palette.secondaryText)
             Text("ひと息。")
                 .font(.system(.title, design: .serif).weight(.semibold))
                 .foregroundStyle(Theme.Palette.text)
@@ -504,12 +501,7 @@ struct HitoikiView: View {
         .onAppear {
             start = .now
             SoundBank.shared.startAmbient()
-            SoundBank.shared.startSeason(Season.current)
         }
-        .onDisappear {
-            SoundBank.shared.stopAmbient()
-            SoundBank.shared.stopSeason()
-        }
-        .background { SeasonLayer().ignoresSafeArea() }
+        .onDisappear { SoundBank.shared.stopAmbient() }
     }
 }

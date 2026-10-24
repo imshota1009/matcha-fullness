@@ -24,9 +24,6 @@ final class SoundBank {
     private let shishiNode = AVAudioPlayerNode()
     private var shishiBuffer: AVAudioPCMBuffer?
     private static let shishiVolume: Float = 0.5
-    /// 季節の音(春: うぐいす / 夏: 風鈴 / 秋: 鈴虫 / 冬: 釜の湯)。ひと息の間に、鳥の声に重ねて流す
-    private let seasonNode = AVAudioPlayerNode()
-    private var seasonPlaying: Season?
     private let format = AVAudioFormat(standardFormatWithSampleRate: 44_100, channels: 1)!
 
     private lazy var kakonBuffer = makeKakon()
@@ -49,9 +46,6 @@ final class SoundBank {
         engine.attach(shishiNode)
         engine.connect(shishiNode, to: engine.mainMixerNode, format: shishiBuffer?.format ?? format)
         shishiNode.volume = 0
-        engine.attach(seasonNode)
-        engine.connect(seasonNode, to: engine.mainMixerNode, format: format)
-        seasonNode.volume = 0
         matsukazeNode.volume = 0
         try? engine.start()
     }
@@ -76,47 +70,6 @@ final class SoundBank {
             ambientNode.play()
         }
         fade(ambientNode, to: Self.ambientVolume, seconds: seconds)
-    }
-
-    /// 季節の音を、ゆっくり大きくして流しはじめる(フェードイン)
-    func startSeason(_ season: Season, fade seconds: Double = 3.0) {
-        if !engine.isRunning { try? engine.start() }
-        if seasonPlaying != season || !seasonNode.isPlaying {
-            let buffer: AVAudioPCMBuffer?
-            switch season {
-            case .spring: buffer = Self.loadLoop("uguisu")
-            case .summer: buffer = makeFurin()
-            case .autumn: buffer = Self.loadLoop("suzumushi")
-            case .winter: buffer = matsukazeBuffer
-            }
-            guard let buffer else { return }
-            seasonNode.stop()
-            engine.disconnectNodeOutput(seasonNode)
-            engine.connect(seasonNode, to: engine.mainMixerNode, format: buffer.format)
-            seasonNode.volume = 0
-            seasonNode.scheduleBuffer(buffer, at: nil, options: .loops)
-            seasonNode.play()
-            seasonPlaying = season
-        }
-        fade(seasonNode, to: season == .winter ? 0.25 : 0.5, seconds: seconds)
-    }
-
-    func stopSeason(fade seconds: Double = 2.0) {
-        fade(seasonNode, to: 0, seconds: seconds) { [weak self] in self?.seasonNode.stop() }
-    }
-
-    /// 風鈴: ガラスの「ちりん」を、間をあけて何度か鳴らした 24 秒のループ
-    private func makeFurin() -> AVAudioPCMBuffer {
-        let hits: [(Double, Double)] = [(0.4, 1.0), (3.1, 0.6), (3.5, 0.45), (8.2, 0.9), (13.0, 0.55), (13.3, 0.7), (18.6, 0.85), (21.0, 0.4)]
-        return buffer(seconds: 24) { t in
-            var v = 0.0
-            for (start, amp) in hits where t >= start && t < start + 3.5 {
-                let x = t - start
-                // ガラスらしい、少しずれた高い倍音
-                v += amp * exp(-x * 1.6) * (0.5 * sin(2 * .pi * 2093 * x) + 0.3 * sin(2 * .pi * 3140 * x) + 0.2 * sin(2 * .pi * 4710 * x))
-            }
-            return v * 0.35
-        }
     }
 
     /// ししおどしの音を、ゆっくり大きくして流しはじめる(フェードイン)

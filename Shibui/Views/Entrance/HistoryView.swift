@@ -156,7 +156,6 @@ struct SettingsView: View {
     @AppStorage("didOnboard") private var didOnboard = true
     @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
     @Environment(\.openURL) private var openURL
-    @AppStorage(Season.storageKey) private var seasonOverride = ""
 
     var body: some View {
         @Bindable var store = store
@@ -173,16 +172,6 @@ struct SettingsView: View {
                     .padding(.top, Theme.Spacing.s)
 
                 SectionHeader("デモ")
-                Picker("季節", selection: $seasonOverride) {
-                    Text("自動").tag("")
-                    ForEach(Season.allCases) { Text($0.name).tag($0.rawValue) }
-                }
-                .pickerStyle(.segmented)
-                .padding(.top, Theme.Spacing.s)
-                Text("ふだんは今日の日付から季節が決まります")
-                    .font(.dsCaption)
-                    .foregroundStyle(Theme.Palette.secondaryText)
-                    .padding(.top, Theme.Spacing.xs)
                 Button {
                     dismiss()
                     openURL(URL(string: "shibui://sns")!)
@@ -203,7 +192,7 @@ struct SettingsView: View {
                         .foregroundStyle(Theme.Palette.text)
                         .frame(maxWidth: .infinity, minHeight: Theme.Size.minTouch, alignment: .leading)
                 }
-                Text("鳥のさえずり: \"Birdsong Bourne Woods 2020-04-27 0722\" by Robert EA Harvey (Wikimedia Commons, CC BY-SA 4.0)\nししおどし: \"Shishiodoshi-LS100103\" by Fg2 (Wikimedia Commons, パブリックドメイン)\nうぐいす: \"Uguisu5707\" by Jnn (Wikimedia Commons, CC BY 2.1 JP)\n鈴虫: \"Suzumushi 06z3286\" by ISAKA Yoji (Wikimedia Commons, CC BY 2.1 JP)")
+                Text("鳥のさえずり: \"Birdsong Bourne Woods 2020-04-27 0722\" by Robert EA Harvey (Wikimedia Commons, CC BY-SA 4.0)\nししおどし: \"Shishiodoshi-LS100103\" by Fg2 (Wikimedia Commons, パブリックドメイン)")
                     .font(.dsCaption)
                     .foregroundStyle(Theme.Palette.secondaryText)
                     .padding(.top, Theme.Spacing.s)

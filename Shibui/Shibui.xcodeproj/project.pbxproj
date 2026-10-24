@@ -10,7 +10,6 @@
 		0B59B282650E5868981C81ED /* CREDITS.txt in Resources */ = {isa = PBXBuildFile; fileRef = 631A45B922E68836FEE6CB8A /* CREDITS.txt */; };
 		0DD227DFBD83ED515FD39875 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4E0134F33017E59CDC489E /* OnboardingView.swift */; };
 		171F1940FE0A1247F1DE7EE1 /* SettingsScrollTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5690F6AA9C6DB755D8919EF /* SettingsScrollTests.swift */; };
-		1B326FD02DD6BE565DDAF43E /* uguisu.m4a in Resources */ = {isa = PBXBuildFile; fileRef = A7602A8CCD61B8DF9EF92971 /* uguisu.m4a */; };
 		1B42F778C3C6ED056941B8C7 /* TeaStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47DAED829E39281D4145F9D /* TeaStore.swift */; };
 		1BD043BFB46FB85A6F8E7CF1 /* SoundBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */; };
 		1E60BE9AC6B692DA000D6399 /* SNSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C0140F1D1E5C96BC753C77 /* SNSView.swift */; };
@@ -29,11 +28,9 @@
 		8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */ = {isa = PBXBuildFile; fileRef = 68D816B2DD6715A530FF2740 /* chawan.obj */; };
 		8E9279F55715F2BF3A93FE41 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = C543329568C634D6D1696078 /* DesignSystem */; };
 		8ECA4F5040D72427422946CE /* rikyu.riv in Resources */ = {isa = PBXBuildFile; fileRef = 0B3DE3DAB9D6556F6F596B35 /* rikyu.riv */; };
-		941E4B8C3D5B8BDBE918D747 /* SeasonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0574797CB6E6A98C58FC70 /* SeasonView.swift */; };
 		9701D091EB35AC5A60816B2C /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B22F2D08EEF648DEE68F496F /* MockData.swift */; };
 		9B2558AA5DB67CA65C0CBA86 /* birds.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 8843D1711B2BFB5AB74F45E6 /* birds.m4a */; };
 		9F3852126C490F704DF960E9 /* chasen_tines_outer.obj in Resources */ = {isa = PBXBuildFile; fileRef = F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */; };
-		B1D1B3A4EB4F402EE42453BE /* suzumushi.m4a in Resources */ = {isa = PBXBuildFile; fileRef = DD4655D4E355724FFEE3B8CA /* suzumushi.m4a */; };
 		B746FAC4F7581B11CFC27263 /* EntranceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4172681D23BFDB7E396D23 /* EntranceView.swift */; };
 		C398012896ACFEE343B98226 /* TeaScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B1D0CA450A1A864D89FA0E /* TeaScene.swift */; };
 		C5D684D49BD093E2AE8C0239 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD4A1B4A3972F79F98B3C4D /* WidgetKit.framework */; };
@@ -95,7 +92,6 @@
 		64B1D0CA450A1A864D89FA0E /* TeaScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaScene.swift; sourceTree = "<group>"; };
 		68D816B2DD6715A530FF2740 /* chawan.obj */ = {isa = PBXFileReference; path = chawan.obj; sourceTree = "<group>"; };
 		7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShibuiApp.swift; sourceTree = "<group>"; };
-		7E0574797CB6E6A98C58FC70 /* SeasonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonView.swift; sourceTree = "<group>"; };
 		81FB531B07F92884F38E6E2E /* ShibuiWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShibuiWidget.entitlements; sourceTree = "<group>"; };
 		8665F7910DB623C1AB4AF262 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		8843D1711B2BFB5AB74F45E6 /* birds.m4a */ = {isa = PBXFileReference; path = birds.m4a; sourceTree = "<group>"; };
@@ -104,7 +100,6 @@
 		9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundBank.swift; sourceTree = "<group>"; };
 		A368E64CB76EBDFFF74C39A8 /* TemaeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemaeView.swift; sourceTree = "<group>"; };
 		A50B316535C1E8D8BB68D313 /* ShibuiWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ShibuiWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		A7602A8CCD61B8DF9EF92971 /* uguisu.m4a */ = {isa = PBXFileReference; path = uguisu.m4a; sourceTree = "<group>"; };
 		AA0424EA8BFBAC796F58DF5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ACD4A1B4A3972F79F98B3C4D /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		B22F2D08EEF648DEE68F496F /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
@@ -116,7 +111,6 @@
 		D5690F6AA9C6DB755D8919EF /* SettingsScrollTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScrollTests.swift; sourceTree = "<group>"; };
 		D6085C317848DE5EF3811E52 /* chasen_handle.obj */ = {isa = PBXFileReference; path = chasen_handle.obj; sourceTree = "<group>"; };
 		D92576DC66D3E244DECC4749 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		DD4655D4E355724FFEE3B8CA /* suzumushi.m4a */ = {isa = PBXFileReference; path = suzumushi.m4a; sourceTree = "<group>"; };
 		ED4E0134F33017E59CDC489E /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		ED6C5C8FDAC76C8C34BB3644 /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
 		F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */ = {isa = PBXFileReference; path = chasen_tines_outer.obj; sourceTree = "<group>"; };
@@ -171,7 +165,6 @@
 			isa = PBXGroup;
 			children = (
 				CC09D44EEFF2D2BC8DC81F75 /* RikyuView.swift */,
-				7E0574797CB6E6A98C58FC70 /* SeasonView.swift */,
 				19794A5048322D5107B86A91 /* TeaArt.swift */,
 			);
 			path = Parts;
@@ -183,8 +176,6 @@
 				8843D1711B2BFB5AB74F45E6 /* birds.m4a */,
 				631A45B922E68836FEE6CB8A /* CREDITS.txt */,
 				BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */,
-				DD4655D4E355724FFEE3B8CA /* suzumushi.m4a */,
-				A7602A8CCD61B8DF9EF92971 /* uguisu.m4a */,
 			);
 			path = Sounds;
 			sourceTree = "<group>";
@@ -476,8 +467,6 @@
 				8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */,
 				8ECA4F5040D72427422946CE /* rikyu.riv in Resources */,
 				C62C75D7BA235351798725F0 /* shishiodoshi.m4a in Resources */,
-				B1D1B3A4EB4F402EE42453BE /* suzumushi.m4a in Resources */,
-				1B326FD02DD6BE565DDAF43E /* uguisu.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,7 +485,6 @@
 				0DD227DFBD83ED515FD39875 /* OnboardingView.swift in Sources */,
 				66C26DBE9748558AE67B0237 /* RikyuView.swift in Sources */,
 				1E60BE9AC6B692DA000D6399 /* SNSView.swift in Sources */,
-				941E4B8C3D5B8BDBE918D747 /* SeasonView.swift in Sources */,
 				756B3AF16F6BC0852D324AF8 /* SharedStore.swift in Sources */,
 				E9800038EE98926552AB8CA3 /* ShibuiApp.swift in Sources */,
 				1BD043BFB46FB85A6F8E7CF1 /* SoundBank.swift in Sources */,
