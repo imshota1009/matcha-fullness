@@ -5,7 +5,7 @@ name: Shibui
 options:
   bundleIdPrefix: com.imshota1009
   deploymentTarget:
-    iOS: "27.0"
+    iOS: "26.0"
   createIntermediateGroups: true
 settings:
   base:
@@ -14,7 +14,7 @@ settings:
     SWIFT_VERSION: "5.0"
     TARGETED_DEVICE_FAMILY: "1"
     MARKETING_VERSION: "0.1"
-    CURRENT_PROJECT_VERSION: "1"
+    CURRENT_PROJECT_VERSION: "2"
 packages:
   DesignSystem:
     path: ../DesignSystem
