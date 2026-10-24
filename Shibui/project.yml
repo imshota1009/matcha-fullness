@@ -35,20 +35,22 @@ targets:
     entitlements:
       path: App/Shibui.entitlements
       properties:
-        com.apple.security.application-groups: [group.com.imshota1009.shibui]
+        com.apple.security.application-groups: [group.com.imshota1009.spajam2026.shibui]
     info:
       path: App/Info.plist
       properties:
         CFBundleDisplayName: Shibui
         CFBundleDevelopmentRegion: ja
         UILaunchScreen: {}
+        UIRequiresFullScreen: true
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         ITSAppUsesNonExemptEncryption: false
         CFBundleURLTypes:
           - CFBundleURLSchemes: [shibui]
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.imshota1009.shibui
+        PRODUCT_BUNDLE_IDENTIFIER: com.imshota1009.spajam2026.shibui
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: ""
   ShibuiWidget:
     type: app-extension
@@ -63,7 +65,7 @@ targets:
     entitlements:
       path: Widget/ShibuiWidget.entitlements
       properties:
-        com.apple.security.application-groups: [group.com.imshota1009.shibui]
+        com.apple.security.application-groups: [group.com.imshota1009.spajam2026.shibui]
     info:
       path: Widget/Info.plist
       properties:
@@ -72,4 +74,4 @@ targets:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.imshota1009.shibui.widget
+        PRODUCT_BUNDLE_IDENTIFIER: com.imshota1009.spajam2026.shibui.widget

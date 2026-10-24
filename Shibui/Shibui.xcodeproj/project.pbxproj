@@ -12,6 +12,7 @@
 		421F4D32349C10A02FBA474A /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8665F7910DB623C1AB4AF262 /* SwiftUI.framework */; };
 		55499FF6811B53C5992A2EEF /* ShibuiWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015ECE37B3000AF30755A09E /* ShibuiWidget.swift */; };
 		5F15E2A8D7F1302EECFF798F /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = D7116FF1702F1AF26D0D3654 /* DesignSystem */; };
+		5FD27A1A38EB5774A88FFB06 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0424EA8BFBAC796F58DF5A /* Assets.xcassets */; };
 		756B3AF16F6BC0852D324AF8 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6C5C8FDAC76C8C34BB3644 /* SharedStore.swift */; };
 		7B05D31A00CD0F2460A7AF90 /* EntryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D85A5FCB508387260F8509 /* EntryStore.swift */; };
 		8E9279F55715F2BF3A93FE41 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = C543329568C634D6D1696078 /* DesignSystem */; };
@@ -56,6 +57,7 @@
 		8665F7910DB623C1AB4AF262 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		97222606BC1D13FF560EA77B /* DetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailSheet.swift; sourceTree = "<group>"; };
 		A50B316535C1E8D8BB68D313 /* ShibuiWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ShibuiWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0424EA8BFBAC796F58DF5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ACD4A1B4A3972F79F98B3C4D /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		B22F2D08EEF648DEE68F496F /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		C1E46B566A7DEE89C3554B6E /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DesignSystem; path = ../DesignSystem; sourceTree = SOURCE_ROOT; };
@@ -138,6 +140,7 @@
 		6B25D9F25F3644996A485CAA /* App */ = {
 			isa = PBXGroup;
 			children = (
+				AA0424EA8BFBAC796F58DF5A /* Assets.xcassets */,
 				2F96B19FA8AD1791E07CF3B6 /* Info.plist */,
 				41F6E5D876C58859D10DFBDC /* Shibui.entitlements */,
 				7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */,
@@ -213,6 +216,7 @@
 			buildConfigurationList = 854D8C546CC55A60E3800967 /* Build configuration list for PBXNativeTarget "Shibui" */;
 			buildPhases = (
 				0A7D8096E50412333113AAC5 /* Sources */,
+				B099C1B1964C7F60F61DA809 /* Resources */,
 				9CF5E7355B4954CEA4A1FB6F /* Frameworks */,
 				137EDDE1CDF5727C958F53E8 /* Embed Foundation Extensions */,
 			);
@@ -289,6 +293,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B099C1B1964C7F60F61DA809 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5FD27A1A38EB5774A88FFB06 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0A7D8096E50412333113AAC5 /* Sources */ = {
@@ -397,7 +412,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.imshota1009.shibui;
+				PRODUCT_BUNDLE_IDENTIFIER = com.imshota1009.spajam2026.shibui;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -413,7 +428,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.imshota1009.shibui.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.imshota1009.spajam2026.shibui.widget;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -499,7 +514,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.imshota1009.shibui;
+				PRODUCT_BUNDLE_IDENTIFIER = com.imshota1009.spajam2026.shibui;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -515,7 +530,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.imshota1009.shibui.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.imshota1009.spajam2026.shibui.widget;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

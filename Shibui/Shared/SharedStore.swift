@@ -10,7 +10,7 @@ struct Record: Codable, Identifiable, Hashable {
 }
 
 enum SharedStore {
-    static let appGroup = "group.com.imshota1009.shibui"
+    static let appGroup = "group.com.imshota1009.spajam2026.shibui"
     /// ウィジェットのタップでアプリを開く URL
     static let openURL = URL(string: "shibui://home")!
 
