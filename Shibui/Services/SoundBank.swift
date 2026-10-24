@@ -182,12 +182,19 @@ final class SoundBank {
         fade(birdNode, to: Nature.birds.volume * level * 0.55, seconds: birdsFade ?? seconds, gentle: birdsFade != nil)
     }
 
-    /// ししおどしの「カコン」(録音)。タイマーでは水たまりの絵と合わせて呼ぶ
+    /// ししおどしの録音で「カコン」が鳴る位置(秒)。録音を調べて求めた値(8.70 秒)
+    static let kakonOffset = 8.70
+    /// 「カコン」の少し手前から鳴らす長さ(秒)。この分だけ早めに呼ぶと、音と動きがそろう
+    static let kakonPreroll = 0.12
+
+    /// ししおどしの「カコン」(録音)。録音の頭からではなく、カコンの直前から鳴らす(頭から鳴らすと 8.7 秒遅れる)
     func kakon() {
         guard let buf = buffers["shishiodoshi"] else { return }
+        let start = AVAudioFramePosition((Self.kakonOffset - Self.kakonPreroll) * buf.format.sampleRate)
+        guard let seg = Self.slice(buf, from: start) else { return }
         shishiNode.stop()
         shishiNode.volume = 0.9 * level
-        shishiNode.scheduleBuffer(buf, at: nil, options: .interrupts)
+        shishiNode.scheduleBuffer(seg, at: nil, options: .interrupts)
         shishiNode.play()
     }
 

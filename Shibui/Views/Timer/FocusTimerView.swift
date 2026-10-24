@@ -3,7 +3,7 @@ import SwiftData
 import SwiftUI
 import UserNotifications
 
-/// 集中タイマー(全画面)。15 / 25 / 50 分から選ぶ。
+/// 集中タイマー(全画面)。時間は hh:mm のリングで決める(5 分〜3 時間)。
 /// 見た目: 地面の水たまり(奥行きのある楕円)が残り時間の円グラフ。文字も水たまりと同じ平面に置く。
 /// その横のししおどしに、かけいから水が少しずつ溜まり、5分ごとに傾いて水たまりへ水を落とし、戻るときに「カコン」。
 /// 残り時間は終了予定の時刻から計算する(アプリを閉じてもずれない)。終わると通知と振動。
@@ -59,11 +59,8 @@ struct FocusTimerView: View {
                 Text("集中する時間")
                     .font(.system(.title2, design: .serif).weight(.semibold))
                     .foregroundStyle(Theme.Palette.text)
-                Picker("集中する時間", selection: $minutes) {
-                    ForEach([15, 25, 50], id: \.self) { Text("\($0)分").tag($0) }
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal, Theme.Spacing.xl)
+                DurationDial(minutes: $minutes)
+                    .padding(.horizontal, Theme.Spacing.xl)
                 Spacer()
                 soundButton
                 VStack(spacing: Theme.Spacing.s) {
@@ -207,7 +204,7 @@ struct ShishiOdoshiPond: View {
                 PondPlane(remainingFraction: remainingFraction, timeText: timeText, caption: caption, ripple: sinceDrop, water: water)
                     .frame(width: min(w * 0.9, 360), height: min(w * 0.9, 360))
                     .rotation3DEffect(.degrees(62), axis: (x: 1, y: 0, z: 0), anchor: .center, perspective: 0.45)
-                    .position(x: w * 0.56, y: h * 0.66)
+                    .position(x: w * 0.5, y: h * 0.66)
 
                 // ししおどし(Unity で作った 3D)。水たまりの左上に立ち、傾くと水たまりへ水を落とす
                 ShishiOdoshi3DView(fill: fill, tip: tip, pouring: pouring)

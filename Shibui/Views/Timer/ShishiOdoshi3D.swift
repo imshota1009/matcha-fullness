@@ -43,9 +43,21 @@ final class ShishiScene {
         let kakei = TeaScene.load("shishi_kakei", color: bambooDark)
         let kakeiNode = SCNNode()
         kakeiNode.addChildNode(kakei)
-        kakeiNode.eulerAngles.z = .pi - 0.25
-        kakeiNode.position = SCNVector3(-(0.82 + 0.9 * cos(0.25)), 0.86 + 0.9 * sin(0.25), 0)
+        // 斜めの切り口が下を向くように、筒の向きを上下反転させる(前は逆だった)
+        kakeiNode.eulerAngles = SCNVector3(.pi, 0, .pi - 0.25)
+        let kakeiBase = SCNVector3(-(0.82 + 0.9 * cos(0.25)), 0.86 + 0.9 * sin(0.25), 0)
+        kakeiNode.position = kakeiBase
         root.addChildNode(kakeiNode)
+        // かけいが生えてくる壁(しっくいの白壁と、上に瓦の焦茶の帯)。筒の根元が壁に埋まって見える
+        let wall = SCNNode(geometry: SCNBox(width: 0.5, height: 2.6, length: 1.4, chamferRadius: 0.02))
+        wall.geometry?.firstMaterial?.diffuse.contents = UIColor(red: 0.90, green: 0.87, blue: 0.80, alpha: 1)
+        wall.geometry?.firstMaterial?.lightingModel = .lambert
+        wall.position = SCNVector3(kakeiBase.x - 0.22, kakeiBase.y - 0.75, -0.1)
+        root.addChildNode(wall)
+        let cap = SCNNode(geometry: SCNBox(width: 0.62, height: 0.12, length: 1.5, chamferRadius: 0.02))
+        cap.geometry?.firstMaterial?.diffuse.contents = UIColor(red: 0.20, green: 0.16, blue: 0.13, alpha: 1)
+        cap.position = SCNVector3(wall.position.x, wall.position.y + 1.33, wall.position.z)
+        root.addChildNode(cap)
 
         // かけいから落ちる細い水
         dripSystem.birthRate = 60
@@ -80,8 +92,8 @@ final class ShishiScene {
         scene.rootNode.addChildNode(sun)
         camera.camera = SCNCamera()
         camera.camera?.fieldOfView = 38
-        camera.position = SCNVector3(0.35, 0.75, 5.6)
-        camera.look(at: SCNVector3(0.35, -0.25, 0))
+        camera.position = SCNVector3(0.75, 0.75, 6.2)
+        camera.look(at: SCNVector3(0.75, -0.25, 0))
         scene.rootNode.addChildNode(camera)
         scene.background.contents = UIColor.clear
     }

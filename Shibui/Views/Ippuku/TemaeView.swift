@@ -102,6 +102,9 @@ final class TemaeModel {
     @ObservationIgnored private var holdSince: Double?
     @ObservationIgnored private var holdAngle = 0.0
     @ObservationIgnored private var liquidAtRotateStart: Float = 0
+    /// 回す: 点灯している目盛りの本数(1本ふえる・へるごとに触覚)
+    @ObservationIgnored private var litTicks = 0
+    @ObservationIgnored private let tickFeedback = UISelectionFeedbackGenerator()
 
     var guideText: String {
         switch phase {
@@ -208,6 +211,7 @@ final class TemaeModel {
 
     private func startRotate() {
         phase = .rotate
+        tickFeedback.prepare()
         baseYaw = nil
         Haptics.selection()
         // 目盛りのリングが画面に収まるよう、茶碗を少し引いて見せる
@@ -278,6 +282,13 @@ final class TemaeModel {
         }
         turnAngle = angle
         counterClockwise = angle < -5
+        // 目盛り(2° ごと)が1本動くたびに、Face ID の登録のような軽い触覚
+        let ticks = Int(max(0, min(angle, TemaeConstants.rotateTarget * Double(TemaeConstants.rotateTimes))) / 2)
+        if ticks != litTicks {
+            litTicks = ticks
+            if UserDefaults.standard.object(forKey: Haptics.storageKey) as? Bool ?? true { tickFeedback.selectionChanged() }
+            tickFeedback.prepare()
+        }
         // いまの回の角度(2回目は、1回目で止めた位置から測る)
         let done = turns.reduce(0, +)
         let current = angle - done
