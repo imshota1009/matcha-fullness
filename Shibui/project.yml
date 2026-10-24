@@ -40,6 +40,8 @@ targets:
       path: App/Info.plist
       properties:
         CFBundleDisplayName: Shibui
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleDevelopmentRegion: ja
         UILaunchScreen: {}
         UIRequiresFullScreen: true
@@ -70,6 +72,8 @@ targets:
       path: Widget/Info.plist
       properties:
         CFBundleDisplayName: Shibui
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
