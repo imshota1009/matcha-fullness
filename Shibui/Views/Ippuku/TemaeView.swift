@@ -155,13 +155,24 @@ final class TemaeModel {
 
     // MARK: 指
 
+    /// 指の位置(1つ)。デモの自動往復などから呼ぶ
     func touchMoved(_ p: CGPoint?) {
+        guard let p else { touchesMoved([]); return }
+        touchesMoved([(p, CACurrentMediaTime())])
+    }
+
+    /// 指の位置のまとまり(5章 L-1)。UIKit の coalescedTouches で取った、画面の更新より細かい点(最大 240Hz)を
+    /// 時刻つきで受け取り、すべて採点に使う。空なら指が離れた
+    func touchesMoved(_ points: [(CGPoint, TimeInterval)]) {
         guard phase == .whisk || phase == .finish else { return }
-        guard let p else { endTouch(); return }
-        guard let w = worldPoint(p) else { tipWorld = nil; return }
-        tipWorld = w
-        let q = SIMD2(Double(w.x), Double(w.y)) / Double(TeaScene.liquidRadius)
-        touchSamples.append(.init(p: q, t: CACurrentMediaTime()))
+        guard !points.isEmpty else { endTouch(); return }
+        for (p, t) in points {
+            guard let w = worldPoint(p) else { continue }
+            tipWorld = w
+            let q = SIMD2(Double(w.x), Double(w.y)) / Double(TeaScene.liquidRadius)
+            touchSamples.append(.init(p: q, t: t))
+        }
+        guard tipWorld != nil else { return }
         // 新しく往復が1本できたら、振動と、液全体の揺れ
         let n = Scoring.strokes(in: touchSamples).count
         if n > touchStrokes {
@@ -445,12 +456,19 @@ struct TeaSceneView: UIViewRepresentable {
     }
 }
 
+/// 指の軌跡を UIKit で受け取る(5章 L-1)。SwiftUI のジェスチャーでは取れない「間の点」(coalescedTouches)まで取り、
+/// 画面の更新(60〜120Hz)より細かい最大 240Hz の点で採点する。時刻はタッチの時刻(timestamp)を使う
 final class TouchSCNView: SCNView {
     weak var model: TemaeModel?
-    override func touchesBegan(_ t: Set<UITouch>, with e: UIEvent?) { model?.touchMoved(t.first?.location(in: self)) }
-    override func touchesMoved(_ t: Set<UITouch>, with e: UIEvent?) { model?.touchMoved(t.first?.location(in: self)) }
-    override func touchesEnded(_ t: Set<UITouch>, with e: UIEvent?) { model?.touchMoved(nil) }
-    override func touchesCancelled(_ t: Set<UITouch>, with e: UIEvent?) { model?.touchMoved(nil) }
+    private func points(_ t: Set<UITouch>, _ e: UIEvent?) -> [(CGPoint, TimeInterval)] {
+        guard let touch = t.first else { return [] }
+        let all = e?.coalescedTouches(for: touch) ?? [touch]
+        return all.map { ($0.location(in: self), $0.timestamp) }
+    }
+    override func touchesBegan(_ t: Set<UITouch>, with e: UIEvent?) { model?.touchesMoved(points(t, e)) }
+    override func touchesMoved(_ t: Set<UITouch>, with e: UIEvent?) { model?.touchesMoved(points(t, e)) }
+    override func touchesEnded(_ t: Set<UITouch>, with e: UIEvent?) { model?.touchesMoved([]) }
+    override func touchesCancelled(_ t: Set<UITouch>, with e: UIEvent?) { model?.touchesMoved([]) }
     @objc func rotated(_ g: UIRotationGestureRecognizer) { model?.rotate(by: Double(g.rotation)) }
 }
 
