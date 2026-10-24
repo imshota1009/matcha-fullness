@@ -33,7 +33,14 @@ struct WaitingView: View {
         NavigationStack {
             VStack(spacing: Theme.Spacing.l) {
                 Spacer()
-                RikyuView(size: 200, mood: parting ? 1 : 0)
+                // 小さな茶室(床の間・畳・奥の壁)の前に、りきゅうさんが座る。お雛様の飾り台のように、背中のまわりだけ
+                ZStack(alignment: .bottom) {
+                    ChashitsuBackdrop()
+                        .frame(width: 300, height: 250)
+                    RikyuView(size: 210, mood: parting ? 1 : 0)
+                        .offset(y: 26)
+                }
+                .frame(width: 300, height: 260)
                 if parting {
                     Text("スマホを置いて、目の前のことへ")
                         .font(.system(.title3, design: .serif).weight(.semibold))
