@@ -26,7 +26,7 @@ final class TeaScene {
     private let chasenModel = SCNNode()
     private let bowl: SCNNode
     private let liquid = SCNNode()
-    private let surface = FoamSurface()
+    private let surface = LiquidSurface()
 
     /// 水面の高さと半径(Unity の茶碗の寸法と同じ)
     static let liquidY: Float = 0.52
@@ -105,188 +105,253 @@ final class TeaScene {
 
     // MARK: - 毎フレーム
 
-    func step(dt: Float, tip: SIMD2<Float>?, velocity: SIMD2<Float>, mode: FoamSurface.Mode) {
-        surface.step(dt: dt, tip: tip, velocity: velocity, mode: mode)
+    /// 水面を1フレーム進める
+    func step(dt: Float, input: LiquidSurface.Input) {
+        surface.step(dt: dt, input: input)
     }
 
-    var froth: Float { surface.froth }
-    var coarseness: Float { surface.coarseness }
+    /// 往復の折り返し(液全体が奥⇔手前に揺れる)
+    func slosh(direction: Float) { surface.slosh(direction: direction) }
+
+    /// 指を離したときの中心のくぼみ(仕上げ)
+    func dimple() { surface.dimple() }
+
+    /// 液面の向き。回すときは、iPhone の回転を打ち消して空間に固定する
+    func setLiquidRotation(_ radians: Float) { liquid.eulerAngles.y = radians }
 
     /// 抹茶がすでに点った状態にする(プレビュー用)
     func prefill() { surface.prefill() }
 }
 
-/// 抹茶の水面。高さ(波)・泡の量・泡の粗さを格子で持ち、茶筅の動きでかき混ぜる。
-/// 実際の薄茶の点て方に合わせている:
-/// - はじめは抹茶の粉がダマになって浮いている。茶筅が通るとほぐれて溶ける
-/// - すばやく前後(M の字)に振ると泡が立つ。はじめの泡は大きく粗い
-/// - ゆっくり表面をなでると、大きな泡がつぶれてきめが細かくなる
-/// - 最後の「の」の字で、泡が中央に集まってこんもりする
-final class FoamSurface {
-    enum Mode { case whisk, smooth, gather, idle }
+/// 抹茶の水面(SPEC 5章「泡と波の表現」)。シミュレーションと描画を分けている。
+/// シミュレーション: 茶碗の内側を格子に区切り、マスごとに「液面の高さと速さ」「流れ」「泡の量」「泡の大きさ」を持つ。
+/// 毎フレーム、波(減衰あり・縁で反射)、流れによる泡の移動と拡散、泡の生成・細分化・消滅を計算する。
+/// 描画: 格子の値から、液の色・泡・明暗をテクスチャに描いて、波で起伏をつけた面に貼る。
+final class LiquidSurface {
+    struct Input {
+        /// 茶筅の位置(液面の座標。半径 = TeaScene.liquidRadius)。触れていなければ nil
+        var tip: SIMD2<Float>?
+        /// 茶筅の速さ(液面の座標/秒)
+        var velocity: SIMD2<Float> = .zero
+        /// 点てている(泡が生まれる)
+        var whisking = false
+        /// 仕上げ中(通った所の大きな泡が消え、面がならされる)
+        var smoothing = false
+        /// いまの泡スコア(0〜100)。泡がどこまで細かくなれるかの上限を決める
+        var foamScore: Double = 0
+    }
 
     let geometry: SCNGeometry
     private let material = SCNMaterial()
-    private static let n = 64          // 計算の格子
+    private static let n = TemaeConstants.grid
     private static let rings = 40, segments = 120
-    private var h = [Float](repeating: 0, count: n * n)
-    private var v = [Float](repeating: 0, count: n * n)
-    private var foam = [Float](repeating: 0, count: n * n)
-    private var powder = [Float](repeating: 0, count: n * n)
-    private(set) var froth: Float = 0
-    private(set) var coarseness: Float = 1
-    private var bubbles: [Bubble] = []
-    private var rng = SystemRandomNumberGenerator()
-    private var frame = 0
-    private var mound: Float = 0
 
-    struct Bubble { var p: SIMD2<Float>; var r: Float; var life: Float }
+    private var h = [Float](repeating: 0, count: n * n)      // 液面の高さ
+    private var hv = [Float](repeating: 0, count: n * n)     // 高さの速さ
+    private var u = [Float](repeating: 0, count: n * n)      // 流れ(x)
+    private var v = [Float](repeating: 0, count: n * n)      // 流れ(y)
+    private var foam = [Float](repeating: 0, count: n * n)   // 泡の量(0〜1)
+    private var size = [Float](repeating: 1, count: n * n)   // 泡の大きさ(1=粗い 〜 0=きめ細かい)
+    private let inside: [Bool]
+    private var frame = 0
+    var onGeometry: ((SCNGeometry) -> Void)?
+
+    /// 泡を描く点の位置(x, y は 0〜1、z はその点に泡が出る泡の量のしきい値)
+    private static let stipple: [SIMD3<Float>] = {
+        var g = SeededRandom(seed: 31)
+        return (0..<14000).map { _ in SIMD3(Float(g.next()), Float(g.next()), Float(0.04 + 0.92 * g.next())) }
+    }()
 
     init() {
-        // 粉のダマ(はじめの状態)
-        var g = SystemRandomNumberGenerator()
-        var lumps = [Float](repeating: 0, count: Self.n * Self.n)
-        for _ in 0..<22 {
-            let c = SIMD2<Float>(Float.random(in: -0.5...0.5, using: &g), Float.random(in: -0.5...0.5, using: &g))
-            let r = Float.random(in: 0.02...0.06, using: &g)
-            Self.splat(&lumps, at: c, radius: r, amount: 1)
+        let n = Self.n
+        inside = (0..<(n * n)).map { i in
+            let x = Float(i % n) / Float(n - 1) * 2 - 1, y = Float(i / n) / Float(n - 1) * 2 - 1
+            return x * x + y * y < 1
         }
-        powder = lumps
         let (src, idx) = Self.mesh(height: { _ in 0 })
         geometry = SCNGeometry(sources: src, elements: [idx])
         material.lightingModel = .lambert
-        material.diffuse.contents = UIColor(red: 0.33, green: 0.50, blue: 0.20, alpha: 1)
         geometry.materials = [material]
-        redrawTexture()
+        redraw()
     }
 
     func prefill() {
-        foam = foam.map { _ in 0.92 }
-        powder = powder.map { _ in 0 }
-        froth = 0.92
-        coarseness = 0.1
-        redrawTexture()
+        foam = foam.map { _ in 0.95 }
+        size = size.map { _ in 0.05 }
+        redraw()
     }
 
-    // MARK: 計算
+    // MARK: 外からの出来事
 
-    func step(dt: Float, tip: SIMD2<Float>?, velocity: SIMD2<Float>, mode: Mode) {
+    func slosh(direction: Float) {
         let n = Self.n
-        let speed = simd_length(velocity)
-        if let tip, mode != .idle {
-            // 茶筅の穂は輪のように水面に触れる。輪の上を押し下げて波を起こす
-            // 穂の輪の上を押し下げ、内側を持ち上げる(水の量は変えない)
-            let push = min(1.2, speed * 0.6) * dt * 60
-            for k in 0..<10 {
-                let a = Float(k) / 10 * 2 * .pi
-                let q = tip + SIMD2(cos(a), sin(a)) * 0.06
-                Self.splat(&v, at: q, radius: 0.035, amount: -0.0015 * push)
-            }
-            Self.splat(&v, at: tip, radius: 0.05, amount: 0.004 * push)
-            // 粉はかき混ぜるとほぐれる
-            Self.splat(&powder, at: tip, radius: 0.2, amount: -0.05 * (0.3 + speed))
-            switch mode {
-            case .whisk:
-                let gen = min(1, speed * 0.55) * dt * 1.4
-                Self.splat(&foam, at: tip, radius: 0.32, amount: gen)
-                // 速いほど大きい泡ができる(はじめは粗い)
-                coarseness = min(1, coarseness + gen * 0.08 * (froth < 0.6 ? 1 : 0.2))
-                if speed > 0.8, coarseness > 0.35, Float.random(in: 0...1, using: &rng) < 0.2 { spawn(near: tip, big: true) }
-            case .smooth:
-                // 表面をなでると大きな泡がつぶれ、きめが細かくなる
-                coarseness = max(0.05, coarseness - dt * 0.12 * (0.3 + speed))
-                bubbles = bubbles.map { b in
-                    var b = b
-                    if b.r > 0.018, simd_distance(b.p, tip) < 0.18 { b.life = 0 }
-                    return b
+        for y in 0..<n {
+            let yy = Float(y) / Float(n - 1) * 2 - 1
+            for x in 0..<n where inside[y * n + x] { hv[y * n + x] += 0.004 * direction * yy }
+        }
+    }
+
+    func dimple() {
+        splat(&hv, at: .zero, radius: 0.12, amount: -0.012)
+    }
+
+    // MARK: 1フレーム
+
+    func step(dt: Float, input: Input) {
+        let n = Self.n, R = TeaScene.liquidRadius
+        let speed = simd_length(input.velocity)
+        // 泡が細かくなれる下限(泡スコアが高いほど細かくなれる)
+        let finest = Float(1 - input.foamScore / 100) * 0.9 + 0.05
+
+        if let tip = input.tip {
+            let rc = Float(TemaeConstants.chasenRadius) * R
+            let dir = speed > 0.001 ? input.velocity / speed : .zero
+            forEachCell(near: tip, radius: rc) { i, rel, w in
+                // 茶筅は液を押し流す。押した方向が盛り上がり、後ろがくぼむ
+                u[i] += input.velocity.x * 0.08 * w
+                v[i] += input.velocity.y * 0.08 * w
+                // 茶筅の穂が液を外へ押し広げる
+                let len = simd_length(rel)
+                if len > 0.001 {
+                    u[i] += rel.x / len * min(speed, 3) * 0.03 * w
+                    v[i] += rel.y / len * min(speed, 3) * 0.03 * w
                 }
-                Self.splat(&foam, at: tip, radius: 0.25, amount: dt * 0.25)
-            case .gather:
-                mound = min(1, mound + dt * 0.25)
-            case .idle: break
+                let front = simd_dot(rel, dir) / rc
+                hv[i] += 0.0035 * min(speed, 3) * front * w
+                if input.whisking {
+                    // 大きく速いほど、泡が生まれる。生まれたばかりの泡は大きい
+                    let born = TemaeConstants.foamBirth * min(speed, 3) * w
+                    let before = foam[i]
+                    foam[i] = min(1, foam[i] + born)
+                    let added = foam[i] - before
+                    if foam[i] > 0 { size[i] = (size[i] * before + 1.0 * added) / foam[i] }
+                    // 通った所は、泡スコアの上限まで細かくなる
+                    size[i] = max(finest, size[i] - 0.010 * min(speed, 3) * w)
+                }
+                if input.smoothing {
+                    // 仕上げ: 大きな泡が消え、面がならされる
+                    size[i] = max(finest, size[i] - 0.05 * w)
+                    hv[i] *= 0.8
+                }
             }
         }
-        // 波(減衰する波の式)
+
+        // 波(減衰あり)。茶碗の外は「となりと同じ高さ」として扱い、縁で反射させる
         for y in 1..<(n - 1) {
             for x in 1..<(n - 1) {
                 let i = y * n + x
-                let lap = h[i - 1] + h[i + 1] + h[i - n] + h[i + n] - 4 * h[i]
-                v[i] += lap * 0.35
-                v[i] *= 0.965
+                guard inside[i] else { continue }
+                let c = h[i]
+                let l = inside[i - 1] ? h[i - 1] : c, r = inside[i + 1] ? h[i + 1] : c
+                let t = inside[i - n] ? h[i - n] : c, b = inside[i + n] ? h[i + n] : c
+                hv[i] += (l + r + t + b - 4 * c) * TemaeConstants.waveSpeed
+                hv[i] *= TemaeConstants.waveDamping
             }
         }
-        var mean: Float = 0
-        for i in 0..<(n * n) { h[i] += v[i]; mean += h[i] }
-        mean /= Float(n * n)
-        // 平均の高さは 0 に保ち、波の高さにも上限をつける(水面が茶碗の底まで沈まないように)
-        for i in 0..<(n * n) { h[i] = max(-0.035, min(0.035, (h[i] - mean) * 0.995)) }
-        // 泡はゆっくりなじんで広がる
-        blur(&foam, 0.22)
-        var sum: Float = 0
-        for i in 0..<(n * n) { foam[i] = min(1, foam[i]); powder[i] = max(0, powder[i]); sum += foam[i] }
-        froth = min(1, sum / Float(n * n) / 0.78)
-        // 泡の一生
-        bubbles = bubbles.compactMap { b in
-            var b = b
-            b.life -= dt * (b.r > 0.018 ? 0.35 : 0.12)
-            b.r *= (1 - dt * 0.05 * (1 - coarseness))
-            return b.life > 0 ? b : nil
+        var mean: Float = 0, count: Float = 0
+        for i in 0..<(n * n) where inside[i] { h[i] += hv[i]; mean += h[i]; count += 1 }
+        mean /= max(1, count)
+        for i in 0..<(n * n) where inside[i] { h[i] = max(-0.04, min(0.04, h[i] - mean)) }
+
+        // 流れは少しずつ弱まり、泡は流れに運ばれて広がる
+        for i in 0..<(n * n) { u[i] *= 0.9; v[i] *= 0.9 }
+        advect(&foam, dt: dt)
+        advect(&size, dt: dt)
+        blur(&foam, TemaeConstants.foamDiffusion)
+        blur(&foam, TemaeConstants.foamDiffusion)
+        blur(&size, TemaeConstants.foamDiffusion * 0.5)
+        // 点てている間は、泡が面全体へならされていく(茶碗の中を液が大きくめぐるため)
+        if input.whisking {
+            var sumF: Float = 0, sumS: Float = 0, cnt: Float = 0
+            for i in 0..<(n * n) where inside[i] { sumF += foam[i]; sumS += size[i] * foam[i]; cnt += 1 }
+            let meanF = sumF / max(1, cnt), meanS = sumF > 0 ? sumS / sumF : 1
+            let k = TemaeConstants.foamMixing * dt
+            // 泡スコアが高いほど、面全体の泡が細かくなっていく
+            let r = TemaeConstants.foamRefine * dt * Float(input.foamScore / 100)
+            for i in 0..<(n * n) where inside[i] {
+                foam[i] += (meanF - foam[i]) * k
+                size[i] += (meanS - size[i]) * k
+                size[i] = max(finest, size[i] - r)
+            }
         }
+
+        // 振るのをやめると、大きい泡からはじけて消える。きめ細かい泡は残る
+        if !input.whisking {
+            for i in 0..<(n * n) where size[i] > 0.45 {
+                foam[i] = max(0, foam[i] - TemaeConstants.coarsePop * dt * (size[i] - 0.4))
+            }
+        }
+        for i in 0..<(n * n) where !inside[i] { foam[i] = 0 }
+
         frame += 1
         updateMesh()
-        if frame % 2 == 0 { redrawTexture() }
+        if frame % 2 == 0 { redraw() }
     }
 
-    private func spawn(near p: SIMD2<Float>, big: Bool) {
-        guard bubbles.count < 700 else { return }
-        let a = Float.random(in: 0..<(2 * .pi), using: &rng)
-        let d = Float.random(in: 0...0.2, using: &rng)
-        let q = p + SIMD2(cos(a), sin(a)) * d
-        guard simd_length(q) < TeaScene.liquidRadius - 0.03 else { return }
-        let r = big ? Float.random(in: 0.012...0.03, using: &rng) * (0.4 + coarseness)
-                    : Float.random(in: 0.004...0.012, using: &rng)
-        bubbles.append(Bubble(p: q, r: r, life: Float.random(in: 0.6...1.4, using: &rng)))
+    // MARK: 格子の道具
+
+    private func cell(_ p: SIMD2<Float>) -> SIMD2<Float> {
+        (p / TeaScene.liquidRadius * 0.5 + 0.5) * Float(Self.n - 1)
     }
 
-    /// 水面上の点(-R〜R)を格子の位置へ
-    private static func cell(_ p: SIMD2<Float>) -> SIMD2<Float> {
-        (p / TeaScene.liquidRadius * 0.5 + 0.5) * Float(n - 1)
-    }
-
-    private static func splat(_ f: inout [Float], at p: SIMD2<Float>, radius: Float, amount: Float) {
-        let c = cell(p), r = radius / TeaScene.liquidRadius * 0.5 * Float(n - 1)
-        let x0 = max(0, Int(c.x - r)), x1 = min(n - 1, Int(c.x + r) + 1)
-        let y0 = max(0, Int(c.y - r)), y1 = min(n - 1, Int(c.y + r) + 1)
+    private func forEachCell(near p: SIMD2<Float>, radius: Float, _ body: (Int, SIMD2<Float>, Float) -> Void) {
+        let n = Self.n, c = cell(p), rr = radius / TeaScene.liquidRadius * 0.5 * Float(n - 1)
+        let x0 = max(0, Int(c.x - rr)), x1 = min(n - 1, Int(c.x + rr) + 1)
+        let y0 = max(0, Int(c.y - rr)), y1 = min(n - 1, Int(c.y + rr) + 1)
         guard x0 <= x1, y0 <= y1 else { return }
+        let scale = TeaScene.liquidRadius * 2 / Float(n - 1)
         for y in y0...y1 {
             for x in x0...x1 {
-                let d = simd_distance(SIMD2(Float(x), Float(y)), c) / r
-                if d < 1 { f[y * n + x] += amount * (1 - d * d) }
-            }
-        }
-    }
-
-    private func blur(_ f: inout [Float], _ k: Float) {
-        let n = Self.n
-        let src = f
-        for y in 1..<(n - 1) {
-            for x in 1..<(n - 1) {
                 let i = y * n + x
-                f[i] = src[i] * (1 - k) + (src[i - 1] + src[i + 1] + src[i - n] + src[i + n]) * k / 4
+                guard inside[i] else { continue }
+                let rel = (SIMD2(Float(x), Float(y)) - c) * scale
+                let d = simd_length(rel) / radius
+                if d < 1 { body(i, rel, 1 - d * d) }
             }
         }
     }
 
-    private func sample(_ f: [Float], _ p: SIMD2<Float>) -> Float {
+    private func splat(_ f: inout [Float], at p: SIMD2<Float>, radius: Float, amount: Float) {
+        var copy = f
+        forEachCell(near: p, radius: radius) { i, _, w in copy[i] += amount * w }
+        f = copy
+    }
+
+    private func sample(_ f: [Float], _ c: SIMD2<Float>) -> Float {
         let n = Self.n
-        let c = Self.cell(p)
         let x = min(Float(n - 2), max(0, c.x)), y = min(Float(n - 2), max(0, c.y))
         let xi = Int(x), yi = Int(y), fx = x - Float(xi), fy = y - Float(yi)
         let a = f[yi * n + xi], b = f[yi * n + xi + 1], c2 = f[(yi + 1) * n + xi], d = f[(yi + 1) * n + xi + 1]
         return (a * (1 - fx) + b * fx) * (1 - fy) + (c2 * (1 - fx) + d * fx) * fy
     }
 
-    // MARK: 形
+    /// 流れに乗せて運ぶ(1つ前の位置から値を持ってくる)
+    private func advect(_ f: inout [Float], dt: Float) {
+        let n = Self.n, src = f
+        let k = TemaeConstants.foamAdvection * dt * Float(n - 1) / (TeaScene.liquidRadius * 2)
+        for y in 1..<(n - 1) {
+            for x in 1..<(n - 1) {
+                let i = y * n + x
+                guard inside[i], u[i] != 0 || v[i] != 0 else { continue }
+                f[i] = sample(src, SIMD2(Float(x) - u[i] * k, Float(y) - v[i] * k))
+            }
+        }
+    }
+
+    private func blur(_ f: inout [Float], _ k: Float) {
+        let n = Self.n, src = f
+        for y in 1..<(n - 1) {
+            for x in 1..<(n - 1) {
+                let i = y * n + x
+                guard inside[i] else { continue }
+                f[i] = src[i] * (1 - k) + (src[i - 1] + src[i + 1] + src[i - n] + src[i + n]) * k / 4
+            }
+        }
+    }
+
+    private func value(_ f: [Float], at p: SIMD2<Float>) -> Float { sample(f, cell(p)) }
+
+    // MARK: 形(波で起伏をつけた面)
 
     private static func mesh(height: (SIMD2<Float>) -> Float) -> ([SCNGeometrySource], SCNGeometryElement) {
         var verts: [SCNVector3] = [], uvs: [CGPoint] = [], idx: [UInt32] = []
@@ -316,66 +381,36 @@ final class FoamSurface {
 
     private func updateMesh() {
         let R = TeaScene.liquidRadius
-        let m = mound
         let heightAt: (SIMD2<Float>) -> Float = { p in
             let edge = 1 - simd_length(p) / R
-            let wave = self.sample(self.h, p) * min(1, edge * 6)
-            // 泡の分だけ少し盛り上がり、「の」の字のあとは中央がこんもりする
-            let foamLift = self.sample(self.foam, p) * 0.025
-            return wave + foamLift + m * 0.04 * max(0, 1 - simd_length(p) / (R * 0.8))
+            return self.value(self.h, at: p) * min(1, edge * 6) + self.value(self.foam, at: p) * 0.02
         }
         let (src, idx) = Self.mesh(height: heightAt)
-        // 法線は高さの差から求める
-        let e: Float = 0.02
-        var normals: [SCNVector3] = []
-        var p = SIMD2<Float>(0, 0)
-        func nAt(_ p: SIMD2<Float>) -> SCNVector3 {
-            let dx = heightAt(p + SIMD2(e, 0)) - heightAt(p - SIMD2(e, 0))
-            let dz = heightAt(p + SIMD2(0, e)) - heightAt(p - SIMD2(0, e))
-            let v = simd_normalize(SIMD3(-dx, 2 * e, -dz))
-            return SCNVector3(v.x, v.y, v.z)
-        }
-        normals.append(nAt(p))
-        for r in 1...Self.rings {
-            let rr = R * Float(r) / Float(Self.rings)
-            for s in 0..<Self.segments {
-                let a = Float(s) / Float(Self.segments) * 2 * .pi
-                p = SIMD2(cos(a) * rr, sin(a) * rr)
-                normals.append(nAt(p))
-            }
-        }
-        let g = SCNGeometry(sources: [src[0], SCNGeometrySource(normals: normals), src[2]], elements: [idx])
+        let g = SCNGeometry(sources: src, elements: [idx])
         g.materials = [material]
-        // SCNGeometry は作り直して差し替える(ノードは TeaScene 側)
         onGeometry?(g)
     }
 
-    var onGeometry: ((SCNGeometry) -> Void)?
+    // MARK: 描画(テクスチャ)
 
-    /// 細かい泡の点の位置(x, y は 0〜1、z はその点が出る泡の量のしきい値)
-    private static let stipple: [SIMD3<Float>] = {
-        var g = SystemRandomNumberGenerator()
-        return (0..<12000).map { _ in SIMD3(Float.random(in: 0...1, using: &g), Float.random(in: 0...1, using: &g), Float.random(in: 0.05...0.95, using: &g)) }
-    }()
-
-    /// 水面の色(抹茶・泡・粉のダマ・泡粒)を絵にして貼る
-    private func redrawTexture() {
-        let size = 768
-        let t = 128
-        // 泡の量を色に: 濃い抹茶 → 明るい黄緑の泡
-        let deep = SIMD3<Float>(0.30, 0.47, 0.18), light = SIMD3<Float>(0.70, 0.78, 0.42)
-        let powderColor = SIMD3<Float>(0.20, 0.33, 0.12)
-        var px = [UInt8](repeating: 255, count: t * t * 4)
+    private func redraw() {
+        let size = 640, t = 128
         let R = TeaScene.liquidRadius
+        let dark = TemaeConstants.liquidDark, light = TemaeConstants.foamLight
+        var px = [UInt8](repeating: 255, count: t * t * 4)
         for y in 0..<t {
             for x in 0..<t {
                 let p = SIMD2((Float(x) / Float(t - 1) * 2 - 1) * R, (Float(y) / Float(t - 1) * 2 - 1) * R)
-                let f = min(1, sample(foam, p) * 1.1)
-                let pw = min(1, sample(powder, p))
-                var c = deep + (light - deep) * f
-                c = c + (powderColor - c) * pw * 0.9
+                let f = min(1, max(0, value(foam, at: p)))
+                // 泡が多い所ほど明るく不透明に
+                var c = dark + (light - dark) * pow(f, 0.8)
+                // 液面の起伏は、明暗をうっすら2〜3段階で(気づかない程度)
+                let e: Float = 0.02
+                let slope = value(h, at: p + SIMD2(e, 0)) - value(h, at: p - SIMD2(e, 0)) + value(h, at: p - SIMD2(0, e)) - value(h, at: p + SIMD2(0, e))
+                let step: Float = slope > 0.004 ? 0.035 : slope < -0.004 ? -0.035 : 0
+                c = c * (1 + step)
                 let i = (y * t + x) * 4
-                px[i] = UInt8(c.x * 255); px[i + 1] = UInt8(c.y * 255); px[i + 2] = UInt8(c.z * 255)
+                px[i] = UInt8(min(1, c.x) * 255); px[i + 1] = UInt8(min(1, c.y) * 255); px[i + 2] = UInt8(min(1, c.z) * 255)
             }
         }
         let cs = CGColorSpaceCreateDeviceRGB()
@@ -385,31 +420,42 @@ final class FoamSurface {
                                   bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return }
         ctx.interpolationQuality = .high
         ctx.draw(small, in: CGRect(x: 0, y: 0, width: size, height: size))
+
         let scale = CGFloat(size) / CGFloat(2 * R)
-        // きめの細かい泡(薄茶のクリーム状の泡): ごく小さな明暗の点を密に散らして、なめらかな質感にする。
-        // 粗いうちは点が少し大きく、整えるほど細かくなる。光る輪や縁取りは使わない(炭酸のように見えるため)
-        let dot = CGFloat(0.7 + 1.8 * coarseness)
-        let lightDot = UIColor(red: 0.82, green: 0.87, blue: 0.58, alpha: 0.45).cgColor
-        let darkDot = UIColor(red: 0.50, green: 0.62, blue: 0.27, alpha: 0.30).cgColor
+        let radii = TemaeConstants.bubbleRadius
         for (k, s) in Self.stipple.enumerated() {
             let p = SIMD2((s.x * 2 - 1) * R, (s.y * 2 - 1) * R)
-            guard sample(foam, p) > s.z else { continue }
+            guard simd_length(p) < R * 0.97 else { continue }
+            let f = value(foam, at: p)
+            guard f > s.z else { continue }
+            let sz = min(1, max(0, value(self.size, at: p)))
+            // 泡の大きさ(1=粗い〜0=きめ細かい)から段階を決め、その段階の半径で描く
+            let stage = sz > 0.75 ? 0 : sz > 0.5 ? 1 : sz > 0.25 ? 2 : 3
+            let r = radii[stage]
             let c = CGPoint(x: CGFloat(p.x + R) * scale, y: CGFloat(p.y + R) * scale)
-            ctx.setFillColor(k % 3 == 0 ? darkDot : lightDot)
-            ctx.fillEllipse(in: CGRect(x: c.x - dot / 2, y: c.y - dot / 2, width: dot, height: dot))
+            if stage <= 1 {
+                // 大きい泡は数を少なく、液より少し明るい輪郭の円(グラデーションなし)
+                guard k % (stage == 0 ? 9 : 4) == 0 else { continue }
+                let base = dark + (light - dark) * pow(f, 0.8) * 1.15
+                ctx.setStrokeColor(UIColor(red: CGFloat(min(1, base.x + 0.12)), green: CGFloat(min(1, base.y + 0.12)), blue: CGFloat(min(1, base.z + 0.08)), alpha: 0.9).cgColor)
+                ctx.setLineWidth(1.4)
+                ctx.strokeEllipse(in: CGRect(x: c.x - r, y: c.y - r, width: r * 2, height: r * 2))
+            } else {
+                // 細かい泡は、一つ一つが見えないほど小さな点の集まり(ほぼ均一なマットな面)
+                ctx.setFillColor(UIColor(red: CGFloat(light.x + 0.06), green: CGFloat(light.y + 0.06), blue: CGFloat(light.z + 0.06), alpha: 0.55).cgColor)
+                ctx.fillEllipse(in: CGRect(x: c.x - r, y: c.y - r, width: r * 2, height: r * 2))
+                // 抹茶の粒(濃い緑の小さな点)を少しだけ
+                if k % 23 == 0 {
+                    ctx.setFillColor(TemaeConstants.speck.cgColor)
+                    ctx.fillEllipse(in: CGRect(x: c.x - 1, y: c.y - 1, width: 2, height: 2))
+                }
+            }
         }
-        // 点てはじめの大きな泡: 地の色より少し明るい丸で、ふちは目立たせない。整えると消える
-        for b in bubbles {
-            let c = CGPoint(x: CGFloat(b.p.x + R) * scale, y: CGFloat(b.p.y + R) * scale)
-            let r = CGFloat(b.r) * scale
-            let rect = CGRect(x: c.x - r, y: c.y - r, width: r * 2, height: r * 2)
-            let alpha = CGFloat(min(1, b.life * 2))
-            ctx.setFillColor(UIColor(red: 0.74, green: 0.81, blue: 0.48, alpha: 0.55 * alpha).cgColor)
-            ctx.fillEllipse(in: rect)
-            ctx.setStrokeColor(UIColor(red: 0.58, green: 0.69, blue: 0.33, alpha: 0.5 * alpha).cgColor)
-            ctx.setLineWidth(1)
-            ctx.strokeEllipse(in: rect)
-        }
+        // 茶碗の内壁との境目に、細く明るい輪
+        let foamAvg = foam.reduce(0, +) / Float(foam.count)
+        ctx.setStrokeColor(TemaeConstants.rimLight.withAlphaComponent(CGFloat(0.3 + 0.6 * min(1, foamAvg * 2))).cgColor)
+        ctx.setLineWidth(5)
+        ctx.strokeEllipse(in: CGRect(x: 4, y: 4, width: size - 8, height: size - 8))
         material.diffuse.contents = ctx.makeImage()
     }
 }

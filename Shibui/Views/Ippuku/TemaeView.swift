@@ -2,47 +2,44 @@ import DesignSystem
 import SceneKit
 import SwiftUI
 
-/// 点前(指で点てる)。スマホを机に置き、画面を茶碗の水面に見立てて、指を茶筅として点てる。
-/// 実際の薄茶の点て方に沿った流れ:
-/// 1. 点てる: 手首を使って、すばやく前後に(M の字)。粉のダマがほぐれ、泡が立つ(約12秒)
-/// 2. 整える: 茶筅を浮かせて表面をなでる。大きな泡がつぶれ、きめが細かくなる
-/// 3. 「の」の字: 泡を中央に集め、茶筅を抜く
-/// 4. 回す: 茶碗(iPhone)を机の上で回してお出しする。センサーで感知して終わる
-/// 茶碗・茶筅は Unity で作った 3D モデル、抹茶は波と泡の計算で動く 3D の水面(TeaScene)。
-/// うまさは「集中度」(0〜100)として返す。直線の往復からどれだけ外れたか(離脱率)が中心。
+/// 点てる(本体)。机に置いた iPhone を茶碗に、指を茶筅に見立てる(SPEC 5章 A〜C)。
+/// 1. 点てる: 指を縦にまっすぐ往復。往復ごとに振動。泡は採点(泡スコア)に合わせてリアルタイムに変わる
+/// 2. 仕上げ: ゆっくり小さく「くるっ」と約300°回して、指を離す
+/// 3. 回す: 茶碗を持ち上げ、時計回りに 45° ずつ 2回まわす(0.5秒止めると1回)。液面は空間に固定して回さない
+/// 机に置いていないときは入力を止め、朱色で知らせる。茶碗・茶筅は Unity のモデル、液面は LiquidSurface。
 struct TemaeView: View {
     let motion: MotionService
-    let onFinish: (_ score: Int) -> Void
+    let onFinish: (TemaeResult) -> Void
     @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
     @State private var model = TemaeModel()
 
     var body: some View {
-        GeometryReader { geo in
-            ZStack(alignment: .bottom) {
-                TemaePalette.tatami.ignoresSafeArea()
-                // 茶碗は、上のダイナミックアイランドにかからない範囲で最大(左右ははみ出してよい)
-                TeaSceneView(model: model)
-                    .padding(.top, 8)
-                guide
-                    .padding(.bottom, Theme.Spacing.s)
-                // 机に置いてほしい場面で、スマホが水平でなければ知らせる
-                if motion.isAvailable, !motion.isFlatFaceUp, model.needsFlat {
-                    Label("スマホを机に置いてください", systemImage: "iphone.gen3")
-                        .font(.headline)
-                        .foregroundStyle(Theme.Palette.shiro)
-                        .padding(.horizontal, Theme.Spacing.l)
-                        .padding(.vertical, Theme.Spacing.m)
-                        .background(TemaePalette.ink.opacity(0.88), in: .capsule)
-                        .frame(maxHeight: .infinity, alignment: .center)
-                        .transition(.opacity)
-                        .allowsHitTesting(false)
-                }
+        ZStack(alignment: .bottom) {
+            TemaePalette.tatami.ignoresSafeArea()
+            // 茶碗は、上のダイナミックアイランドにかからない範囲で最大(左右ははみ出してよい)
+            TeaSceneView(model: model)
+                .padding(.top, 8)
+            if model.phase == .rotate || model.phase == .done {
+                RotateRing(model: model)
+                    .allowsHitTesting(false)
             }
-            .animation(.easeInOut(duration: 0.3), value: motion.isFlatFaceUp)
+            guide
+                .padding(.bottom, Theme.Spacing.s)
+            if model.showsDeskWarning {
+                Label("机に置いてから点てましょう", systemImage: "iphone.gen3")
+                    .font(.headline)
+                    .foregroundStyle(Theme.Palette.shiro)
+                    .padding(.horizontal, Theme.Spacing.l)
+                    .padding(.vertical, Theme.Spacing.m)
+                    .background(Theme.Palette.vermilion, in: .capsule)
+                    .frame(maxHeight: .infinity, alignment: .center)
+                    .transition(.opacity)
+                    .allowsHitTesting(false)
+            }
         }
-        .onAppear {
-            model.start(style: style, motion: motion, onFinish: onFinish)
-        }
+        .animation(.easeInOut(duration: 0.3), value: model.showsDeskWarning)
+        .animation(.easeInOut(duration: 0.4), value: model.phase)
+        .onAppear { model.start(style: style, motion: motion, onFinish: onFinish) }
         .onDisappear { model.stop() }
     }
 
@@ -52,10 +49,11 @@ struct TemaeView: View {
                 .font(.headline)
                 .foregroundStyle(TemaePalette.ink)
                 .multilineTextAlignment(.center)
-            Capsule().fill(TemaePalette.ink.opacity(0.2)).frame(width: 160, height: 4)
-                .overlay(alignment: .leading) {
-                    Capsule().fill(TemaePalette.ink).frame(width: 160 * model.progress, height: 4)
-                }
+            if model.phase == .whisk {
+                Text("泡: \(FoamStage.names[FoamStage.of(Int(model.liveFoam))])  往復 \(model.strokeCount)/\(TemaeConstants.targetStrokes)")
+                    .font(.dsCaption.monospacedDigit())
+                    .foregroundStyle(TemaePalette.ink.opacity(0.75))
+            }
         }
         .padding(.horizontal, Theme.Spacing.m)
         .padding(.vertical, Theme.Spacing.s)
@@ -68,44 +66,59 @@ struct TemaeView: View {
 @MainActor
 @Observable
 final class TemaeModel {
-    enum Phase { case whisk, smooth, no, lift, turn, done }
+    enum Phase { case whisk, finish, rotate, done }
     private(set) var phase = Phase.whisk
-    private(set) var progress = 0.0
+    private(set) var strokeCount = 0
+    /// 点てている最中の泡スコア(直近 20 ストローク)
+    private(set) var liveFoam = 0.0
+    private(set) var showsDeskWarning = false
+    /// 回す: いま回している角度(度、時計回りが正)と、成立した回の角度
+    private(set) var turnAngle = 0.0
+    private(set) var turns: [Double] = []
+    private(set) var counterClockwise = false
+    private(set) var finishHint = false
+    /// 茶碗の縁(画面上)の中心と半径。目盛りのリングを描くのに使う
+    private(set) var rimCenter = CGPoint.zero
+    private(set) var rimRadius: CGFloat = 0
     var scene: TeaScene?
     @ObservationIgnored weak var view: SCNView?
 
     @ObservationIgnored private var link: CADisplayLink?
     @ObservationIgnored private var last = CACurrentMediaTime()
-    @ObservationIgnored private var touch: CGPoint?
+    @ObservationIgnored private var motion: MotionService?
+    @ObservationIgnored private var onFinish: ((TemaeResult) -> Void)?
+    // 指
+    @ObservationIgnored private var touchSamples: [Scoring.Sample] = []
+    @ObservationIgnored private var touchStrokes = 0
+    @ObservationIgnored private var strokes: [Scoring.Stroke] = []
     @ObservationIgnored private var tipWorld: SIMD2<Float>?
     @ObservationIgnored private var chasenPos = SIMD2<Float>(0, 0)
     @ObservationIgnored private var velocity = SIMD2<Float>(0, 0)
-    @ObservationIgnored private var tracker = StrokeTracker()
-    @ObservationIgnored private var noPath: [CGPoint] = []
-    @ObservationIgnored private var noScore = 0.0
-    @ObservationIgnored private var whiskTime = 0.0
-    @ObservationIgnored private var smoothTime = 0.0
-    @ObservationIgnored private var turned = 0.0
-    @ObservationIgnored private var motion: MotionService?
-    @ObservationIgnored private var onFinish: ((Int) -> Void)?
-
-    private let whiskSeconds = 12.0
-    private let turnGoal = 150.0 * .pi / 180
-
-    /// 机に置いて(水平にして)ほしい場面か。振ってたてている間だけは手に持つ
-    var needsFlat: Bool { phase != .done }
+    @ObservationIgnored private var lastSign = 0.0
+    // 仕上げ・回す
+    @ObservationIgnored private var finishScore = 0.0
+    @ObservationIgnored private var baseYaw: Double?
+    @ObservationIgnored private var gestureAngle = 0.0
+    @ObservationIgnored private var holdSince: Double?
+    @ObservationIgnored private var holdAngle = 0.0
+    @ObservationIgnored private var liquidAtRotateStart: Float = 0
 
     var guideText: String {
         switch phase {
-        case .whisk: whiskTime == 0 ? "指を茶せんに。手首を使って、すばやく前後に" : "シャカシャカ。まっすぐ、一定の速さで"
-        case .smooth: "茶せんを浮かせて、表面をゆっくりなでる。大きな泡をつぶします"
-        case .no: "最後に「の」の字を書いて、泡を中央に集める"
-        case .lift: "茶せんを、まっすぐ抜きます"
-        case .turn, .done: "茶碗(スマホ)を回して、お出しします"
+        case .whisk: strokeCount == 0 ? "指を茶筅に。奥と手前を、まっすぐ往復" : "まっすぐ、一定のリズムで"
+        case .finish: finishHint ? "もう少しゆっくり、くるっと一周してから離します" : "仕上げましょう。ゆっくり小さく、くるっと回して離します"
+        case .rotate:
+            if counterClockwise { "時計回りに回します ↻" }
+            else if turnAngle - (turns.last.map { _ in turns.reduce(0, +) } ?? 0) > TemaeConstants.rotateTarget + TemaeConstants.rotateTolerance { "少し戻しましょう" }
+            else { turns.isEmpty ? "茶碗を持ち上げて、時計回りに2回まわしましょう" : "もう1回、時計回りに" }
+        case .done: "どうぞ"
         }
     }
 
-    func start(style: ChawanStyle, motion: MotionService, onFinish: @escaping (Int) -> Void) {
+    /// 机に置いていない(センサーがないシミュレーターでは常に置いている扱い)
+    private var onDesk: Bool { motion.map { !$0.isAvailable || $0.isOnDesk } ?? true }
+
+    func start(style: ChawanStyle, motion: MotionService, onFinish: @escaping (TemaeResult) -> Void) {
         guard scene == nil else { return }
         let tea = TeaScene(style: style)
         scene = tea
@@ -114,20 +127,20 @@ final class TemaeModel {
         self.motion = motion
         self.onFinish = onFinish
         motion.start()
-        motion.onTurn = { [weak self] d in self?.addTurn(d) }
         // 起動引数 `-demoWhisk YES` で、指の代わりに自動で往復させる(画面確認用)
         if UserDefaults.standard.bool(forKey: "demoWhisk") {
             Task { @MainActor [weak self] in
                 var t = 0.0
-                while let self, self.link != nil, self.phase == .whisk || self.phase == .smooth {
+                while let self, self.link != nil, self.phase == .whisk {
                     let size = self.view?.bounds.size ?? CGSize(width: 400, height: 800)
-                    let y = size.height / 2 + sin(t * 9) * size.height * 0.22
-                    self.touchMoved(CGPoint(x: size.width / 2 + sin(t * 1.3) * 60, y: y))
+                    self.touchMoved(CGPoint(x: size.width / 2 + sin(t * 0.7) * 6, y: size.height / 2 + sin(t * 8) * size.height * 0.26))
                     t += 1.0 / 60
                     try? await Task.sleep(for: .milliseconds(16))
                 }
             }
         }
+        // 起動引数 `-temaePhase rotate` で「回す」から始める(画面確認用)
+        if UserDefaults.standard.string(forKey: "temaePhase") == "rotate" { startRotate() }
         let link = CADisplayLink(target: self, selector: #selector(tick))
         link.add(to: .main, forMode: .common)
         self.link = link
@@ -136,35 +149,74 @@ final class TemaeModel {
     func stop() {
         link?.invalidate()
         link = nil
-        motion?.onTurn = nil
+        motion?.stop()
     }
 
     // MARK: 指
 
     func touchMoved(_ p: CGPoint?) {
-        touch = p
-        guard let p else {
-            tipWorld = nil
-            tracker.lift()
-            if phase == .no { finishNo() }
-            return
+        guard phase == .whisk || phase == .finish else { return }
+        guard let p else { endTouch(); return }
+        guard onDesk, let w = worldPoint(p) else { tipWorld = nil; return }
+        tipWorld = w
+        let q = SIMD2(Double(w.x), Double(w.y)) / Double(TeaScene.liquidRadius)
+        touchSamples.append(.init(p: q, t: CACurrentMediaTime()))
+        // 新しく往復が1本できたら、振動と、液全体の揺れ
+        let n = Scoring.strokes(in: touchSamples).count
+        if n > touchStrokes {
+            touchStrokes = n
+            strokeCount = strokes.count + n
+            Haptics.selection()
+            scene?.slosh(direction: Float(lastSign))
+            updateLiveFoam()
+            if phase == .whisk, strokeCount >= TemaeConstants.targetStrokes, liveFoam >= 40 { phase = .finish }
         }
-        tipWorld = worldPoint(p)
-        switch phase {
-        case .whisk:
-            if tracker.add(p) {
-                let now = CACurrentMediaTime()
-                Haptics.selection()
-            }
-        case .no: noPath.append(p)
-        default: break
+        if touchSamples.count >= 2 {
+            let dy = touchSamples[touchSamples.count - 1].p.y - touchSamples[touchSamples.count - 2].p.y
+            if dy != 0 { lastSign = dy > 0 ? 1 : -1 }
         }
     }
 
-    func rotate(by radians: Double) {
-        guard phase == .turn else { return }
-        turned = radians
-        checkTurn()
+    private func endTouch() {
+        tipWorld = nil
+        defer { touchSamples = []; touchStrokes = 0 }
+        let ks = Scoring.strokes(in: touchSamples)
+        if phase == .finish {
+            let m = Scoring.finishMeasure(touchSamples)
+            if m.speed <= TemaeConstants.finishFast, m.degrees >= TemaeConstants.finishDegrees {
+                // 仕上げ完了。中心に小さなくぼみができ、すぐに戻る
+                finishScore = Scoring.finishScore(degrees: m.degrees, speed: m.speed)
+                scene?.dimple()
+                Haptics.success()
+                startRotate()
+                return
+            }
+            if m.speed > TemaeConstants.finishFast { strokes += ks } else if m.degrees > 60 { finishHint = true }
+        } else {
+            strokes += ks
+        }
+        strokeCount = strokes.count
+        updateLiveFoam()
+    }
+
+    private func updateLiveFoam() {
+        let all = strokes + Scoring.strokes(in: touchSamples)
+        liveFoam = Scoring.foam(all, window: TemaeConstants.liveWindow).foam
+    }
+
+    /// 二本指で回す(センサーがないシミュレーターでの代わり)
+    func rotate(by radians: Double) { gestureAngle = -radians * 180 / .pi * TemaeConstants.clockwiseSign }
+
+    private func startRotate() {
+        phase = .rotate
+        baseYaw = nil
+        Haptics.selection()
+        // 目盛りのリングが画面に収まるよう、茶碗を少し引いて見せる
+        SCNTransaction.begin()
+        SCNTransaction.animationDuration = 0.8
+        scene?.camera.position.y = 9.6
+        scene?.chasen.opacity = 0  // 茶筅は抜いたので見せない
+        SCNTransaction.commit()
     }
 
     /// 画面の点 → 水面(茶碗の座標)の点
@@ -174,7 +226,7 @@ final class TemaeModel {
         let b = view.unprojectPoint(SCNVector3(Float(p.x), Float(p.y), 1))
         let t = (TeaScene.liquidY - a.y) / (b.y - a.y)
         var q = SIMD2(a.x + (b.x - a.x) * t, a.z + (b.z - a.z) * t)
-        let maxR = TeaScene.liquidRadius - 0.1
+        let maxR = TeaScene.liquidRadius - 0.06
         if simd_length(q) > maxR { q = simd_normalize(q) * maxR }
         return q
     }
@@ -186,76 +238,133 @@ final class TemaeModel {
         let dt = Float(min(0.05, now - last))
         last = now
         guard let scene else { return }
+        let desk = onDesk
+        showsDeskWarning = !desk && (phase == .whisk || phase == .finish)
 
-        // 茶筅は指を少し遅れて追う(重さ)。動く向きに傾ける(手首の返し)
+        // 茶筅は指を少し遅れて追い、動く方向に少し傾く
         let target = tipWorld ?? chasenPos
         let prev = chasenPos
         chasenPos += (target - chasenPos) * min(1, dt * 22)
         velocity = velocity * 0.7 + ((chasenPos - prev) / max(dt, 0.001)) * 0.3
-        let touching = tipWorld != nil && phase != .lift && phase != .turn && phase != .done
-        let y: Float = touching ? TeaScene.liquidY - 0.03 : (phase == .lift || phase == .turn || phase == .done ? 3.2 : TeaScene.liquidY + 0.25)
+        let touching = tipWorld != nil
         let node = scene.chasen
+        let y: Float = phase == .rotate || phase == .done ? 3.2 : (touching ? TeaScene.liquidY - 0.03 : TeaScene.liquidY + 0.25)
         node.position.x = chasenPos.x
         node.position.z = chasenPos.y
-        node.position.y += (y - node.position.y) * min(1, dt * (phase == .lift ? 4 : 14))
+        node.position.y += (y - node.position.y) * min(1, dt * (phase == .rotate ? 4 : 14))
         let tilt = simd_clamp(velocity * 0.12, SIMD2(-0.45, -0.45), SIMD2(0.45, 0.45))
         node.eulerAngles.z += (-tilt.x - node.eulerAngles.z) * min(1, dt * 12)
         node.eulerAngles.x += (tilt.y - node.eulerAngles.x) * min(1, dt * 12)
 
-        let mode: FoamSurface.Mode
-        switch phase {
-        case .whisk: mode = touching ? .whisk : .idle
-        case .smooth: mode = touching ? .smooth : .idle
-        case .no: mode = touching ? .gather : .idle
-        default: mode = .idle
+        // 液面(持ち上げられているときも、揺れと泡がはじける動きは続ける)
+        scene.step(dt: dt, input: .init(tip: touching ? chasenPos : nil, velocity: velocity,
+                                        whisking: touching && phase == .whisk || (touching && phase == .finish && simd_length(velocity) > 1.6),
+                                        smoothing: touching && phase == .finish, foamScore: liveFoam))
+
+        if phase == .rotate { updateRotate(now: now) }
+        updateRim()
+    }
+
+    // MARK: 回す
+
+    private func updateRotate(now: Double) {
+        guard let motion, let scene else { return }
+        let angle: Double
+        if motion.isAvailable {
+            // 持ち上げを検知したら、判定を始める
+            if baseYaw == nil {
+                guard !motion.isOnDesk else { return }
+                baseYaw = motion.yaw
+            }
+            angle = (motion.yaw - (baseYaw ?? 0)) * 180 / .pi * TemaeConstants.clockwiseSign
+            // 液面は回さない: iPhone が回った分だけ、逆向きに回して打ち消す
+            scene.setLiquidRotation(Float(-(motion.yaw - (baseYaw ?? 0))))
+        } else {
+            angle = gestureAngle
         }
-        scene.step(dt: dt, tip: touching ? chasenPos : nil, velocity: velocity, mode: mode)
-
-        switch phase {
-        case .whisk:
-            if touching, simd_length(velocity) > 0.3 { whiskTime += Double(dt) }
-            progress = min(1, whiskTime / whiskSeconds)
-            if whiskTime >= whiskSeconds { advance(.smooth) }
-        case .smooth:
-            if touching { smoothTime += Double(dt) }
-            progress = min(1, smoothTime / 5)
-            if smoothTime >= 5 || (smoothTime > 2 && scene.coarseness < 0.2) { advance(.no) }
-        case .no:
-            progress = NoJudge.score(noPath.count > 2 ? noPath : [.zero, .zero, .zero])
-        case .lift:
-            progress = 1
-            if node.position.y > 3.0 { advance(.turn) }
-        case .turn:
-            progress = min(1, abs(turned) / turnGoal)
-            scene.bowlGroup.eulerAngles.y = Float(turned)
-        case .done: break
+        turnAngle = angle
+        counterClockwise = angle < -5
+        // いまの回の角度(2回目は、1回目で止めた位置から測る)
+        let done = turns.reduce(0, +)
+        let current = angle - done
+        if abs(angle - holdAngle) > 1.5 { holdSince = now; holdAngle = angle }
+        if let since = holdSince, now - since >= TemaeConstants.rotateHold,
+           abs(current - TemaeConstants.rotateTarget) <= TemaeConstants.rotateTolerance {
+            turns.append(current)
+            holdSince = nil
+            Haptics.impact()  // カチッ
+            if turns.count >= TemaeConstants.rotateTimes { complete() }
         }
     }
 
-    private func advance(_ next: Phase) {
-        phase = next
-        progress = 0
-        Haptics.success()
-    }
-
-    private func finishNo() {
-        guard noPath.count > 8 else { noPath = []; return }
-        noScore = NoJudge.score(noPath)
-        advance(.lift)
-    }
-
-    private func addTurn(_ d: Double) {
-        guard phase == .turn else { return }
-        turned += d
-        checkTurn()
-    }
-
-    private func checkTurn() {
-        guard phase == .turn, abs(turned) >= turnGoal else { return }
+    private func complete() {
         phase = .done
-        Haptics.impact()
-        let score = ConcentrationJudge.score(tracker: tracker, noScore: noScore, seconds: whiskSeconds)
-        onFinish?(score)
+        Haptics.success()
+        let all = Scoring.foam(strokes)
+        let rotate = Scoring.rotateScore(turns)
+        let result = TemaeResult(score: Scoring.total(foam: all.foam, finish: finishScore, rotate: rotate),
+                                 foam: Int(all.foam.rounded()), line: Int(all.line.rounded()), rhythm: Int(all.rhythm.rounded()),
+                                 count: Int(all.count.rounded()), finish: Int(finishScore.rounded()), rotate: Int(rotate.rounded()))
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(1.2))  // 目盛りが一度だけ点灯して消えるのを見せる
+            self?.onFinish?(result)
+        }
+    }
+
+    private func updateRim() {
+        guard let view, view.bounds.width > 0 else { return }
+        let c = view.projectPoint(SCNVector3(0, 0.84, 0))
+        let e = view.projectPoint(SCNVector3(1.0, 0.84, 0))
+        let center = CGPoint(x: CGFloat(c.x), y: CGFloat(c.y) + view.frame.minY)
+        let r = CGFloat(abs(e.x - c.x))
+        if abs(center.x - rimCenter.x) > 0.5 || abs(r - rimRadius) > 0.5 { rimCenter = center; rimRadius = r }
+    }
+}
+
+/// 回した量がひと目でわかる目盛りのリング(SPEC 5章 C。Face ID の登録画面のような進捗リング)。
+/// 茶碗の縁の外側に 2° ごとの短い目盛り。回す範囲(0〜90°)だけ薄い墨で出し、回した角度まで抹茶色に点灯する。
+/// 回しすぎた分は朱。茶碗の手前(下)に「正面」の印。
+struct RotateRing: View {
+    let model: TemaeModel
+    @State private var flash = false
+
+    var body: some View {
+        Canvas { ctx, _ in
+            let c = model.rimCenter, r = model.rimRadius + 10
+            guard r > 20 else { return }
+            let done = model.turns.reduce(0, +)
+            let upper = done + TemaeConstants.rotateTarget + TemaeConstants.rotateTolerance
+            // 開始位置は手前(画面の下)。時計回り = 画面上でも時計回り
+            for k in 0...45 {
+                let deg = Double(k) * 2
+                let a = (90 + deg) * .pi / 180
+                let inner = CGPoint(x: c.x + cos(a) * r, y: c.y + sin(a) * r)
+                let outer = CGPoint(x: c.x + cos(a) * (r + 14), y: c.y + sin(a) * (r + 14))
+                var p = Path(); p.move(to: inner); p.addLine(to: outer)
+                let lit = deg <= model.turnAngle
+                let confirmed = deg <= done
+                let over = lit && deg > upper
+                let color: Color = over ? Theme.Palette.vermilion : lit ? Theme.Palette.matcha : TemaePalette.ink.opacity(0.25)
+                ctx.stroke(p, with: .color(flash ? Theme.Palette.matcha : color), lineWidth: confirmed ? 3.5 : 2)
+            }
+            // 「1/2」「2/2」
+            for (j, label) in ["1/2", "2/2"].enumerated() where model.turns.count > j {
+                let a = (90 + Double(j + 1) * 45 + 6) * .pi / 180
+                ctx.draw(Text(label).font(.caption.weight(.semibold)).foregroundStyle(TemaePalette.ink),
+                         at: CGPoint(x: c.x + cos(a) * (r + 30), y: c.y + sin(a) * (r + 30)))
+            }
+            // 正面の印(茶碗の縁の手前)
+            let front = CGPoint(x: c.x, y: c.y + model.rimRadius - 6)
+            ctx.fill(Path(ellipseIn: CGRect(x: front.x - 6, y: front.y - 6, width: 12, height: 12)), with: .color(TemaePalette.ink))
+            ctx.fill(Path(ellipseIn: CGRect(x: front.x - 3, y: front.y - 3, width: 6, height: 6)), with: .color(Theme.Palette.vermilion))
+        }
+        .opacity(model.phase == .done && flash ? 0 : 1)
+        .onChange(of: model.phase) { _, p in
+            guard p == .done else { return }
+            withAnimation(.easeIn(duration: 0.3)) { flash = true }
+        }
+        .accessibilityElement()
+        .accessibilityLabel("回した角度 \(Int(model.turnAngle))度。\(model.turns.count)回目まで成立")
     }
 }
 
@@ -276,7 +385,7 @@ struct TeaSceneView: UIViewRepresentable {
         let rot = UIRotationGestureRecognizer(target: v, action: #selector(TouchSCNView.rotated(_:)))
         v.addGestureRecognizer(rot)
         v.isAccessibilityElement = true
-        v.accessibilityLabel = "茶碗。指を茶せんにしてたてます"
+        v.accessibilityLabel = "茶碗。指を茶筅にして点てます"
         return v
     }
 
@@ -309,151 +418,4 @@ enum TemaePalette {
 enum ChawanSpec {
     static let liquid: CGFloat = 0.80
     static let imageExtent: CGFloat = 1.02
-}
-
-// MARK: - 泡と波
-
-/// 水面の泡と波。指でかき混ぜた場所に泡が生まれ、波紋が広がる。混ぜるほど泡は細かく、全体が淡い色になる。
-struct FoamField {
-    struct Bubble { var p: CGPoint; var r: CGFloat }
-    struct Ripple { var p: CGPoint; var born: Date }
-
-    private(set) var bubbles: [Bubble] = []
-    private(set) var ripples: [Ripple] = []
-    /// 泡の量(0〜1)。水面全体の色が淡くなる
-    private(set) var froth = 0.0
-    private var lastRipple = Date.distantPast
-    private var rng = SeededRandom(seed: 11)
-    var lastTick = Date()
-
-    mutating func stir(at p: CGPoint, strength: Double, center: CGPoint, radius: CGFloat, smooth: Bool = false) {
-        froth = min(1, froth + (smooth ? 0 : 0.0016 + strength * 0.002))
-        // 混ぜるほど泡は細かくなる
-        let size = max(2, 9 - 7 * CGFloat(froth))
-        for _ in 0..<(smooth ? 0 : 3) {
-            let a = rng.next() * 2 * .pi, d = rng.next() * 26
-            let q = CGPoint(x: p.x + cos(a) * d, y: p.y + sin(a) * d)
-            guard hypot(q.x - center.x, q.y - center.y) < radius - 4 else { continue }
-            bubbles.append(Bubble(p: q, r: size * (0.6 + 0.6 * CGFloat(rng.next()))))
-        }
-        if bubbles.count > 900 { bubbles.removeFirst(bubbles.count - 900) }
-        if Date().timeIntervalSince(lastRipple) > 0.08 {
-            ripples.append(Ripple(p: p, born: .now))
-            lastRipple = .now
-            ripples.removeAll { Date().timeIntervalSince($0.born) > 1.2 }
-        }
-    }
-
-    /// 「の」の字のあと、泡を細かく整える
-    mutating func settle() {
-        froth = min(1, froth + 0.15)
-        bubbles = bubbles.map { Bubble(p: $0.p, r: max(1.5, $0.r * 0.5)) }
-    }
-
-    func draw(in ctx: inout GraphicsContext, center: CGPoint, radius: CGFloat, now: Date) {
-        let disk = Path(ellipseIn: CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2))
-        // 抹茶の水面。泡が増えるほど淡い色に(グラデーションではなく、単色を重ねる)
-        ctx.fill(disk, with: .color(TemaePalette.matcha))
-        ctx.fill(disk, with: .color(TemaePalette.foam.opacity(froth * 0.75)))
-        ctx.clip(to: disk)
-        for b in bubbles {
-            ctx.fill(Path(ellipseIn: CGRect(x: b.p.x - b.r, y: b.p.y - b.r, width: b.r * 2, height: b.r * 2)),
-                     with: .color(Theme.Palette.shiro.opacity(0.45)))
-        }
-        // 波紋: 指の通ったところから輪が広がって消える
-        for w in ripples {
-            let t = now.timeIntervalSince(w.born)
-            guard t < 1.2 else { continue }
-            let r = 12 + CGFloat(t) * 90
-            ctx.stroke(Path(ellipseIn: CGRect(x: w.p.x - r, y: w.p.y - r, width: r * 2, height: r * 2)),
-                       with: .color(Theme.Palette.shiro.opacity(0.35 * (1 - t / 1.2))), lineWidth: 2)
-        }
-    }
-}
-
-// MARK: - 採点
-
-/// 往復の記録。向きが変わるたびに1往復(片道)とし、その片道が直線からどれだけ外れたかを測る
-struct StrokeTracker {
-    private var points: [CGPoint] = []
-    private var direction: CGVector?
-    private(set) var strokeTimes: [Date] = []
-    /// 片道ごとの離脱率(直線からのずれ / 片道の長さ)
-    private(set) var deviations: [Double] = []
-    private(set) var speed = 0.0
-    private var lastPoint: CGPoint?
-    private var lastTime = Date()
-
-    /// 点を足す。片道が終わった(向きが反転した)ら true
-    mutating func add(_ p: CGPoint) -> Bool {
-        let now = Date()
-        if let last = lastPoint {
-            let dt = max(0.001, now.timeIntervalSince(lastTime))
-            speed = min(1, Double(hypot(p.x - last.x, p.y - last.y)) / dt / 1500)
-        }
-        lastPoint = p
-        lastTime = now
-        points.append(p)
-        guard points.count >= 3, let first = points.first else { return false }
-        let v = CGVector(dx: p.x - first.x, dy: p.y - first.y)
-        let length = hypot(v.dx, v.dy)
-        guard length > 20 else { return false }
-        if let d = direction {
-            // 向きが逆になった = 片道が終わった
-            let step = CGVector(dx: p.x - points[points.count - 2].x, dy: p.y - points[points.count - 2].y)
-            if d.dx * step.dx + d.dy * step.dy < 0 {
-                finishStroke(now: now)
-                return true
-            }
-        } else {
-            direction = CGVector(dx: v.dx / length, dy: v.dy / length)
-        }
-        return false
-    }
-
-    mutating func lift() {
-        points = []
-        direction = nil
-        lastPoint = nil
-    }
-
-    private mutating func finishStroke(now: Date) {
-        guard let a = points.first, let b = points.dropLast().last else { return }
-        let len = max(1, hypot(b.x - a.x, b.y - a.y))
-        // 始点と終点を結ぶ直線から、途中の点がどれだけ離れたか(平均)
-        let devs = points.map { p -> Double in
-            Double(abs((b.y - a.y) * p.x - (b.x - a.x) * p.y + b.x * a.y - b.y * a.x) / len)
-        }
-        deviations.append(min(1, (devs.reduce(0, +) / Double(devs.count)) / Double(len) * 4))
-        strokeTimes.append(now)
-        let last = points.last!
-        points = [b, last]
-        direction = CGVector(dx: (last.x - b.x), dy: (last.y - b.y))
-    }
-}
-
-/// 集中度(0〜100)。まっすぐさ50・リズム20・往復の数15・「の」の字15
-enum ConcentrationJudge {
-    static func score(tracker: StrokeTracker, noScore: Double, seconds: Double) -> Int {
-        let straight = tracker.deviations.isEmpty ? 0 : 1 - tracker.deviations.reduce(0, +) / Double(tracker.deviations.count)
-        let rhythm = TemaeJudge.steadiness(tracker.strokeTimes)
-        let amount = min(1, Double(tracker.strokeTimes.count) / (seconds * 3))
-        return Int((50 * straight + 20 * rhythm + 15 * amount + 15 * noScore).rounded())
-    }
-}
-
-/// 「の」の字らしさ。書いた線がどれだけ回ったか(約1周で満点)
-enum NoJudge {
-    static func score(_ path: [CGPoint]) -> Double {
-        var total = 0.0
-        for i in 2..<path.count {
-            let a = atan2(path[i - 1].y - path[i - 2].y, path[i - 1].x - path[i - 2].x)
-            let b = atan2(path[i].y - path[i - 1].y, path[i].x - path[i - 1].x)
-            var d = Double(b - a)
-            while d > .pi { d -= 2 * .pi }
-            while d < -.pi { d += 2 * .pi }
-            total += d
-        }
-        return min(1, abs(total) / (2 * .pi * 0.9))
-    }
 }

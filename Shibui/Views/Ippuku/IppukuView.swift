@@ -24,7 +24,7 @@ struct TeaFlowView: View {
                     .transition(.opacity)
             } else {
                 // 画面いっぱいの 3D の茶碗(真上から)
-                TemaeView(motion: motion) { s in finish(score: s) }
+                TemaeView(motion: motion) { r in finish(r) }
                     .overlay(alignment: .topLeading) {
                         Button { onDone(false) } label: {
                             Text("やめる")
@@ -44,9 +44,10 @@ struct TeaFlowView: View {
         .onAppear { startedAt = .now }
     }
 
-    private func finish(score s: Int) {
+    private func finish(_ r: TemaeResult) {
         let usedToday = Set(sessions.filter { Calendar.current.isDateInToday($0.startedAt) }.map(\.messageID))
-        let new = MatchaSession(startedAt: startedAt, score: s, foamScore: s, foamStage: FoamStage.of(s),
+        let new = MatchaSession(startedAt: startedAt, score: r.score, foamScore: r.foam, lineScore: r.line, rhythmScore: r.rhythm,
+                                countScore: r.count, finishScore: r.finish, rotateScore: r.rotate, foamStage: FoamStage.of(r.foam),
                                 messageID: Messages.pick(at: startedAt, usedToday: usedToday))
         context.insert(new)
         try? context.save()

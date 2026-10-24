@@ -2,30 +2,47 @@ import CoreMotion
 import Foundation
 import Observation
 
-/// 机に置いているか(画面が上向きで水平)と、茶碗(iPhone)を回した角度を検出する。
+/// 机に置いているか(SPEC 5章「机置き判定」)と、茶碗(iPhone)を回した角度(ヨー)を検出する。
 @Observable
 final class MotionService {
     private let manager = CMMotionManager()
-    /// 画面を上にして、ほぼ水平に置かれているか
-    private(set) var isFlatFaceUp = true
+    /// 机に置いている = 画面が上向き かつ 直近 0.5 秒の揺れが小さい
+    private(set) var isOnDesk = true
+    /// 回した角度(ラジアン)。連続した値(1周をこえても飛ばない)。反時計回りが正(CoreMotion の向き)
+    private(set) var yaw = 0.0
     /// センサーが使えるか(シミュレーターでは使えない)
     var isAvailable: Bool { manager.isDeviceMotionAvailable }
-    /// 机の上で回した角度(ラジアン)を、更新のたびに渡す(茶碗を回す動作)
-    var onTurn: ((Double) -> Void)?
+
+    private var shakes: [(t: Double, a2: Double)] = []
+    private var lastRawYaw: Double?
 
     func start() {
         guard manager.isDeviceMotionAvailable, !manager.isDeviceMotionActive else { return }
         manager.deviceMotionUpdateInterval = 1.0 / 60
-        manager.startDeviceMotionUpdates(to: .main) { [weak self] motion, _ in
+        manager.startDeviceMotionUpdates(using: .xArbitraryZVertical, to: .main) { [weak self] motion, _ in
             guard let self, let motion else { return }
-            self.isFlatFaceUp = motion.gravity.z < -0.92
-            self.onTurn?(motion.rotationRate.z * self.manager.deviceMotionUpdateInterval)
+            // 揺れ: ユーザー加速度の大きさの二乗を、直近 0.5 秒ぶん持つ
+            let a = motion.userAcceleration
+            let t = motion.timestamp
+            shakes.append((t, a.x * a.x + a.y * a.y + a.z * a.z))
+            shakes.removeAll { t - $0.t > TemaeConstants.deskWindow }
+            let rms = (shakes.map(\.a2).reduce(0, +) / Double(max(1, shakes.count))).squareRoot()
+            isOnDesk = motion.gravity.z <= TemaeConstants.deskGravityZ && rms <= TemaeConstants.deskShakeRMS
+            // ヨー: -π〜π の値をつなげて、連続した角度にする
+            let raw = motion.attitude.yaw
+            if let last = lastRawYaw {
+                var d = raw - last
+                if d > .pi { d -= 2 * .pi }
+                if d < -.pi { d += 2 * .pi }
+                yaw += d
+            }
+            lastRawYaw = raw
         }
     }
 
     func stop() {
         manager.stopDeviceMotionUpdates()
-        onTurn = nil
+        lastRawYaw = nil
     }
 }
 
