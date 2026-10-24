@@ -121,7 +121,7 @@ struct OnboardingView: View {
     private var ready: some View {
         VStack(spacing: Theme.Spacing.l) {
             Spacer()
-            Stamp("完了", isStamped: stamped, size: 112)
+            ImoView(ripeness: stamped ? 1 : 0, size: 120, showsString: true)
             VStack(spacing: Theme.Spacing.s) {
                 Text(OnboardingContent.readyTitle)
                     .font(.dsTitle)
@@ -165,17 +165,17 @@ private struct PageDots: View {
 
 /// オンボーディングの文言。案が決まったらここだけ書き換える。
 enum OnboardingContent {
-    static let appName = "Shibui"
+    static let appName = "ほしいも"
     static let stampText = "渋"
-    static let tagline = "派手じゃないけど、いい。\nそんな瞬間を、ひとつずつ残す。"
-    static let valuesTitle = "できること"
+    static let tagline = "その欲しいも、干してから。\n待てる人は、渋くてかっこいい。"
+    static let valuesTitle = "使い方"
     static let values: [(symbol: String, title: String, detail: String)] = [
-        ("square.and.pencil", "ワンタップで記録", "思い立ったら、下のボタンを押すだけ。"),
-        ("seal", "判子で手応え", "記録するたびに判子が押され、積み重ねが見える。"),
-        ("rectangle.on.rectangle", "ウィジェットで振り返る", "ホーム画面から、いつでも記録の数を確かめられる。"),
+        ("arrow.down.to.line", "欲しい物を、吊るす", "すぐには買わず、干し芋や干し柿にして軒下へ。"),
+        ("clock", "待つと、干し上がる", "日がたつほど、生の芋が甘い干し芋の色へ。"),
+        ("checkmark.seal", "食べごろに、決める", "それでも欲しければ買う。いらなければ見送って、お金が浮く。"),
     ]
-    static let readyTitle = "準備ができました"
-    static let readyMessage = "さっそく、最初のひとつを記録しましょう。"
+    static let readyTitle = "さあ、吊るしましょう"
+    static let readyMessage = "最初の「欲しい」を、軒下へ。"
     static let startTitle = "はじめる"
 }
 

@@ -3,7 +3,7 @@ import SwiftUI
 
 @main
 struct ShibuiApp: App {
-    @State private var store = EntryStore()
+    @State private var store = KakiStore()
     /// はじめの説明を見終えたか。起動引数 `-resetOnboarding` で未読に戻せる(実機・シミュレーターの確認用)
     @AppStorage("didOnboard") private var didOnboard = false
 
