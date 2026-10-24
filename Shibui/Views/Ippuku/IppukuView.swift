@@ -44,7 +44,11 @@ struct TeaFlowView: View {
         }
         .overlay { if !doorsOpen { FusumaOpening { doorsOpen = true } } }
         .animation(.easeInOut(duration: 0.4), value: session?.id)
-        .onAppear { startedAt = .now }
+        .onAppear {
+            startedAt = .now
+            // 起動引数 `-scene timer` でタイマーから始める(画面確認用)
+            if UserDefaults.standard.string(forKey: "scene") == "timer" { doorsOpen = true; timerOpen = true }
+        }
     }
 
     private func finish(_ r: TemaeResult) {

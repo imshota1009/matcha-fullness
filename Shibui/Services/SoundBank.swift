@@ -1,10 +1,11 @@
 import AVFoundation
 
 /// 音(10/25 開発者の依頼で復活)。
-/// - 茶筅の「シャカッ」: 点てる往復ごと(音量 1 の基準。コードで合成)
-/// - 背景の自然の音(オプション): 川と風(茶筅の 0.5 くらい)がずっと流れ、ときどき鳥のさえずりとししおどし
-/// - タイマー中: 自然の音がずっと流れ、5分ごとにししおどしが「カコン」
-/// 背景の音量は設定とタイマー画面のスライダー(0〜100%)で決める。出入りはフェードイン・フェードアウト。
+/// - 茶筅: 往復ごとに、和紙をなでるような やわらかい「さら…」(音量 1 の基準。コードで合成)
+/// - 自然の音は3種類(川・風・鳥)。種類ごとに音量(0〜100%)を決められる。人によって好みが違うため
+///   - 点てるとき(設定でオン/オフ): 茶筅の 0.5 くらいに抑え、ときどきししおどし
+///   - タイマー中: ずっと流れ、5分ごとにししおどしが「カコン」
+/// 出入りはフェードイン・フェードアウト。鳥は録音の途中から、ゆっくり大きくなりながら入る。
 /// 録音の出典は App/Sounds/CREDITS.txt と tech-used.md。
 @MainActor
 final class SoundBank {
@@ -12,7 +13,30 @@ final class SoundBank {
 
     /// 設定のキー(UserDefaults)
     static let ambientOnKey = "ambientOn"
-    static let ambientVolumeKey = "ambientVolume"
+    /// 自然の音の種類
+    enum Nature: String, CaseIterable, Identifiable {
+        case river, wind, birds
+        var id: Self { self }
+        var name: String {
+            switch self {
+            case .river: "川"
+            case .wind: "風"
+            case .birds: "鳥"
+            }
+        }
+        var symbol: String {
+            switch self {
+            case .river: "water.waves"
+            case .wind: "wind"
+            case .birds: "bird"
+            }
+        }
+        var volumeKey: String { "volume_\(rawValue)" }
+        /// その種類の音量(0〜1)。初期値は 0.6
+        var volume: Float {
+            Float(UserDefaults.standard.object(forKey: volumeKey) as? Double ?? 0.6)
+        }
+    }
 
     private let engine = AVAudioEngine()
     private let format = AVAudioFormat(standardFormatWithSampleRate: 44_100, channels: 1)!
@@ -30,8 +54,10 @@ final class SoundBank {
     private var accents: Task<Void, Never>?
     private(set) var isAmbientPlaying = false
 
-    /// 茶筅の音を 1 としたときの、川と風の大きさ
+    /// 茶筅の音を 1 としたときの、自然の音の大きさ(点てるとき)
     private static let bedLevel: Float = 0.5
+    /// いまの自然の音の全体の大きさ(点てるときは 0.5、タイマーは 1)
+    private var level: Float = 1
 
     private init() {
         try? AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
@@ -40,7 +66,7 @@ final class SoundBank {
             engine.attach(node)
             engine.connect(node, to: engine.mainMixerNode, format: format)
         }
-        for (node, name, loop) in [(riverNode, "river", true), (windNode, "wind", true), (birdNode, "birds", false), (shishiNode, "shishiodoshi", false)] {
+        for (node, name, loop) in [(riverNode, "river", true), (windNode, "wind", true), (birdNode, "birds", true), (shishiNode, "shishiodoshi", false)] {
             let buf = loop ? Self.loadLoop(name) : Self.load(name)
             buffers[name] = buf
             engine.attach(node)
@@ -48,11 +74,6 @@ final class SoundBank {
             node.volume = 0
         }
         try? engine.start()
-    }
-
-    /// 設定のスライダーの値(0〜1)。初期値は 0.6
-    static var ambientVolume: Float {
-        UserDefaults.standard.object(forKey: ambientVolumeKey) as? Float ?? 0.6
     }
 
     // MARK: 茶筅
@@ -68,28 +89,35 @@ final class SoundBank {
 
     // MARK: 背景の自然の音
 
-    /// 自然の音を流しはじめる(フェードイン)。`shishiEvery` 秒ごとにししおどし、鳥はときどき
-    func startAmbient(shishiEvery: Double) {
+    /// 自然の音(川・風・鳥)を流しはじめる。`shishiEvery` 秒ごとにししおどし。
+    /// `forTimer` のときは大きめ、点てるときは茶筅の半分くらい
+    func startAmbient(shishiEvery: Double, forTimer: Bool) {
         if !engine.isRunning { try? engine.start() }
         isAmbientPlaying = true
+        level = forTimer ? 1 : Self.bedLevel
         for (node, name) in [(riverNode, "river"), (windNode, "wind")] where !node.isPlaying {
             guard let buf = buffers[name] else { continue }
             node.volume = 0
             node.scheduleBuffer(buf, at: nil, options: .loops)
             node.play()
         }
-        applyVolume(fade: 2.5)
+        if !birdNode.isPlaying, let buf = buffers["birds"] {
+            // 鳥は録音の途中から入る(いつも同じ鳴き声から始まらないように)
+            birdNode.volume = 0
+            let start = AVAudioFramePosition(Double.random(in: 0.2...0.7) * Double(buf.frameLength))
+            if let rest = Self.slice(buf, from: start) { birdNode.scheduleBuffer(rest, at: nil) }
+            birdNode.scheduleBuffer(buf, at: nil, options: .loops)
+            birdNode.play()
+        }
+        applyVolume(fade: 2.5, birdsFade: 7)
         accents?.cancel()
         accents = Task { @MainActor [weak self] in
-            var nextShishi = shishiEvery
-            var nextBird = Double.random(in: 8...18)
             var t = 0.0
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(1))
                 t += 1
                 guard let self else { return }
-                if t >= nextBird { self.playAccent(self.birdNode, "birds", level: 0.45); nextBird = t + Double.random(in: 25...45) }
-                if t >= nextShishi { self.playAccent(self.shishiNode, "shishiodoshi", level: 0.7); nextShishi = t + shishiEvery }
+                if shishiEvery.isFinite, t.truncatingRemainder(dividingBy: shishiEvery) == 0 { self.kakon() }
             }
         }
     }
@@ -99,38 +127,32 @@ final class SoundBank {
         isAmbientPlaying = false
         accents?.cancel()
         for node in [riverNode, windNode, birdNode, shishiNode] {
-            fade(node, to: 0, seconds: 2) { node.stop() }
+            fade(node, to: 0, seconds: 2.5) { node.stop() }
         }
     }
 
-    /// スライダーを動かしたとき
-    func applyVolume(fade seconds: Double = 0.2) {
+    /// 音量バーを動かしたとき(種類ごと)
+    func applyVolume(fade seconds: Double = 0.15, birdsFade: Double? = nil) {
         guard isAmbientPlaying else { return }
-        let v = Self.ambientVolume * Self.bedLevel
-        fade(riverNode, to: v, seconds: seconds)
-        fade(windNode, to: v * 0.8, seconds: seconds)
+        fade(riverNode, to: Nature.river.volume * level, seconds: seconds)
+        fade(windNode, to: Nature.wind.volume * level, seconds: seconds)
+        // 鳥は 0 → 100 ではなく、なだらかに大きくなりはじめる(ゆっくりした曲線)
+        fade(birdNode, to: Nature.birds.volume * level * 0.8, seconds: birdsFade ?? seconds, gentle: birdsFade != nil)
     }
 
-    private func playAccent(_ node: AVAudioPlayerNode, _ name: String, level: Float) {
-        guard let buf = buffers[name] else { return }
-        node.stop()
-        node.volume = 0
-        node.scheduleBuffer(buf, at: nil, options: .interrupts)
-        node.play()
-        let v = Self.ambientVolume * level
-        fade(node, to: v, seconds: 1.5)
-        // 録音の終わりに向けて、静かに消す
-        let length = Double(buf.frameLength) / buf.format.sampleRate
-        Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .seconds(max(0, length - 2.5)))
-            self?.fade(node, to: 0, seconds: 2.4)
-        }
+    /// ししおどしの「カコン」(録音)。タイマーでは水たまりの絵と合わせて呼ぶ
+    func kakon() {
+        guard let buf = buffers["shishiodoshi"] else { return }
+        shishiNode.stop()
+        shishiNode.volume = 0.8 * level
+        shishiNode.scheduleBuffer(buf, at: nil, options: .interrupts)
+        shishiNode.play()
     }
 
     // MARK: 道具
 
     /// 音量をなめらかに変える。途中で別のフェードが来たら、そちらに引き継ぐ
-    private func fade(_ node: AVAudioPlayerNode, to target: Float, seconds: Double, then done: (() -> Void)? = nil) {
+    private func fade(_ node: AVAudioPlayerNode, to target: Float, seconds: Double, gentle: Bool = false, then done: (() -> Void)? = nil) {
         let key = ObjectIdentifier(node)
         fades[key]?.cancel()
         let start = node.volume
@@ -140,11 +162,24 @@ final class SoundBank {
                 try? await Task.sleep(for: .milliseconds(33))
                 if Task.isCancelled { return }
                 let x = Float(i) / Float(steps)
-                // ゆっくり始まり、ゆっくり終わる曲線
-                node.volume = start + (target - start) * (x * x * (3 - 2 * x))
+                // ゆっくり始まり、ゆっくり終わる曲線。gentle のときは、はじめをさらにゆっくり(耳の感じ方に合わせて)
+                let curve = gentle ? x * x * x : x * x * (3 - 2 * x)
+                node.volume = start + (target - start) * curve
             }
             done?()
         }
+    }
+
+    /// 録音の途中から終わりまでを切り出す
+    private static func slice(_ buf: AVAudioPCMBuffer, from start: AVAudioFramePosition) -> AVAudioPCMBuffer? {
+        let count = AVAudioFrameCount(max(0, Int64(buf.frameLength) - start))
+        guard count > 0, let out = AVAudioPCMBuffer(pcmFormat: buf.format, frameCapacity: count),
+              let src = buf.floatChannelData, let dst = out.floatChannelData else { return nil }
+        out.frameLength = count
+        for ch in 0..<Int(buf.format.channelCount) {
+            dst[ch].update(from: src[ch].advanced(by: Int(start)), count: Int(count))
+        }
+        return out
     }
 
     private static func load(_ name: String) -> AVAudioPCMBuffer? {
@@ -187,15 +222,19 @@ final class SoundBank {
         return buf
     }
 
-    /// 茶筅の「シャッ」。高い音だけを残したノイズを、短く山なりに
+    /// 茶筅の音: 和紙をなでるような、やわらかい「さら…」。高い音を落とした低めのノイズを、ゆっくり立ち上げてゆっくり消す。
+    /// 耳ざわりな高音(前の「シャッ」)は使わない
     private func makeChasen() -> AVAudioPCMBuffer {
-        var last = 0.0
-        return buffer(seconds: 0.09) { t in
-            let white = Double.random(in: -1...1)
-            let high = white - last
-            last = white
-            let env = sin(.pi * min(1, t / 0.09))
-            return high * env * 0.5
+        var brown = 0.0, low = 0.0
+        let length = 0.22
+        return buffer(seconds: length) { t in
+            // ブラウンノイズ(低めのざらつき)を、さらに高い音を落として丸くする
+            brown = (brown + Double.random(in: -0.02...0.02)) * 0.995
+            low += (brown - low) * 0.18
+            let x = t / length
+            let env = sin(.pi * x) * sin(.pi * x)
+            return low * env * 5.5
         }
     }
+
 }

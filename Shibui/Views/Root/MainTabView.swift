@@ -64,7 +64,7 @@ struct WaitingView: View {
             }
         }
         // 起動引数 `-scene ippuku` で点てる画面から開ける(画面確認・デモ準備用)
-        .task { if UserDefaults.standard.string(forKey: "scene") == "ippuku" { flowOpen = true } }
+        .task { if ["ippuku", "timer"].contains(UserDefaults.standard.string(forKey: "scene")) { flowOpen = true } }
     }
 
     private func showParting() {

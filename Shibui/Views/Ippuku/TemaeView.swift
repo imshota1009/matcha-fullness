@@ -48,7 +48,7 @@ struct TemaeView: View {
         .onAppear {
             model.start(style: style, motion: motion, onFinish: onFinish)
             // 背景の自然の音(設定でオンのとき)。ししおどしは、点てる時間の中でたまに
-            if UserDefaults.standard.bool(forKey: SoundBank.ambientOnKey) { SoundBank.shared.startAmbient(shishiEvery: 75) }
+            if UserDefaults.standard.bool(forKey: SoundBank.ambientOnKey) { SoundBank.shared.startAmbient(shishiEvery: 75, forTimer: false) }
         }
         .onDisappear {
             model.stop()

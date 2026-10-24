@@ -18,6 +18,7 @@
 		32603C0A9E275A5622F489FB /* Fusuma.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FFC025933A196D0FD29EFF /* Fusuma.swift */; };
 		36CC081133F9E4DF3EF9D3F9 /* river.m4a in Resources */ = {isa = PBXBuildFile; fileRef = A2E90426BF18D4E0860DA1FC /* river.m4a */; };
 		387D1D8EA0BB0326157B2F7F /* WhiteSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D2A2CE20F21D8CEAADFB45 /* WhiteSlider.swift */; };
+		3EE95BD613E009BFC690F78E /* NatureMixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570E7C1C60396A60C47A55C4 /* NatureMixer.swift */; };
 		43A0F73DEF28312C28BDC789 /* Records.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242ECD94824029EA6F2F7C85 /* Records.swift */; };
 		4E8BAF01B55371002535256B /* chasen_handle.obj in Resources */ = {isa = PBXBuildFile; fileRef = D6085C317848DE5EF3811E52 /* chasen_handle.obj */; };
 		515C13F1C660C35C043DFD7B /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEE805E42620D02DC2C3931 /* Messages.swift */; };
@@ -71,6 +72,7 @@
 		35D2A2CE20F21D8CEAADFB45 /* WhiteSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteSlider.swift; sourceTree = "<group>"; };
 		41F6E5D876C58859D10DFBDC /* Shibui.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shibui.entitlements; sourceTree = "<group>"; };
 		4765AD634CC4D538F24439CB /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
+		570E7C1C60396A60C47A55C4 /* NatureMixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NatureMixer.swift; sourceTree = "<group>"; };
 		631A45B922E68836FEE6CB8A /* CREDITS.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CREDITS.txt; sourceTree = "<group>"; };
 		64B1D0CA450A1A864D89FA0E /* TeaScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaScene.swift; sourceTree = "<group>"; };
 		68D816B2DD6715A530FF2740 /* chawan.obj */ = {isa = PBXFileReference; path = chawan.obj; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				31FFC025933A196D0FD29EFF /* Fusuma.swift */,
+				570E7C1C60396A60C47A55C4 /* NatureMixer.swift */,
 				8844868F280DE82CE5C5B814 /* Pickers.swift */,
 				CC09D44EEFF2D2BC8DC81F75 /* RikyuView.swift */,
 				19794A5048322D5107B86A91 /* TeaArt.swift */,
@@ -397,6 +400,7 @@
 				01E17A6C98EA974C57049C90 /* MainTabView.swift in Sources */,
 				515C13F1C660C35C043DFD7B /* Messages.swift in Sources */,
 				F1F6A1C22771A6A4C2C5C10B /* MotionService.swift in Sources */,
+				3EE95BD613E009BFC690F78E /* NatureMixer.swift in Sources */,
 				0DD227DFBD83ED515FD39875 /* OnboardingView.swift in Sources */,
 				6C3EDB7CAF6E509FB10343D8 /* Pickers.swift in Sources */,
 				E5530817981D055098821677 /* Rank.swift in Sources */,
@@ -470,7 +474,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 24;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -583,7 +587,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 24;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
