@@ -27,9 +27,9 @@ struct IppukuView: View {
     private let settleSeconds = 5.0
 
     var body: some View {
-        if mode == .finger && step == .whisk {
-            // 指で点てる: 画面いっぱいの茶碗(真上から)。左上の x でいつでも抜けられる
-            TemaeView(motion: motion) { score in finishTemae(score: score) }
+        if step == .whisk {
+            // 画面いっぱいの 3D の茶碗(真上から)。指でも、振ってもたてられる。左上の x でいつでも抜けられる
+            TemaeView(motion: motion, gyro: mode == .gyro) { score in finishTemae(score: score) }
                 .overlay(alignment: .topLeading) { BackToEntrance(go: go).padding(.leading, Theme.Spacing.s) }
                 .transition(.opacity)
         } else {
@@ -53,7 +53,7 @@ struct IppukuView: View {
             Group {
                 switch step {
                 case .whisk, .settle: whiskView
-                case .result: if let result { ResultView(result: result, praise: praise, total: store.record.totalPoints) { step = .breath } }
+                case .result: if let result { ResultView(result: result, praise: praise, total: store.record.totalPoints) { step = .ichiji; focused = true } }
                 case .breath: BreathView { step = .ichiji; focused = true }
                 case .ichiji: ichijiView
                 case .kakejiku: kakejikuView
@@ -64,7 +64,7 @@ struct IppukuView: View {
         }
         .animation(.easeInOut(duration: 0.4), value: step)
         .onAppear {
-            motion.start(onWhisk: { date in if mode == .gyro { whisk(at: date) } })
+            motion.start()
         }
         .onDisappear { motion.setWhiskHandler(nil) }
         // 起動引数 `-ippukuStep kakejiku` で掛け軸から始める(画面確認用)
@@ -168,7 +168,7 @@ struct IppukuView: View {
 
     private func finishTemae(score: Int) {
         praise = TemaeJudge.praise(for: score)
-        result = store.serve(score: score, praise: praise.title, mode: .finger)
+        result = store.serve(score: score, praise: praise.title, mode: mode)
         Haptics.success()
         withAnimation { step = .result }
     }

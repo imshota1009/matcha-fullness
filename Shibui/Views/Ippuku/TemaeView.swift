@@ -12,6 +12,8 @@ import SwiftUI
 /// うまさは「集中度」(0〜100)として返す。直線の往復からどれだけ外れたか(離脱率)が中心。
 struct TemaeView: View {
     let motion: MotionService
+    /// true: スマホを振ってたてる(茶せんが振りに合わせて動く)。整える・の字・回すは指とセンサーで同じ
+    var gyro = false
     let onFinish: (_ score: Int) -> Void
     @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
     @State private var model = TemaeModel()
@@ -28,7 +30,7 @@ struct TemaeView: View {
             }
         }
         .onAppear {
-            model.start(style: style, motion: motion, onFinish: onFinish)
+            model.start(style: style, motion: motion, gyro: gyro, onFinish: onFinish)
         }
         .onDisappear { model.stop() }
     }
@@ -82,15 +84,24 @@ final class TemaeModel {
 
     var guideText: String {
         switch phase {
-        case .whisk: whiskTime == 0 ? "指を茶せんに。手首を使って、すばやく前後に" : "シャカシャカ。まっすぐ、一定の速さで"
-        case .smooth: "茶せんを浮かせて、表面をゆっくりなでる。大きな泡をつぶします"
+        case .whisk:
+            if gyro { whiskTime == 0 ? "スマホを手に持って、小さく前後に振ってください" : "シャカシャカ。一定のリズムで" }
+            else { whiskTime == 0 ? "指を茶せんに。手首を使って、すばやく前後に" : "シャカシャカ。まっすぐ、一定の速さで" }
+        case .smooth: (gyro ? "スマホを机に置いて、指で" : "") + "茶せんを浮かせて、表面をゆっくりなでる。大きな泡をつぶします"
         case .no: "最後に「の」の字を書いて、泡を中央に集める"
         case .lift: "茶せんを、まっすぐ抜きます"
         case .turn, .done: "茶碗(スマホ)を回して、お出しします"
         }
     }
 
-    func start(style: ChawanStyle, motion: MotionService, onFinish: @escaping (Int) -> Void) {
+    @ObservationIgnored private var gyro = false
+    @ObservationIgnored private var shakes: [Date] = []
+    @ObservationIgnored private var shakeSide: Float = 1
+    @ObservationIgnored private var lastShake = 0.0
+    @ObservationIgnored private var shakeStart: Date?
+
+    func start(style: ChawanStyle, motion: MotionService, gyro: Bool, onFinish: @escaping (Int) -> Void) {
+        self.gyro = gyro
         guard scene == nil else { return }
         let tea = TeaScene(style: style)
         scene = tea
@@ -100,6 +111,7 @@ final class TemaeModel {
         self.onFinish = onFinish
         motion.start()
         motion.onTurn = { [weak self] d in self?.addTurn(d) }
+        if gyro { motion.setWhiskHandler { [weak self] date in self?.shake(at: date) } }
         // 起動引数 `-demoWhisk YES` で、指の代わりに自動で往復させる(画面確認用)
         if UserDefaults.standard.bool(forKey: "demoWhisk") {
             Task { @MainActor [weak self] in
@@ -122,6 +134,19 @@ final class TemaeModel {
         link?.invalidate()
         link = nil
         motion?.onTurn = nil
+        motion?.setWhiskHandler(nil)
+    }
+
+    /// 振って1回たてた。茶せんを前後の反対側へ動かす(M の字の往復)
+    private func shake(at date: Date) {
+        guard gyro, phase == .whisk else { return }
+        if shakeStart == nil { shakeStart = date }
+        shakes.append(date)
+        shakeSide = -shakeSide
+        lastShake = CACurrentMediaTime()
+        tipWorld = SIMD2(Float.random(in: -0.08...0.08), shakeSide * 0.38)
+        SoundBank.shared.chasen()
+        Haptics.selection()
     }
 
     // MARK: 指
@@ -174,6 +199,7 @@ final class TemaeModel {
         guard let scene else { return }
 
         // 茶筅は指を少し遅れて追う(重さ)。動く向きに傾ける(手首の返し)
+        if gyro, phase == .whisk, touch == nil, now - lastShake > 0.35 { tipWorld = nil }
         let target = tipWorld ?? chasenPos
         let prev = chasenPos
         chasenPos += (target - chasenPos) * min(1, dt * 22)
@@ -242,7 +268,9 @@ final class TemaeModel {
         phase = .done
         SoundBank.shared.kakon()
         Haptics.impact()
-        let score = ConcentrationJudge.score(tracker: tracker, noScore: noScore, seconds: whiskSeconds)
+        let score = gyro
+            ? Int(0.85 * Double(TemaeJudge.score(times: shakes, start: shakeStart ?? .now, seconds: whiskSeconds, coverage: nil)) + 15 * noScore)
+            : ConcentrationJudge.score(tracker: tracker, noScore: noScore, seconds: whiskSeconds)
         onFinish?(score)
     }
 }

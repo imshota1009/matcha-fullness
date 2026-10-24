@@ -191,8 +191,7 @@ final class FoamSurface {
                 Self.splat(&foam, at: tip, radius: 0.32, amount: gen)
                 // 速いほど大きい泡ができる(はじめは粗い)
                 coarseness = min(1, coarseness + gen * 0.08 * (froth < 0.6 ? 1 : 0.2))
-                if speed > 0.8, Float.random(in: 0...1, using: &rng) < 0.25 { spawn(near: tip, big: true) }
-                spawn(near: tip, big: false)
+                if speed > 0.8, coarseness > 0.35, Float.random(in: 0...1, using: &rng) < 0.2 { spawn(near: tip, big: true) }
             case .smooth:
                 // 表面をなでると大きな泡がつぶれ、きめが細かくなる
                 coarseness = max(0.05, coarseness - dt * 0.12 * (0.3 + speed))
@@ -356,15 +355,15 @@ final class FoamSurface {
     /// 細かい泡の点の位置(x, y は 0〜1、z はその点が出る泡の量のしきい値)
     private static let stipple: [SIMD3<Float>] = {
         var g = SystemRandomNumberGenerator()
-        return (0..<4500).map { _ in SIMD3(Float.random(in: 0...1, using: &g), Float.random(in: 0...1, using: &g), Float.random(in: 0.05...0.95, using: &g)) }
+        return (0..<12000).map { _ in SIMD3(Float.random(in: 0...1, using: &g), Float.random(in: 0...1, using: &g), Float.random(in: 0.05...0.95, using: &g)) }
     }()
 
     /// 水面の色(抹茶・泡・粉のダマ・泡粒)を絵にして貼る
     private func redrawTexture() {
-        let size = 512
+        let size = 768
         let t = 128
         // 泡の量を色に: 濃い抹茶 → 明るい黄緑の泡
-        let deep = SIMD3<Float>(0.30, 0.47, 0.18), light = SIMD3<Float>(0.66, 0.76, 0.38)
+        let deep = SIMD3<Float>(0.30, 0.47, 0.18), light = SIMD3<Float>(0.70, 0.78, 0.42)
         let powderColor = SIMD3<Float>(0.20, 0.33, 0.12)
         var px = [UInt8](repeating: 255, count: t * t * 4)
         let R = TeaScene.liquidRadius
@@ -387,26 +386,29 @@ final class FoamSurface {
         ctx.interpolationQuality = .high
         ctx.draw(small, in: CGRect(x: 0, y: 0, width: size, height: size))
         let scale = CGFloat(size) / CGFloat(2 * R)
-        // きめの細かい泡: 泡の多いところほど、細かい点が密に並ぶ。粗いうちは点が大きい
-        let dot = CGFloat(0.8 + 3.2 * coarseness)
-        ctx.setFillColor(UIColor(red: 0.86, green: 0.90, blue: 0.66, alpha: 0.55).cgColor)
-        for s in Self.stipple {
+        // きめの細かい泡(薄茶のクリーム状の泡): ごく小さな明暗の点を密に散らして、なめらかな質感にする。
+        // 粗いうちは点が少し大きく、整えるほど細かくなる。光る輪や縁取りは使わない(炭酸のように見えるため)
+        let dot = CGFloat(0.7 + 1.8 * coarseness)
+        let lightDot = UIColor(red: 0.82, green: 0.87, blue: 0.58, alpha: 0.45).cgColor
+        let darkDot = UIColor(red: 0.50, green: 0.62, blue: 0.27, alpha: 0.30).cgColor
+        for (k, s) in Self.stipple.enumerated() {
             let p = SIMD2((s.x * 2 - 1) * R, (s.y * 2 - 1) * R)
             guard sample(foam, p) > s.z else { continue }
             let c = CGPoint(x: CGFloat(p.x + R) * scale, y: CGFloat(p.y + R) * scale)
+            ctx.setFillColor(k % 3 == 0 ? darkDot : lightDot)
             ctx.fillEllipse(in: CGRect(x: c.x - dot / 2, y: c.y - dot / 2, width: dot, height: dot))
         }
-        // 泡粒: 縁が明るく、中が少し透ける丸(フラットな2色)
+        // 点てはじめの大きな泡: 地の色より少し明るい丸で、ふちは目立たせない。整えると消える
         for b in bubbles {
             let c = CGPoint(x: CGFloat(b.p.x + R) * scale, y: CGFloat(b.p.y + R) * scale)
             let r = CGFloat(b.r) * scale
             let rect = CGRect(x: c.x - r, y: c.y - r, width: r * 2, height: r * 2)
             let alpha = CGFloat(min(1, b.life * 2))
-            ctx.setFillColor(UIColor(red: 0.80, green: 0.86, blue: 0.58, alpha: 0.18 * alpha).cgColor)
+            ctx.setFillColor(UIColor(red: 0.74, green: 0.81, blue: 0.48, alpha: 0.55 * alpha).cgColor)
             ctx.fillEllipse(in: rect)
-            ctx.setStrokeColor(UIColor(red: 0.93, green: 0.95, blue: 0.80, alpha: 0.85 * alpha).cgColor)
-            ctx.setLineWidth(max(1, r * 0.25))
-            ctx.strokeEllipse(in: rect.insetBy(dx: r * 0.1, dy: r * 0.1))
+            ctx.setStrokeColor(UIColor(red: 0.58, green: 0.69, blue: 0.33, alpha: 0.5 * alpha).cgColor)
+            ctx.setLineWidth(1)
+            ctx.strokeEllipse(in: rect)
         }
         material.diffuse.contents = ctx.makeImage()
     }
