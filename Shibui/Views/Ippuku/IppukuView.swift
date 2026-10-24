@@ -58,6 +58,8 @@ struct TeaFlowView: View {
                                 messageID: Messages.pick(at: startedAt, usedToday: usedToday))
         context.insert(new)
         try? context.save()
+        // ヘルスケアの「マインドフルネス」に、点てていた時間を書き込む(設定でオンのとき)
+        HealthRecorder.record(from: startedAt, to: .now)
         Haptics.success()
         session = new
     }

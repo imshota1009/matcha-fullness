@@ -37,6 +37,8 @@ targets:
       path: App/Shibui.entitlements
       properties:
         com.apple.security.application-groups: [group.com.imshota1009.spajam2026.shibui]
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
     info:
       path: App/Info.plist
       properties:
@@ -49,6 +51,8 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         ITSAppUsesNonExemptEncryption: false
         UIBackgroundModes: [audio]
+        NSHealthUpdateUsageDescription: 抹茶を点てた時間を、ヘルスケアの「マインドフルネス」に記録します。
+        NSHealthShareUsageDescription: ヘルスケアのデータは読み取りません。マインドフルネスの記録を書き込むときだけ使います。
         CFBundleURLTypes:
           - CFBundleURLSchemes: [shibui]
     settings:

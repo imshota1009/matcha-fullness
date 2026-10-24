@@ -18,6 +18,7 @@ struct SettingsView: View {
     @AppStorage(Haptics.storageKey) private var hapticsOn = true
     @State private var confirmsDeleteAll = false
     @AppStorage(SoundBank.ambientOnKey) private var ambientOn = false
+    @AppStorage(HealthRecorder.enabledKey) private var healthOn = true
 
     var body: some View {
         NavigationStack {
@@ -50,6 +51,12 @@ struct SettingsView: View {
                 Section {
                     Toggle("振動", isOn: $hapticsOn)
                         .tint(Theme.Palette.matcha)
+                }
+                Section {
+                    Toggle("ヘルスケアに記録", isOn: $healthOn)
+                        .tint(Theme.Palette.matcha)
+                } footer: {
+                    Text("点てた時間を、ヘルスケアの「マインドフルネス」に記録します。ヘルスケアのデータは読み取りません")
                 }
                 Section {
                     Toggle("点てるときの自然の音", isOn: $ambientOn)
