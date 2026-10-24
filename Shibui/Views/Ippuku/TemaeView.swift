@@ -82,10 +82,10 @@ final class TemaeModel {
 
     var guideText: String {
         switch phase {
-        case .whisk: whiskTime == 0 ? "指を茶筅に。手首を使って、すばやく前後に" : "シャカシャカ。まっすぐ、一定の速さで"
-        case .smooth: "茶筅を浮かせて、表面をゆっくりなでる。大きな泡をつぶします"
+        case .whisk: whiskTime == 0 ? "指を茶せんに。手首を使って、すばやく前後に" : "シャカシャカ。まっすぐ、一定の速さで"
+        case .smooth: "茶せんを浮かせて、表面をゆっくりなでる。大きな泡をつぶします"
         case .no: "最後に「の」の字を書いて、泡を中央に集める"
-        case .lift: "茶筅を、まっすぐ抜きます"
+        case .lift: "茶せんを、まっすぐ抜きます"
         case .turn, .done: "茶碗(スマホ)を回して、お出しします"
         }
     }
@@ -264,7 +264,7 @@ struct TeaSceneView: UIViewRepresentable {
         let rot = UIRotationGestureRecognizer(target: v, action: #selector(TouchSCNView.rotated(_:)))
         v.addGestureRecognizer(rot)
         v.isAccessibilityElement = true
-        v.accessibilityLabel = "茶碗。指を茶筅にして点てます"
+        v.accessibilityLabel = "茶碗。指を茶せんにしてたてます"
         return v
     }
 

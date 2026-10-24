@@ -110,7 +110,7 @@ struct ShishiOdoshiView: View {
         .animation(.spring(duration: 0.35, bounce: 0.4), value: tipped)
         .animation(.linear(duration: 0.2), value: water)
         .accessibilityElement()
-        .accessibilityLabel(tipped ? "鹿威しが鳴りました" : "鹿威しに水が溜まっています")
+        .accessibilityLabel(tipped ? "ししおどしが鳴りました" : "ししおどしに水がたまっています")
     }
 }
 
@@ -148,7 +148,7 @@ struct KakejikuView: View {
             Capsule().fill(Theme.Palette.kogecha).frame(width: height * 0.42, height: height * 0.04)
         }
         .accessibilityElement()
-        .accessibilityLabel("掛け軸: \(text)")
+        .accessibilityLabel("かけじく: \(text)")
     }
 }
 

@@ -17,7 +17,7 @@ struct HistoryView: View {
                             .font(.system(.largeTitle, design: .serif).weight(.bold))
                             .foregroundStyle(Theme.Palette.text)
                         Spacer()
-                        Text("\(record.totalPoints) 茶点")
+                        Text("\(record.totalPoints) ポイント")
                             .font(.headline.monospacedDigit())
                             .foregroundStyle(Theme.Palette.matcha)
                     }
@@ -25,26 +25,26 @@ struct HistoryView: View {
                 }
                 .padding(.top, Theme.Spacing.l)
 
-                SectionHeader("点てた日")
+                SectionHeader("たてた日")
                 DayDots(days: record.servedDays)
                     .padding(.top, Theme.Spacing.s)
-                Text("休んだ日があっても、茶壺も段位も減りません。")
+                Text("休んだ日があっても、抹茶の入れものもランクも減りません。")
                     .font(.dsCaption)
                     .foregroundStyle(Theme.Palette.secondaryText)
                     .padding(.top, Theme.Spacing.s)
 
                 SectionHeader("まとめ")
-                StatRow(label: "一服した回数", value: "\(record.servings.count)杯")
-                StatRow(label: "点てた日", value: "\(record.servedDays.count)日")
+                StatRow(label: "抹茶をたてた回数", value: "\(record.servings.count)杯")
+                StatRow(label: "たてた日", value: "\(record.servedDays.count)日")
                 StatRow(label: "今週", value: "\(record.daysThisWeek())日")
-                StatRow(label: "石臼を回した時間", value: EntranceView.hours(record.groundSeconds))
+                StatRow(label: "石うすを回した時間", value: EntranceView.hours(record.groundSeconds))
                 StatRow(label: "集中度の自己ベスト", value: "\(record.bestScore)")
 
-                SectionHeader("これまでの一服")
+                SectionHeader("これまでの記録")
                 ForEach(record.servings.reversed()) { serving in
                     HStack(spacing: Theme.Spacing.m) {
                         VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                            Text(serving.ichiji.isEmpty ? "(一事なし)" : serving.ichiji)
+                            Text(serving.ichiji.isEmpty ? "(やることなし)" : serving.ichiji)
                                 .font(.dsBody)
                                 .foregroundStyle(Theme.Palette.text)
                             Text("\(serving.date.formatted(.dateTime.month().day().hour().minute())) ・ \(serving.praise)")
@@ -103,7 +103,7 @@ private struct DayDots: View {
             }
         }
         .accessibilityElement()
-        .accessibilityLabel("直近5週で \(days.count) 日、一服しました")
+        .accessibilityLabel("この5週間で \(days.count) 日、抹茶をたてました")
     }
 }
 
@@ -134,7 +134,7 @@ struct SettingsView: View {
         @Bindable var store = store
         NavigationStack {
             DSScreen("設定") {
-                SectionHeader("点て方")
+                SectionHeader("たて方")
                 ModePicker(selection: $mode)
                     .padding(.top, Theme.Spacing.s)
 

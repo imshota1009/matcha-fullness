@@ -80,9 +80,9 @@ struct IppukuView: View {
         switch step {
         case .whisk: mode.title
         case .settle: "整える"
-        case .result: "お点前"
+        case .result: "たて方"
         case .breath: "ひと息"
-        case .ichiji, .kakejiku: "今日の一事"
+        case .ichiji, .kakejiku: "今日やること"
         }
     }
 
@@ -96,7 +96,7 @@ struct IppukuView: View {
             let smooth = step == .settle ? min(1, settleElapsed / settleSeconds) : 0
             VStack(spacing: Theme.Spacing.l) {
                 Spacer(minLength: 0)
-                Text(store.record.matchaCups > 0 ? "自分で挽いた抹茶で、点てましょう" : "おもてなしの一杯を、点てましょう")
+                Text(store.record.matchaCups > 0 ? "自分でひいた抹茶で、たてましょう" : "おもてなしの一杯を、たてましょう")
                     .font(.dsCaption)
                     .foregroundStyle(Theme.Palette.secondaryText)
 
@@ -110,7 +110,7 @@ struct IppukuView: View {
                     }
                     .buttonStyle(.plain)
                     .disabled(step == .settle)
-                    .accessibilityLabel("茶碗。押しても点てられます")
+                    .accessibilityLabel("茶碗。押してもたてられます")
                 }
 
                 Text(guide)
@@ -145,7 +145,7 @@ struct IppukuView: View {
     private var hint: String {
         switch mode {
         case .finger: "スマホは机に置いたまま。茶碗の端から端まで動かすと、泡がそろいます"
-        case .gyro: motion.isAvailable ? "強く振らなくても点てられます。ストラップの使用をおすすめします" : "茶碗を押しても点てられます"
+        case .gyro: motion.isAvailable ? "強く振らなくてもたてられます。ストラップの使用をおすすめします" : "茶碗を押してもたてられます"
         }
     }
 
@@ -191,7 +191,7 @@ struct IppukuView: View {
             Text("このあと、ひとつだけ。")
                 .font(.dsTitle)
                 .foregroundStyle(Theme.Palette.text)
-            Text("次にやることを一言で書くと、掛け軸になります。")
+            Text("次にやることを一言で書くと、かけじくになります。")
                 .font(.dsBody)
                 .foregroundStyle(Theme.Palette.secondaryText)
             TextField("例: 英単語を三十", text: $ichiji)
@@ -203,7 +203,7 @@ struct IppukuView: View {
                 .padding(.horizontal, Theme.Spacing.m)
                 .background(Theme.Palette.surface, in: .rect(cornerRadius: Theme.Radius.m))
             Spacer()
-            PrimaryButton("掛け軸にする") { hang() }
+            PrimaryButton("かけじくにする") { hang() }
                 .disabled(ichiji.trimmingCharacters(in: .whitespaces).isEmpty)
                 .opacity(ichiji.trimmingCharacters(in: .whitespaces).isEmpty ? 0.4 : 1)
                 .padding(.bottom, Theme.Spacing.s)
@@ -224,11 +224,11 @@ struct IppukuView: View {
         VStack(spacing: Theme.Spacing.l) {
             Spacer()
             KakejikuView(text: ichiji.trimmingCharacters(in: .whitespaces), height: 340, unrolls: true)
-            Text("スマホを伏せると、石臼が回りはじめます")
+            Text("スマホをうら返すと、石うすが回りはじめます")
                 .font(.dsBody)
                 .foregroundStyle(Theme.Palette.text)
             Spacer()
-            PrimaryButton("石臼へ", systemImage: "circle.dotted") { go(.ishiusu) }
+            PrimaryButton("石うすへ", systemImage: "circle.dotted") { go(.ishiusu) }
                 .padding(.horizontal, Theme.Spacing.screen)
                 .padding(.bottom, Theme.Spacing.s)
         }
@@ -283,7 +283,7 @@ struct FingerWhiskPad: View {
         }
         .frame(height: 320)
         .padding(.horizontal, Theme.Spacing.l)
-        .accessibilityLabel("茶碗。指を前後に動かして点てます")
+        .accessibilityLabel("茶碗。指を前後に動かしてたてます")
     }
 
     private func track(_ p: CGPoint, size: CGFloat) {
@@ -358,7 +358,7 @@ struct ResultView: View {
                 .multilineTextAlignment(.center)
 
             HStack(spacing: Theme.Spacing.s) {
-                Label("+\(result.points) 茶点", systemImage: "leaf")
+                Label("+\(result.points) ポイント", systemImage: "leaf")
                 if result.isBest { Label("自己ベスト", systemImage: "crown") }
             }
             .font(.dsCaption.weight(.semibold))
@@ -395,11 +395,11 @@ struct RankProgress: View {
         let next = Rank.next(for: total)
         VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
             HStack {
-                Text(promoted ? "昇段 \(rank.name)" : "段位 \(rank.name)")
+                Text(promoted ? "ランクアップ \(rank.name)" : "ランク \(rank.name)")
                     .font(.dsCaption.weight(.semibold))
                     .foregroundStyle(Theme.Palette.text)
                 Spacer()
-                Text(next.map { "次の\($0.name)まで \($0.threshold - total)" } ?? "皆伝です")
+                Text(next.map { "次の\($0.name)まで \($0.threshold - total)" } ?? "最高ランクです")
                     .font(.dsCaption.monospacedDigit())
                     .foregroundStyle(Theme.Palette.secondaryText)
             }

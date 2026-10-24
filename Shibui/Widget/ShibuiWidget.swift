@@ -54,7 +54,7 @@ struct ShibuiWidgetView: View {
                     .font(.caption2)
                     .foregroundStyle(Theme.Palette.secondaryText)
                 Spacer(minLength: 0)
-                Text(entry.matchaCups > 0 ? "挽いた抹茶 \(entry.matchaCups)杯" : "一服どうぞ")
+                Text(entry.matchaCups > 0 ? "ひいた抹茶 \(entry.matchaCups)杯" : "抹茶をどうぞ")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Theme.Palette.matcha)
             }
@@ -96,7 +96,7 @@ struct ShibuiWidget: Widget {
             ShibuiWidgetView(entry: entry)
         }
         .configurationDisplayName("おてまえ")
-        .description("今日取り戻した抹茶の杯数と、今日の一事を表示します。")
+        .description("今日取り戻した抹茶の杯数と、今日やることを表示します。")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

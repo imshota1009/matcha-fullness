@@ -87,14 +87,14 @@ struct EntranceView: View {
                 }
                 .buttonStyle(.plain)
 
-                SectionHeader("茶壺")
+                SectionHeader("抹茶の入れもの")
                 HStack(spacing: Theme.Spacing.m) {
                     ChawanView(foam: 0, size: 44)
                     VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                        Text(store.record.matchaCups > 0 ? "自分で挽いた抹茶が \(store.record.matchaCups)杯" : "次の一服は、おもてなしの一杯")
+                        Text(store.record.matchaCups > 0 ? "自分でひいた抹茶が \(store.record.matchaCups)杯" : "次の一杯は、おもてなしの一杯")
                             .font(.dsBody)
                             .foregroundStyle(Theme.Palette.text)
-                        Text("これまで石臼を回した時間 \(Self.hours(store.record.groundSeconds))")
+                        Text("これまで石うすを回した時間 \(Self.hours(store.record.groundSeconds))")
                             .font(.dsCaption)
                             .foregroundStyle(Theme.Palette.secondaryText)
                     }
@@ -104,7 +104,7 @@ struct EntranceView: View {
                 .accessibilityElement(children: .combine)
 
                 if let ichiji = store.record.latestIchiji {
-                    SectionHeader("最近の掛け軸")
+                    SectionHeader("最近のかけじく")
                     HStack {
                         Spacer()
                         KakejikuView(text: ichiji, height: 220)
@@ -114,7 +114,7 @@ struct EntranceView: View {
                 }
             } bottom: {
                 VStack(spacing: Theme.Spacing.s) {
-                    PrimaryButton("一服する", systemImage: "cup.and.saucer") { go(.ippuku) }
+                    PrimaryButton("抹茶をたてる", systemImage: "cup.and.saucer") { go(.ippuku) }
                     Button("SNSを見ているところから試す") { go(.sns) }
                         .font(.dsCaption.weight(.medium))
                         .foregroundStyle(Theme.Palette.secondaryText)

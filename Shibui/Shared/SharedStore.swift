@@ -7,11 +7,11 @@ enum WhiskMode: String, Codable, CaseIterable, Identifiable {
     /// スマホを机に置き、画面の茶碗の上で指を動かす
     case finger
     var id: Self { self }
-    var title: String { self == .gyro ? "振って点てる" : "指で点てる" }
+    var title: String { self == .gyro ? "振ってたてる" : "指でたてる" }
     var detail: String {
         self == .gyro
-            ? "スマホを手に持ち、茶筅のように小さく振ったり、手首を回したりして点てます。"
-            : "スマホを机に置いて画面を上に。上から見た茶碗の上で、指を前後に動かして点てます。"
+            ? "スマホを手に持ち、茶せんのように小さく振ったり、手首を回したりしてたてます。"
+            : "スマホを机に置いて画面を上に。上から見た茶碗の上で、指を前後に動かしてたてます。"
     }
     var symbol: String { self == .gyro ? "iphone.radiowaves.left.and.right" : "hand.draw" }
 
@@ -24,10 +24,10 @@ enum ChawanStyle: String, CaseIterable, Identifiable {
     var id: Self { self }
     var name: String {
         switch self {
-        case .shino: "志野"
-        case .kuroraku: "黒楽"
-        case .oribe: "織部"
-        case .nezumi: "鼠志野"
+        case .shino: "白"
+        case .kuroraku: "黒"
+        case .oribe: "緑"
+        case .nezumi: "灰色"
         }
     }
     var imageName: String { "Chawan_\(rawValue)" }
@@ -73,11 +73,11 @@ struct Rank {
     let threshold: Int
 
     static let all = [
-        Rank(name: "入門", threshold: 0),
-        Rank(name: "初伝", threshold: 300),
-        Rank(name: "中伝", threshold: 1_000),
-        Rank(name: "奥伝", threshold: 2_500),
-        Rank(name: "皆伝", threshold: 5_000),
+        Rank(name: "見習い", threshold: 0),
+        Rank(name: "初級", threshold: 300),
+        Rank(name: "中級", threshold: 1_000),
+        Rank(name: "上級", threshold: 2_500),
+        Rank(name: "名人", threshold: 5_000),
     ]
 
     static func current(for points: Int) -> Rank { all.last { points >= $0.threshold } ?? all[0] }

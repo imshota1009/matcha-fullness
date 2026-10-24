@@ -124,7 +124,7 @@ struct OnboardingView: View {
     private var modePage: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.m) {
             Spacer()
-            Text("点て方と茶碗を選んでください")
+            Text("たて方と茶碗を選んでください")
                 .font(.dsTitle)
                 .foregroundStyle(Theme.Palette.text)
             Text("あとから設定で変えられます。")
@@ -191,12 +191,12 @@ private struct PageDots: View {
 enum OnboardingContent {
     static let appName = "おてまえ"
     static let stampText = "渋"
-    static let tagline = "渋々でいい。\n一服したら、渋い時間が始まる。"
-    static let valuesTitle = "一服の流れ"
+    static let tagline = "渋々でいい。\n一杯たてたら、渋い時間が始まる。"
+    static let valuesTitle = "使い方の流れ"
     static let values: [(symbol: String, title: String, detail: String)] = [
-        ("drop", "鹿威しで、区切る", "SNSを見すぎたら「カコン」。茶室へご案内します。"),
-        ("hand.wave", "振って、一服", "スマホを振って抹茶を点て、ひと息ついて、次の一事を決める。"),
-        ("circle.dotted", "伏せて、石臼を回す", "伏せている間だけ抹茶が挽ける。挽いた抹茶で次の一服を。"),
+        ("drop", "ししおどしで、区切る", "SNSを見すぎたら「カコン」。茶室へご案内します。"),
+        ("hand.wave", "振って、抹茶をたてる", "スマホを振って抹茶をたて、ひと息ついて、次にやることを決める。"),
+        ("circle.dotted", "うら返して、石うすを回す", "うら返している間だけ抹茶がひける。ひいた抹茶で次の一杯を。"),
     ]
     static let readyTitle = "どうぞ、お入りください"
     static let readyMessage = "まずは、おもてなしの一杯から。"
