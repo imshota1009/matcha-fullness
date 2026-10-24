@@ -11,7 +11,8 @@ struct OnboardingView: View {
     @State private var page = UserDefaults.standard.integer(forKey: "onboardingPage")
     @State private var stamped = false
 
-    private let pageCount = 3
+    private let pageCount = 4
+    @AppStorage(WhiskMode.storageKey) private var mode = WhiskMode.gyro
 
     var body: some View {
         VStack(spacing: 0) {
@@ -30,7 +31,8 @@ struct OnboardingView: View {
             TabView(selection: $page) {
                 welcome.tag(0)
                 values.tag(1)
-                ready.tag(2)
+                modePage.tag(2)
+                ready.tag(3)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
 
@@ -117,7 +119,24 @@ struct OnboardingView: View {
         .padding(.horizontal, Theme.Spacing.l)
     }
 
-    /// 3ページ目: 判子が押されて「準備完了」
+    /// 3ページ目: 点て方を選ぶ(あとで設定から変えられる)
+    private var modePage: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.m) {
+            Spacer()
+            Text("点て方を選んでください")
+                .font(.dsTitle)
+                .foregroundStyle(Theme.Palette.text)
+            Text("あとから設定で変えられます。")
+                .font(.dsCaption)
+                .foregroundStyle(Theme.Palette.secondaryText)
+            ModePicker(selection: $mode)
+            Spacer()
+            Spacer()
+        }
+        .padding(.horizontal, Theme.Spacing.l)
+    }
+
+    /// 4ページ目: 判子が押されて「準備完了」
     private var ready: some View {
         VStack(spacing: Theme.Spacing.l) {
             Spacer()

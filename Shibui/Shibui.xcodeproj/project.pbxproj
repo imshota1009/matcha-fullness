@@ -27,6 +27,7 @@
 		E6B84020FBF579F2BDA39529 /* TeaArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19794A5048322D5107B86A91 /* TeaArt.swift */; };
 		E9800038EE98926552AB8CA3 /* ShibuiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */; };
 		F1F6A1C22771A6A4C2C5C10B /* MotionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C4AD58D13F998189C1CB78 /* MotionService.swift */; };
+		F74E753F6BEA48EEF13E025F /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DFB255B5F9AFF723AEEF1E /* HistoryView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +66,7 @@
 		7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShibuiApp.swift; sourceTree = "<group>"; };
 		81FB531B07F92884F38E6E2E /* ShibuiWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShibuiWidget.entitlements; sourceTree = "<group>"; };
 		8665F7910DB623C1AB4AF262 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		99DFB255B5F9AFF723AEEF1E /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		9A4172681D23BFDB7E396D23 /* EntranceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntranceView.swift; sourceTree = "<group>"; };
 		9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundBank.swift; sourceTree = "<group>"; };
 		A50B316535C1E8D8BB68D313 /* ShibuiWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ShibuiWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -206,6 +208,7 @@
 			isa = PBXGroup;
 			children = (
 				9A4172681D23BFDB7E396D23 /* EntranceView.swift */,
+				99DFB255B5F9AFF723AEEF1E /* HistoryView.swift */,
 			);
 			path = Entrance;
 			sourceTree = "<group>";
@@ -361,6 +364,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B746FAC4F7581B11CFC27263 /* EntranceView.swift in Sources */,
+				F74E753F6BEA48EEF13E025F /* HistoryView.swift in Sources */,
 				2F62FAB594940440F866A95F /* IppukuView.swift in Sources */,
 				C0BE525245676357992E290C /* IshiusuScreen.swift in Sources */,
 				9701D091EB35AC5A60816B2C /* MockData.swift in Sources */,
@@ -430,7 +434,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -525,7 +529,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

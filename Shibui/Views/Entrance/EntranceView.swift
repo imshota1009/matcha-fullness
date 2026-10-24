@@ -51,8 +51,9 @@ struct RootView: View {
 /// 茶室の入口(ホーム)。今日取り戻した杯数・茶壺・最新の掛け軸。
 struct EntranceView: View {
     @Environment(TeaStore.self) private var store
-    @AppStorage("didOnboard") private var didOnboard = true
     let go: (Stage) -> Void
+    @State private var showsHistory = false
+    @State private var showsSettings = false
 
     var body: some View {
         NavigationStack {
@@ -78,6 +79,13 @@ struct EntranceView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.top, Theme.Spacing.xl)
                 .accessibilityElement(children: .combine)
+
+                Button { showsHistory = true } label: {
+                    RankProgress(total: store.record.totalPoints)
+                        .padding(.horizontal, Theme.Spacing.l)
+                        .padding(.top, Theme.Spacing.l)
+                }
+                .buttonStyle(.plain)
 
                 SectionHeader("茶壺")
                 HStack(spacing: Theme.Spacing.m) {
@@ -114,20 +122,31 @@ struct EntranceView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        @Bindable var store = store
-                        Toggle(isOn: $store.isFastMode) {
-                            Label("早送り(集中25分を10秒に)", systemImage: "forward")
-                        }
-                        Button("はじめの説明をもう一度見る", systemImage: "book") { didOnboard = false }
-                    } label: {
-                        Image(systemName: "ellipsis")
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { showsHistory = true } label: {
+                        Image(systemName: "chart.bar")
                             .frame(width: Theme.Size.minTouch, height: Theme.Size.minTouch)
                     }
-                    .accessibilityLabel("その他")
+                    .accessibilityLabel("茶の記録")
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showsSettings = true } label: {
+                        Image(systemName: "gearshape")
+                            .frame(width: Theme.Size.minTouch, height: Theme.Size.minTouch)
+                    }
+                    .accessibilityLabel("設定")
                 }
             }
+            // 起動引数 `-sheet history|settings` で開いた状態にできる(画面確認用)
+            .task {
+                switch UserDefaults.standard.string(forKey: "sheet") {
+                case "history": showsHistory = true
+                case "settings": showsSettings = true
+                default: break
+                }
+            }
+            .sheet(isPresented: $showsHistory) { HistoryView() }
+            .sheet(isPresented: $showsSettings) { SettingsView() }
         }
     }
 

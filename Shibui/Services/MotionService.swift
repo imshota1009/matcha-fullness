@@ -24,9 +24,12 @@ final class MotionService {
             guard let self, let motion else { return }
             self.isFaceDown = motion.gravity.z > 0.8
             let a = motion.userAcceleration
+            let r = motion.rotationRate
             let magnitude = (a.x * a.x + a.y * a.y + a.z * a.z).squareRoot()
-            // しきい値を越えた瞬間を1回の「振り」として数える(続けて数えないよう 0.12 秒あける)
-            let above = magnitude > 0.35
+            let spin = (r.x * r.x + r.y * r.y + r.z * r.z).squareRoot()
+            // 振る(加速度)か、回す(ジャイロ)のどちらかがしきい値を越えた瞬間を1回として数える
+            // 続けて数えないよう 0.12 秒あける
+            let above = magnitude > 0.35 || spin > 3.0
             let now = Date()
             if above, !self.wasAbove, now.timeIntervalSince(self.lastWhisk) > 0.12 {
                 self.lastWhisk = now
@@ -44,7 +47,7 @@ final class MotionService {
     }
 }
 
-/// 振る間隔のそろい具合から、褒め言葉だけで点前を評価する(F3)。数字で責めない。
+/// 点前の採点(F3)。点数は加点式で出し、言葉は褒め言葉だけ。数字で責めない。
 enum TemaeJudge {
     /// 0(ばらばら)〜1(よくそろっている)
     static func steadiness(_ times: [Date]) -> Double {
@@ -56,10 +59,25 @@ enum TemaeJudge {
         return max(0, min(1, 1 - cv))
     }
 
-    static func praise(for steadiness: Double) -> (title: String, note: String) {
-        switch steadiness {
-        case 0.8...: ("見事なお点前で", "振るリズムが、ぴたりとそろっていました")
-        case 0.6...: ("結構なお点前で", "落ち着いたリズムで、きめ細かく点ちました")
+    /// 途切れずに点て続けたか(1秒ごとに1回以上点てた割合)
+    static func continuity(_ times: [Date], from start: Date, seconds: Double) -> Double {
+        let slots = Set(times.map { Int($0.timeIntervalSince(start)) }.filter { $0 >= 0 && Double($0) < seconds })
+        return Double(slots.count) / seconds
+    }
+
+    /// 点数(0〜100)。リズム40・回数30・続ける力20・茶碗全体に行き渡ったか10(指のときだけ。振るときは満点)
+    static func score(times: [Date], start: Date, seconds: Double, coverage: Double?) -> Int {
+        let rhythm = steadiness(times)
+        let amount = min(1, Double(times.count) / 45)
+        let keep = continuity(times, from: start, seconds: seconds)
+        let spread = coverage ?? 1
+        return Int((40 * rhythm + 30 * amount + 20 * keep + 10 * spread).rounded())
+    }
+
+    static func praise(for score: Int) -> (title: String, note: String) {
+        switch score {
+        case 90...: ("見事なお点前で", "振るリズムが、ぴたりとそろっていました")
+        case 70...: ("結構なお点前で", "落ち着いたリズムで、きめ細かく点ちました")
         default: ("心のこもったお点前で", "あなたの一服です。ゆっくり味わいましょう")
         }
     }
