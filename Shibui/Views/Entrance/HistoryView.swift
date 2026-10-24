@@ -173,6 +173,10 @@ struct SettingsView: View {
                         .foregroundStyle(Theme.Palette.text)
                         .frame(maxWidth: .infinity, minHeight: Theme.Size.minTouch, alignment: .leading)
                 }
+                Text("鳥のさえずり: \"Birdsong Bourne Woods 2020-04-27 0722\" by Robert EA Harvey (Wikimedia Commons, CC BY-SA 4.0)")
+                    .font(.dsCaption)
+                    .foregroundStyle(Theme.Palette.secondaryText)
+                    .padding(.top, Theme.Spacing.s)
             }
             .toolbar { ToolbarItem(placement: .topBarTrailing) { CloseButton() } }
         }

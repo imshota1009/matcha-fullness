@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B59B282650E5868981C81ED /* CREDITS.txt in Resources */ = {isa = PBXBuildFile; fileRef = 631A45B922E68836FEE6CB8A /* CREDITS.txt */; };
 		0DD227DFBD83ED515FD39875 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4E0134F33017E59CDC489E /* OnboardingView.swift */; };
 		1B42F778C3C6ED056941B8C7 /* TeaStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47DAED829E39281D4145F9D /* TeaStore.swift */; };
 		1BD043BFB46FB85A6F8E7CF1 /* SoundBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */; };
@@ -25,6 +26,7 @@
 		8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */ = {isa = PBXBuildFile; fileRef = 68D816B2DD6715A530FF2740 /* chawan.obj */; };
 		8E9279F55715F2BF3A93FE41 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = C543329568C634D6D1696078 /* DesignSystem */; };
 		9701D091EB35AC5A60816B2C /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B22F2D08EEF648DEE68F496F /* MockData.swift */; };
+		9B2558AA5DB67CA65C0CBA86 /* birds.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 8843D1711B2BFB5AB74F45E6 /* birds.m4a */; };
 		9F3852126C490F704DF960E9 /* chasen_tines_outer.obj in Resources */ = {isa = PBXBuildFile; fileRef = F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */; };
 		B746FAC4F7581B11CFC27263 /* EntranceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4172681D23BFDB7E396D23 /* EntranceView.swift */; };
 		C0BE525245676357992E290C /* IshiusuScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1610BEA1F0D1A4BF6B9D07F3 /* IshiusuScreen.swift */; };
@@ -75,11 +77,13 @@
 		32F66273A5E2AD701ADE7100 /* YujiSyuku-OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "YujiSyuku-OFL.txt"; sourceTree = "<group>"; };
 		41F6E5D876C58859D10DFBDC /* Shibui.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shibui.entitlements; sourceTree = "<group>"; };
 		446300BCCCC1914F083565E3 /* YujiSyuku.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = YujiSyuku.ttf; sourceTree = "<group>"; };
+		631A45B922E68836FEE6CB8A /* CREDITS.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CREDITS.txt; sourceTree = "<group>"; };
 		64B1D0CA450A1A864D89FA0E /* TeaScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaScene.swift; sourceTree = "<group>"; };
 		68D816B2DD6715A530FF2740 /* chawan.obj */ = {isa = PBXFileReference; path = chawan.obj; sourceTree = "<group>"; };
 		7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShibuiApp.swift; sourceTree = "<group>"; };
 		81FB531B07F92884F38E6E2E /* ShibuiWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShibuiWidget.entitlements; sourceTree = "<group>"; };
 		8665F7910DB623C1AB4AF262 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		8843D1711B2BFB5AB74F45E6 /* birds.m4a */ = {isa = PBXFileReference; path = birds.m4a; sourceTree = "<group>"; };
 		99DFB255B5F9AFF723AEEF1E /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		9A4172681D23BFDB7E396D23 /* EntranceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntranceView.swift; sourceTree = "<group>"; };
 		9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundBank.swift; sourceTree = "<group>"; };
@@ -149,6 +153,15 @@
 			path = Parts;
 			sourceTree = "<group>";
 		};
+		1682FF52BC135E5084AD16A7 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				8843D1711B2BFB5AB74F45E6 /* birds.m4a */,
+				631A45B922E68836FEE6CB8A /* CREDITS.txt */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
 		1C22C54A174E9F8F2A9BC8AF /* Mock */ = {
 			isa = PBXGroup;
 			children = (
@@ -190,6 +203,7 @@
 				7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */,
 				F7A1E7234E4762C58D5D5818 /* Fonts */,
 				01E7984660FBCD9C4AB2A8A6 /* Models3D */,
+				1682FF52BC135E5084AD16A7 /* Sounds */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -396,8 +410,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FD27A1A38EB5774A88FFB06 /* Assets.xcassets in Resources */,
+				0B59B282650E5868981C81ED /* CREDITS.txt in Resources */,
 				57218950A4259B537217577C /* YujiSyuku-OFL.txt in Resources */,
 				C60D0AAA04C8E51EA3E1C59E /* YujiSyuku.ttf in Resources */,
+				9B2558AA5DB67CA65C0CBA86 /* birds.m4a in Resources */,
 				4E8BAF01B55371002535256B /* chasen_handle.obj in Resources */,
 				6EE43B272095A54ED26EFAA1 /* chasen_thread.obj in Resources */,
 				27342E2854EC59C08CD6F18F /* chasen_tines_inner.obj in Resources */,
@@ -486,7 +502,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -581,7 +597,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

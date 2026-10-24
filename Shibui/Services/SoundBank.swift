@@ -5,6 +5,7 @@ import AVFoundation
 /// - 茶筅: 振るたびに短い「シャッ」
 /// - 松風: 釜の湯が沸く「ゴー」(呼吸に合わせて強弱をつける)
 /// - 水琴窟: 挽き上がりの「キーン」
+/// - 鳥のさえずり(録音、CC BY-SA 4.0。App/Sounds/CREDITS.txt): 点前と集中タイムの間に流す。出入りはフェードで
 @MainActor
 final class SoundBank {
     static let shared = SoundBank()
@@ -13,6 +14,11 @@ final class SoundBank {
     private let oneShots = (0..<4).map { _ in AVAudioPlayerNode() }
     private var nextShot = 0
     private let matsukazeNode = AVAudioPlayerNode()
+    /// 鳥のさえずり(自然の音)。点前と集中タイムの間、うしろで静かに流す
+    private let ambientNode = AVAudioPlayerNode()
+    private var ambientBuffer: AVAudioPCMBuffer?
+    private var fades: [ObjectIdentifier: Task<Void, Never>] = [:]
+    private static let ambientVolume: Float = 0.45
     private let format = AVAudioFormat(standardFormatWithSampleRate: 44_100, channels: 1)!
 
     private lazy var kakonBuffer = makeKakon()
@@ -27,6 +33,10 @@ final class SoundBank {
             engine.attach(node)
             engine.connect(node, to: engine.mainMixerNode, format: format)
         }
+        ambientBuffer = Self.loadLoop("birds")
+        engine.attach(ambientNode)
+        engine.connect(ambientNode, to: engine.mainMixerNode, format: ambientBuffer?.format ?? format)
+        ambientNode.volume = 0
         matsukazeNode.volume = 0
         try? engine.start()
     }
@@ -41,12 +51,71 @@ final class SoundBank {
         matsukazeNode.play()
     }
 
+    /// 鳥のさえずりを、ゆっくり大きくして流しはじめる(フェードイン)
+    func startAmbient(fade seconds: Double = 2.5) {
+        guard let ambientBuffer else { return }
+        if !engine.isRunning { try? engine.start() }
+        if !ambientNode.isPlaying {
+            ambientNode.volume = 0
+            ambientNode.scheduleBuffer(ambientBuffer, at: nil, options: .loops)
+            ambientNode.play()
+        }
+        fade(ambientNode, to: Self.ambientVolume, seconds: seconds)
+    }
+
+    /// 鳥のさえずりを、ゆっくり小さくして止める(フェードアウト)
+    func stopAmbient(fade seconds: Double = 2.0) {
+        fade(ambientNode, to: 0, seconds: seconds) { [weak self] in self?.ambientNode.stop() }
+    }
+
+    /// 音量をなめらかに変える。途中で別のフェードが来たら、そちらに引き継ぐ
+    private func fade(_ node: AVAudioPlayerNode, to target: Float, seconds: Double, then done: (() -> Void)? = nil) {
+        let key = ObjectIdentifier(node)
+        fades[key]?.cancel()
+        let start = node.volume
+        fades[key] = Task { @MainActor in
+            let steps = max(1, Int(seconds * 30))
+            for i in 1...steps {
+                try? await Task.sleep(for: .milliseconds(33))
+                if Task.isCancelled { return }
+                let x = Float(i) / Float(steps)
+                // ゆっくり始まり、ゆっくり終わる曲線
+                node.volume = start + (target - start) * (x * x * (3 - 2 * x))
+            }
+            done?()
+        }
+    }
+
+    /// 音源を読み、終わりと始まりを重ねてつなぎ目のないループにする(3秒のクロスフェード)
+    private static func loadLoop(_ name: String) -> AVAudioPCMBuffer? {
+        guard let url = Bundle.main.url(forResource: name, withExtension: "m4a"),
+              let file = try? AVAudioFile(forReading: url),
+              let src = AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: AVAudioFrameCount(file.length)),
+              (try? file.read(into: src)) != nil, let data = src.floatChannelData else { return nil }
+        let rate = file.processingFormat.sampleRate
+        let total = Int(src.frameLength), x = Int(rate * 3)
+        guard total > x * 2, let out = AVAudioPCMBuffer(pcmFormat: src.format, frameCapacity: AVAudioFrameCount(total - x)),
+              let o = out.floatChannelData else { return nil }
+        out.frameLength = AVAudioFrameCount(total - x)
+        for ch in 0..<Int(src.format.channelCount) {
+            for i in 0..<(total - x) {
+                var v = data[ch][i]
+                // 先頭の x フレームに、末尾の x フレームを重ねる
+                if i < x {
+                    let t = Float(i) / Float(x)
+                    v = v * t + data[ch][total - x + i] * (1 - t)
+                }
+                o[ch][i] = v
+            }
+        }
+        return out
+    }
+
     /// 0(静か)〜1(強い)
     func setMatsukaze(_ level: Double) { matsukazeNode.volume = Float(0.08 + 0.6 * level) }
 
     func stopMatsukaze() {
-        matsukazeNode.stop()
-        matsukazeNode.volume = 0
+        fade(matsukazeNode, to: 0, seconds: 1.2) { [weak self] in self?.matsukazeNode.stop() }
     }
 
     private func play(_ buffer: AVAudioPCMBuffer, volume: Float = 1) {
