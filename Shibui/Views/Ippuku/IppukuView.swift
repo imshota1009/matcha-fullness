@@ -27,6 +27,17 @@ struct IppukuView: View {
     private let settleSeconds = 5.0
 
     var body: some View {
+        if mode == .finger && step == .whisk {
+            // 指で点てる: 画面いっぱいの茶碗(真上から)。左上の x でいつでも抜けられる
+            TemaeView(motion: motion) { score in finishTemae(score: score) }
+                .overlay(alignment: .topLeading) { BackToEntrance(go: go).padding(.leading, Theme.Spacing.s) }
+                .transition(.opacity)
+        } else {
+            flow
+        }
+    }
+
+    private var flow: some View {
         VStack(spacing: 0) {
             HStack {
                 BackToEntrance(go: go)
@@ -148,6 +159,13 @@ struct IppukuView: View {
         }
     }
 
+    private func finishTemae(score: Int) {
+        praise = TemaeJudge.praise(for: score)
+        result = store.serve(score: score, praise: praise.title, mode: .finger)
+        Haptics.success()
+        withAnimation { step = .result }
+    }
+
     private func finishWhisking() {
         let start = startedAt ?? .now
         let coverage = mode == .finger ? Double(visitedCells.count) / Double(FingerWhiskPad.cellCount) : nil
@@ -238,7 +256,7 @@ struct FingerWhiskPad: View {
             let size = min(geo.size.width, geo.size.height)
             ZStack {
                 ChawanView(foam: foam, smoothness: smoothness, size: size)
-                if let tip { ChasenTip(size: size * 0.2).position(tip) }
+                if let tip { Image("ChasenTop").resizable().frame(width: size * 0.32, height: size * 0.32).position(tip).allowsHitTesting(false) }
             }
             .frame(width: size, height: size)
             .contentShape(Circle())
@@ -319,12 +337,12 @@ struct ResultView: View {
             Text(praise.title)
                 .font(.system(.title, design: .serif).weight(.semibold))
                 .foregroundStyle(Theme.Palette.text)
-            HStack(alignment: .firstTextBaseline, spacing: 2) {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Text("\(shown)")
                     .font(.system(size: 64, weight: .bold, design: .rounded))
                     .monospacedDigit()
                     .contentTransition(.numericText(value: Double(shown)))
-                Text("点")
+                Text("集中度")
                     .font(.headline)
             }
             .foregroundStyle(Theme.Palette.text)

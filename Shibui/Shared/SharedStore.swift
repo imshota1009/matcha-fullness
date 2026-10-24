@@ -18,6 +18,23 @@ enum WhiskMode: String, Codable, CaseIterable, Identifiable {
     static let storageKey = "whiskMode"
 }
 
+/// 茶碗の種類(Unity で作った単色の茶碗)。設定で選べる。志野がアプリアイコンの茶碗
+enum ChawanStyle: String, CaseIterable, Identifiable {
+    case shino, kuroraku, oribe, nezumi
+    var id: Self { self }
+    var name: String {
+        switch self {
+        case .shino: "志野"
+        case .kuroraku: "黒楽"
+        case .oribe: "織部"
+        case .nezumi: "鼠志野"
+        }
+    }
+    var imageName: String { "Chawan_\(rawValue)" }
+
+    static let storageKey = "chawan"
+}
+
 /// 一服1回の記録
 struct Serving: Codable, Identifiable, Hashable {
     var id = UUID()

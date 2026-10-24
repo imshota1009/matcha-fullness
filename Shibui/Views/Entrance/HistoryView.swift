@@ -38,7 +38,7 @@ struct HistoryView: View {
                 StatRow(label: "点てた日", value: "\(record.servedDays.count)日")
                 StatRow(label: "今週", value: "\(record.daysThisWeek())日")
                 StatRow(label: "石臼を回した時間", value: EntranceView.hours(record.groundSeconds))
-                StatRow(label: "自己ベスト", value: "\(record.bestScore)点")
+                StatRow(label: "集中度の自己ベスト", value: "\(record.bestScore)")
 
                 SectionHeader("これまでの一服")
                 ForEach(record.servings.reversed()) { serving in
@@ -56,7 +56,7 @@ struct HistoryView: View {
                             .font(.footnote)
                             .foregroundStyle(Theme.Palette.secondaryText)
                             .accessibilityLabel(serving.mode.title)
-                        Text("\(serving.score)点")
+                        Text("集中度 \(serving.score)")
                             .font(.dsBody.monospacedDigit().weight(.semibold))
                             .foregroundStyle(Theme.Palette.text)
                     }
@@ -128,6 +128,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage(WhiskMode.storageKey) private var mode = WhiskMode.gyro
     @AppStorage("didOnboard") private var didOnboard = true
+    @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
 
     var body: some View {
         @Bindable var store = store
@@ -135,6 +136,10 @@ struct SettingsView: View {
             DSScreen("設定") {
                 SectionHeader("点て方")
                 ModePicker(selection: $mode)
+                    .padding(.top, Theme.Spacing.s)
+
+                SectionHeader("茶碗")
+                ChawanPicker(selection: $style)
                     .padding(.top, Theme.Spacing.s)
 
                 SectionHeader("デモ")
@@ -199,6 +204,40 @@ struct ModePicker: View {
                 }
                 .buttonStyle(PressScaleStyle())
                 .accessibilityAddTraits(selection == mode ? .isSelected : [])
+            }
+        }
+    }
+}
+
+/// 茶碗の種類を選ぶ(横に並べた4つ)
+struct ChawanPicker: View {
+    @Binding var selection: ChawanStyle
+
+    var body: some View {
+        HStack(spacing: Theme.Spacing.s) {
+            ForEach(ChawanStyle.allCases) { style in
+                Button {
+                    Haptics.selection()
+                    selection = style
+                } label: {
+                    VStack(spacing: Theme.Spacing.xs) {
+                        ZStack {
+                            Image(style.imageName).resizable().frame(width: 60, height: 60)
+                            Circle().fill(Theme.Palette.matcha).frame(width: 60 * ChawanSpec.liquid / ChawanSpec.imageExtent)
+                        }
+                        Text(style.name)
+                            .font(.dsCaption.weight(selection == style ? .semibold : .regular))
+                            .foregroundStyle(Theme.Palette.text)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 96)
+                    .background(selection == style ? Theme.Palette.surface : .clear, in: .rect(cornerRadius: Theme.Radius.m))
+                    .overlay(RoundedRectangle(cornerRadius: Theme.Radius.m)
+                        .strokeBorder(selection == style ? Theme.Palette.matcha : .clear, lineWidth: 1.5))
+                    .contentShape(.rect)
+                }
+                .buttonStyle(PressScaleStyle())
+                .accessibilityLabel("茶碗 \(style.name)")
+                .accessibilityAddTraits(selection == style ? .isSelected : [])
             }
         }
     }

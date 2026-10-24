@@ -23,6 +23,7 @@
 		B746FAC4F7581B11CFC27263 /* EntranceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4172681D23BFDB7E396D23 /* EntranceView.swift */; };
 		C0BE525245676357992E290C /* IshiusuScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1610BEA1F0D1A4BF6B9D07F3 /* IshiusuScreen.swift */; };
 		C5D684D49BD093E2AE8C0239 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD4A1B4A3972F79F98B3C4D /* WidgetKit.framework */; };
+		D120F3BDB60662A96AD513B5 /* TemaeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A368E64CB76EBDFFF74C39A8 /* TemaeView.swift */; };
 		D6AAD73E330DE7777DAB91BE /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6C5C8FDAC76C8C34BB3644 /* SharedStore.swift */; };
 		E6B84020FBF579F2BDA39529 /* TeaArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19794A5048322D5107B86A91 /* TeaArt.swift */; };
 		E9800038EE98926552AB8CA3 /* ShibuiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */; };
@@ -69,6 +70,7 @@
 		99DFB255B5F9AFF723AEEF1E /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		9A4172681D23BFDB7E396D23 /* EntranceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntranceView.swift; sourceTree = "<group>"; };
 		9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundBank.swift; sourceTree = "<group>"; };
+		A368E64CB76EBDFFF74C39A8 /* TemaeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemaeView.swift; sourceTree = "<group>"; };
 		A50B316535C1E8D8BB68D313 /* ShibuiWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ShibuiWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0424EA8BFBAC796F58DF5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ACD4A1B4A3972F79F98B3C4D /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -174,6 +176,7 @@
 			isa = PBXGroup;
 			children = (
 				29CD8030EDFE4B138CF0D65E /* IppukuView.swift */,
+				A368E64CB76EBDFFF74C39A8 /* TemaeView.swift */,
 			);
 			path = Ippuku;
 			sourceTree = "<group>";
@@ -376,6 +379,7 @@
 				1BD043BFB46FB85A6F8E7CF1 /* SoundBank.swift in Sources */,
 				E6B84020FBF579F2BDA39529 /* TeaArt.swift in Sources */,
 				1B42F778C3C6ED056941B8C7 /* TeaStore.swift in Sources */,
+				D120F3BDB60662A96AD513B5 /* TemaeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -434,7 +438,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -529,7 +533,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

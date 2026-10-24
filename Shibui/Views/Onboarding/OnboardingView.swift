@@ -13,6 +13,7 @@ struct OnboardingView: View {
 
     private let pageCount = 4
     @AppStorage(WhiskMode.storageKey) private var mode = WhiskMode.gyro
+    @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
 
     var body: some View {
         VStack(spacing: 0) {
@@ -69,7 +70,7 @@ struct OnboardingView: View {
     private var welcome: some View {
         VStack(spacing: Theme.Spacing.l) {
             Spacer()
-            Stamp(OnboardingContent.stampText, isStamped: true, size: 96)
+            Image("ChasenSide").resizable().scaledToFit().frame(height: 200)
             VStack(spacing: Theme.Spacing.s) {
                 Text(OnboardingContent.appName)
                     .font(.dsTitle)
@@ -123,14 +124,18 @@ struct OnboardingView: View {
     private var modePage: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.m) {
             Spacer()
-            Text("点て方を選んでください")
+            Text("点て方と茶碗を選んでください")
                 .font(.dsTitle)
                 .foregroundStyle(Theme.Palette.text)
             Text("あとから設定で変えられます。")
                 .font(.dsCaption)
                 .foregroundStyle(Theme.Palette.secondaryText)
             ModePicker(selection: $mode)
-            Spacer()
+            Text("茶碗")
+                .font(.dsSection)
+                .foregroundStyle(Theme.Palette.secondaryText)
+                .padding(.top, Theme.Spacing.s)
+            ChawanPicker(selection: $style)
             Spacer()
         }
         .padding(.horizontal, Theme.Spacing.l)

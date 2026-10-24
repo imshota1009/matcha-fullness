@@ -3,18 +3,20 @@ import SwiftUI
 
 // 茶室の絵。絵文字や画像を使わず、4色(抹茶・焦茶・白・灰)の図形で描く。グラデーションは使わない。
 
-/// 茶碗。上から見た形で、抹茶の水面に泡が立つ。
+/// 茶碗。上から見た形で、抹茶の水面に泡が立つ。茶碗は設定で選んだ種類(Unity で作った画像)を使う。
 struct ChawanView: View {
     /// 0(泡なし)〜1(きめ細かい泡でいっぱい)
     var foam: Double
     /// 泡の粒の細かさ。整えるほど細かく(0〜1)
     var smoothness: Double = 0
     var size: CGFloat = 240
+    @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
 
     var body: some View {
+        let liquid = size * ChawanSpec.liquid / ChawanSpec.imageExtent
         ZStack {
-            Circle().fill(Theme.Palette.kogecha)
-            Circle().fill(Theme.Palette.matcha).padding(size * 0.07)
+            Image(style.imageName).resizable().frame(width: size, height: size)
+            Circle().fill(Theme.Palette.matcha).frame(width: liquid, height: liquid)
             Canvas { context, canvasSize in
                 let center = CGPoint(x: canvasSize.width / 2, y: canvasSize.height / 2)
                 let radius = canvasSize.width / 2
@@ -24,13 +26,13 @@ struct ChawanView: View {
                     let angle = rng.next() * 2 * .pi
                     let r = radius * (rng.next().squareRoot() * 0.92)
                     let base = 2 + rng.next() * 5
-                    let dot = base * (1 - 0.6 * smoothness)
+                    let dot = base * (1 - 0.6 * smoothness) * size / 240
                     let p = CGPoint(x: center.x + cos(angle) * r, y: center.y + sin(angle) * r)
                     context.fill(Path(ellipseIn: CGRect(x: p.x - dot, y: p.y - dot, width: dot * 2, height: dot * 2)),
                                  with: .color(Theme.Palette.shiro.opacity(0.55)))
                 }
             }
-            .padding(size * 0.1)
+            .frame(width: liquid, height: liquid)
             .clipShape(Circle())
         }
         .frame(width: size, height: size)

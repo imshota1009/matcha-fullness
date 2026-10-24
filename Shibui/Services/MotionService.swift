@@ -13,6 +13,8 @@ final class MotionService {
     var isAvailable: Bool { manager.isDeviceMotionAvailable }
 
     private var onWhisk: ((Date) -> Void)?
+    /// 机の上で回した角度(ラジアン)を、更新のたびに渡す(茶碗を回す動作)
+    var onTurn: ((Double) -> Void)?
     private var lastWhisk = Date.distantPast
     private var wasAbove = false
 
@@ -23,6 +25,7 @@ final class MotionService {
         manager.startDeviceMotionUpdates(to: .main) { [weak self] motion, _ in
             guard let self, let motion else { return }
             self.isFaceDown = motion.gravity.z > 0.8
+            self.onTurn?(motion.rotationRate.z * self.manager.deviceMotionUpdateInterval)
             let a = motion.userAcceleration
             let r = motion.rotationRate
             let magnitude = (a.x * a.x + a.y * a.y + a.z * a.z).squareRoot()
