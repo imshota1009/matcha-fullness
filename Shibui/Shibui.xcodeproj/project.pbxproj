@@ -49,6 +49,7 @@
 		C62C75D7BA235351798725F0 /* shishiodoshi.m4a in Resources */ = {isa = PBXBuildFile; fileRef = BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */; };
 		C668CC69836B916CE1B19961 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80D9182EA02986A07E8C589 /* SettingsView.swift */; };
 		C859E46BA576C948788A466A /* DurationDial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5D1B12429E623EE7B05B2D /* DurationDial.swift */; };
+		CD0CB5CC5F6524294F307D79 /* WhiskHaptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917D32A39B6699F0F72A7CC7 /* WhiskHaptics.swift */; };
 		D120F3BDB60662A96AD513B5 /* TemaeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A368E64CB76EBDFFF74C39A8 /* TemaeView.swift */; };
 		D1B7C0F77E4727A6FBB4BBB4 /* Scoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF36C1BEC8F23FBB4BFD248A /* Scoring.swift */; };
 		E5530817981D055098821677 /* Rank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175ED488074D9EC320169462 /* Rank.swift */; };
@@ -99,6 +100,7 @@
 		8222BAE0B36963A54C3BE782 /* TemaeConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemaeConstants.swift; sourceTree = "<group>"; };
 		8843D1711B2BFB5AB74F45E6 /* birds.m4a */ = {isa = PBXFileReference; path = birds.m4a; sourceTree = "<group>"; };
 		8844868F280DE82CE5C5B814 /* Pickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pickers.swift; sourceTree = "<group>"; };
+		917D32A39B6699F0F72A7CC7 /* WhiskHaptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiskHaptics.swift; sourceTree = "<group>"; };
 		9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundBank.swift; sourceTree = "<group>"; };
 		9E101ACD0D3A51C9E66C019E /* LiquidShader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidShader.swift; sourceTree = "<group>"; };
 		9F5D1B12429E623EE7B05B2D /* DurationDial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationDial.swift; sourceTree = "<group>"; };
@@ -269,6 +271,7 @@
 				24C4AD58D13F998189C1CB78 /* MotionService.swift */,
 				AA6BDE7082D250853FA01848 /* Reminders.swift */,
 				9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */,
+				917D32A39B6699F0F72A7CC7 /* WhiskHaptics.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -462,6 +465,7 @@
 				C398012896ACFEE343B98226 /* TeaScene.swift in Sources */,
 				9CDF2E51E818ABD4FE6088A9 /* TemaeConstants.swift in Sources */,
 				D120F3BDB60662A96AD513B5 /* TemaeView.swift in Sources */,
+				CD0CB5CC5F6524294F307D79 /* WhiskHaptics.swift in Sources */,
 				387D1D8EA0BB0326157B2F7F /* WhiteSlider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

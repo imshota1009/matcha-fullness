@@ -105,6 +105,8 @@ final class TemaeModel {
     /// 回す: 点灯している目盛りの本数(1本ふえる・へるごとに触覚)
     @ObservationIgnored private var litTicks = 0
     @ObservationIgnored private let tickFeedback = UISelectionFeedbackGenerator()
+    /// 茶筅の手触り(Core Haptics の連続した振動。5章 J)
+    @ObservationIgnored private let whiskHaptics = WhiskHaptics()
 
     var guideText: String {
         switch phase {
@@ -128,6 +130,7 @@ final class TemaeModel {
         self.motion = motion
         self.onFinish = onFinish
         motion.start()
+        whiskHaptics.prepare()
         // 起動引数 `-demoWhisk YES` で、指の代わりに自動で往復させる(画面確認用)
         if UserDefaults.standard.bool(forKey: "demoWhisk") {
             Task { @MainActor [weak self] in
@@ -148,6 +151,7 @@ final class TemaeModel {
     }
 
     func stop() {
+        whiskHaptics.stop()
         link?.invalidate()
         link = nil
         motion?.stop()
@@ -178,7 +182,8 @@ final class TemaeModel {
         if n > touchStrokes {
             touchStrokes = n
             strokeCount = strokes.count + n
-            Haptics.selection()
+            // 折り返しの瞬間の短いアクセント(茶筅の手触りは Core Haptics。簡易版の「カチッ」は使わない)
+            whiskHaptics.accent(fineness: liveFoam / 100)
             SoundBank.shared.chasen()
             scene?.slosh(direction: Float(lastSign))
             updateLiveFoam()
@@ -273,6 +278,9 @@ final class TemaeModel {
                                         whisking: touching && phase == .whisk || (touching && phase == .finish && simd_length(velocity) > 1.6),
                                         smoothing: touching && phase == .finish, foamScore: liveFoam))
 
+        // 指が触れている間は、速さと泡の細かさに合わせて連続した振動
+        whiskHaptics.update(touching: touching && (phase == .whisk || phase == .finish),
+                            speed: Double(simd_length(velocity)), fineness: liveFoam / 100)
         if phase == .rotate { updateRotate(now: now) }
         updateRim()
     }
