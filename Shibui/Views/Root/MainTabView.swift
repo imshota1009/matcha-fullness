@@ -5,14 +5,18 @@ import SwiftUI
 /// アプリの土台。画面下部のタブバー(点てる / 振り返り / 設定)。iOS 標準の TabView。
 struct MainTabView: View {
     @Environment(\.modelContext) private var context
+    @State private var tab = 0
+    private let reminders = Reminders.shared
 
     var body: some View {
-        TabView {
-            Tab("点てる", systemImage: "cup.and.saucer") { WaitingView() }
-            Tab("振り返り", systemImage: "clock") { ReviewView() }
-            Tab("設定", systemImage: "gearshape") { SettingsView() }
+        TabView(selection: $tab) {
+            Tab("点てる", systemImage: "cup.and.saucer", value: 0) { WaitingView() }
+            Tab("振り返り", systemImage: "clock", value: 1) { ReviewView() }
+            Tab("設定", systemImage: "gearshape", value: 2) { SettingsView() }
         }
         .task { LegacyImport.run(into: context) }
+        // 通知をタップして開いたら、点てるタブへ(点てる画面は WaitingView が開く)
+        .onChange(of: reminders.openTemae, initial: true) { _, open in if open { tab = 0 } }
     }
 }
 
@@ -62,6 +66,12 @@ struct WaitingView: View {
                 flowOpen = false
                 if closedWithParting { showParting() }
             }
+        }
+        // 通知をタップして開いたら、点てる(本体)を直接開く
+        .onChange(of: Reminders.shared.openTemae, initial: true) { _, open in
+            guard open else { return }
+            Reminders.shared.openTemae = false
+            flowOpen = true
         }
         // 起動引数 `-scene ippuku` で点てる画面から開ける(画面確認・デモ準備用)
         .task { if ["ippuku", "timer"].contains(UserDefaults.standard.string(forKey: "scene")) { flowOpen = true } }

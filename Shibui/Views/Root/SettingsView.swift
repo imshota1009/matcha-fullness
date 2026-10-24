@@ -2,11 +2,18 @@ import DesignSystem
 import SwiftData
 import SwiftUI
 
-/// 設定。iOS 標準の Form で作る(SPEC 5章 I)。茶碗・振動・はじめの説明・記録の削除。
-/// 通知時刻は M5 で加える。
+/// 設定。iOS 標準の Form で作る(SPEC 5章 I)。通知時刻(複数)・茶碗・振動・音・はじめの説明・記録の削除。
 struct SettingsView: View {
+    static func date(_ m: Int) -> Date { Calendar.current.date(bySettingHour: m / 60, minute: m % 60, second: 0, of: .now) ?? .now }
+    static func minutes(_ d: Date) -> Int {
+        let c = Calendar.current.dateComponents([.hour, .minute], from: d)
+        return (c.hour ?? 0) * 60 + (c.minute ?? 0)
+    }
+
     @Environment(\.modelContext) private var context
     @State private var showsOnboarding = false
+    @State private var newTime = Calendar.current.date(byAdding: .minute, value: 1, to: .now) ?? .now
+    private let reminders = Reminders.shared
     @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
     @AppStorage(Haptics.storageKey) private var hapticsOn = true
     @State private var confirmsDeleteAll = false
@@ -22,6 +29,23 @@ struct SettingsView: View {
                     Text("茶碗")
                 } footer: {
                     Text("押すと 3D で見られます")
+                }
+                Section {
+                    ForEach(reminders.times, id: \.self) { m in
+                        DatePicker("通知", selection: Binding(
+                            get: { Self.date(m) },
+                            set: { reminders.change(m, to: Self.minutes($0)) }
+                        ), displayedComponents: .hourAndMinute)
+                    }
+                    .onDelete { idx in idx.map { reminders.times[$0] }.forEach(reminders.remove) }
+                    Button("時刻を追加", systemImage: "plus") {
+                        reminders.add(Self.minutes(newTime))
+                        newTime = newTime.addingTimeInterval(3600)
+                    }
+                } header: {
+                    Text("通知")
+                } footer: {
+                    Text("決めた時刻に毎日お知らせします。タップすると点てる画面が開きます。左にスワイプで消せます")
                 }
                 Section {
                     Toggle("振動", isOn: $hapticsOn)

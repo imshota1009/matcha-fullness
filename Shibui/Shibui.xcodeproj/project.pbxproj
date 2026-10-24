@@ -22,6 +22,7 @@
 		43A0F73DEF28312C28BDC789 /* Records.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242ECD94824029EA6F2F7C85 /* Records.swift */; };
 		4E8BAF01B55371002535256B /* chasen_handle.obj in Resources */ = {isa = PBXBuildFile; fileRef = D6085C317848DE5EF3811E52 /* chasen_handle.obj */; };
 		515C13F1C660C35C043DFD7B /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEE805E42620D02DC2C3931 /* Messages.swift */; };
+		5DBCE140AE2FE5F56EAD6BE6 /* Reminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6BDE7082D250853FA01848 /* Reminders.swift */; };
 		5F15E2A8D7F1302EECFF798F /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = D7116FF1702F1AF26D0D3654 /* DesignSystem */; };
 		5FD27A1A38EB5774A88FFB06 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0424EA8BFBAC796F58DF5A /* Assets.xcassets */; };
 		66C26DBE9748558AE67B0237 /* RikyuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC09D44EEFF2D2BC8DC81F75 /* RikyuView.swift */; };
@@ -35,6 +36,7 @@
 		9B2558AA5DB67CA65C0CBA86 /* birds.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 8843D1711B2BFB5AB74F45E6 /* birds.m4a */; };
 		9CDF2E51E818ABD4FE6088A9 /* TemaeConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8222BAE0B36963A54C3BE782 /* TemaeConstants.swift */; };
 		9F3852126C490F704DF960E9 /* chasen_tines_outer.obj in Resources */ = {isa = PBXBuildFile; fileRef = F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */; };
+		B99DD37D5142E62BB5BCBF7D /* ReminderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B2FCA889D41046A8A6D5CB2 /* ReminderTests.swift */; };
 		C398012896ACFEE343B98226 /* TeaScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B1D0CA450A1A864D89FA0E /* TeaScene.swift */; };
 		C62C75D7BA235351798725F0 /* shishiodoshi.m4a in Resources */ = {isa = PBXBuildFile; fileRef = BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */; };
 		C668CC69836B916CE1B19961 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80D9182EA02986A07E8C589 /* SettingsView.swift */; };
@@ -67,6 +69,7 @@
 		242ECD94824029EA6F2F7C85 /* Records.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Records.swift; sourceTree = "<group>"; };
 		24C4AD58D13F998189C1CB78 /* MotionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionService.swift; sourceTree = "<group>"; };
 		29CD8030EDFE4B138CF0D65E /* IppukuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IppukuView.swift; sourceTree = "<group>"; };
+		2B2FCA889D41046A8A6D5CB2 /* ReminderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTests.swift; sourceTree = "<group>"; };
 		2F96B19FA8AD1791E07CF3B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		31FFC025933A196D0FD29EFF /* Fusuma.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fusuma.swift; sourceTree = "<group>"; };
 		35D2A2CE20F21D8CEAADFB45 /* WhiteSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteSlider.swift; sourceTree = "<group>"; };
@@ -84,6 +87,7 @@
 		A2E90426BF18D4E0860DA1FC /* river.m4a */ = {isa = PBXFileReference; path = river.m4a; sourceTree = "<group>"; };
 		A368E64CB76EBDFFF74C39A8 /* TemaeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemaeView.swift; sourceTree = "<group>"; };
 		AA0424EA8BFBAC796F58DF5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AA6BDE7082D250853FA01848 /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
 		BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */ = {isa = PBXFileReference; path = chasen_tines_inner.obj; sourceTree = "<group>"; };
 		BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */ = {isa = PBXFileReference; path = shishiodoshi.m4a; sourceTree = "<group>"; };
 		BF36C1BEC8F23FBB4BFD248A /* Scoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scoring.swift; sourceTree = "<group>"; };
@@ -193,6 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				4765AD634CC4D538F24439CB /* OnboardingTests.swift */,
+				2B2FCA889D41046A8A6D5CB2 /* ReminderTests.swift */,
 				D5690F6AA9C6DB755D8919EF /* SettingsScrollTests.swift */,
 			);
 			path = UITests;
@@ -234,6 +239,7 @@
 			isa = PBXGroup;
 			children = (
 				24C4AD58D13F998189C1CB78 /* MotionService.swift */,
+				AA6BDE7082D250853FA01848 /* Reminders.swift */,
 				9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */,
 			);
 			path = Services;
@@ -405,6 +411,7 @@
 				6C3EDB7CAF6E509FB10343D8 /* Pickers.swift in Sources */,
 				E5530817981D055098821677 /* Rank.swift in Sources */,
 				43A0F73DEF28312C28BDC789 /* Records.swift in Sources */,
+				5DBCE140AE2FE5F56EAD6BE6 /* Reminders.swift in Sources */,
 				254BC8A104C78A980716F0C1 /* ReviewView.swift in Sources */,
 				66C26DBE9748558AE67B0237 /* RikyuView.swift in Sources */,
 				D1B7C0F77E4727A6FBB4BBB4 /* Scoring.swift in Sources */,
@@ -424,6 +431,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				877DF850A26B69616077A289 /* OnboardingTests.swift in Sources */,
+				B99DD37D5142E62BB5BCBF7D /* ReminderTests.swift in Sources */,
 				171F1940FE0A1247F1DE7EE1 /* SettingsScrollTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -474,7 +482,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 25;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -587,7 +595,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 25;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
