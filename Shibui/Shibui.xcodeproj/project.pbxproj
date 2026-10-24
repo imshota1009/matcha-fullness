@@ -54,6 +54,7 @@
 		D1B7C0F77E4727A6FBB4BBB4 /* Scoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF36C1BEC8F23FBB4BFD248A /* Scoring.swift */; };
 		E5530817981D055098821677 /* Rank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175ED488074D9EC320169462 /* Rank.swift */; };
 		E6B84020FBF579F2BDA39529 /* TeaArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19794A5048322D5107B86A91 /* TeaArt.swift */; };
+		E755B8DEFB38516A90EE9134 /* IppukuIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2FADAD54C531F190BFF487 /* IppukuIntent.swift */; };
 		E9800038EE98926552AB8CA3 /* ShibuiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */; };
 		EFF68298DF8762074127A073 /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 0DB94AD0C965CDC1CD53B003 /* RiveRuntime */; };
 		F1F6A1C22771A6A4C2C5C10B /* MotionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C4AD58D13F998189C1CB78 /* MotionService.swift */; };
@@ -120,6 +121,7 @@
 		D6085C317848DE5EF3811E52 /* chasen_handle.obj */ = {isa = PBXFileReference; path = chasen_handle.obj; sourceTree = "<group>"; };
 		D905260C023C259E8FED4969 /* ReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewView.swift; sourceTree = "<group>"; };
 		DDEE805E42620D02DC2C3931 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messages.swift; sourceTree = "<group>"; };
+		DE2FADAD54C531F190BFF487 /* IppukuIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IppukuIntent.swift; sourceTree = "<group>"; };
 		E71A1B44AE379668366256BA /* FocusTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTimerView.swift; sourceTree = "<group>"; };
 		ED4E0134F33017E59CDC489E /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */ = {isa = PBXFileReference; path = chasen_tines_outer.obj; sourceTree = "<group>"; };
@@ -268,6 +270,7 @@
 		8C4A5B977EDB9C9479D6B52D /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				DE2FADAD54C531F190BFF487 /* IppukuIntent.swift */,
 				24C4AD58D13F998189C1CB78 /* MotionService.swift */,
 				AA6BDE7082D250853FA01848 /* Reminders.swift */,
 				9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */,
@@ -443,6 +446,7 @@
 				C859E46BA576C948788A466A /* DurationDial.swift in Sources */,
 				72A158DA9E079BDB9C124607 /* FocusTimerView.swift in Sources */,
 				32603C0A9E275A5622F489FB /* Fusuma.swift in Sources */,
+				E755B8DEFB38516A90EE9134 /* IppukuIntent.swift in Sources */,
 				2F62FAB594940440F866A95F /* IppukuView.swift in Sources */,
 				B9A31FA225363E29915757F4 /* LiquidShader.swift in Sources */,
 				01E17A6C98EA974C57049C90 /* MainTabView.swift in Sources */,
