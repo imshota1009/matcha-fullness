@@ -10,6 +10,8 @@ struct SettingsView: View {
     @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
     @AppStorage(Haptics.storageKey) private var hapticsOn = true
     @State private var confirmsDeleteAll = false
+    @AppStorage(SoundBank.ambientOnKey) private var ambientOn = false
+    @AppStorage(SoundBank.ambientVolumeKey) private var volume = 0.6
 
     var body: some View {
         NavigationStack {
@@ -27,7 +29,28 @@ struct SettingsView: View {
                         .tint(Theme.Palette.matcha)
                 }
                 Section {
+                    Toggle("点てるときの自然の音", isOn: $ambientOn)
+                        .tint(Theme.Palette.matcha)
+                    HStack(spacing: Theme.Spacing.m) {
+                        Text("音量")
+                        WhiteSlider(value: $volume, label: "自然の音の音量")
+                        Text("\(Int(volume * 100))%")
+                            .font(.dsCaption.monospacedDigit())
+                            .foregroundStyle(Theme.Palette.secondaryText)
+                            .frame(width: 44, alignment: .trailing)
+                    }
+                } header: {
+                    Text("音")
+                } footer: {
+                    Text("川と風の音に、ときどき鳥とししおどし。茶筅の音はいつも鳴ります。タイマー中は自然の音がずっと流れ、5分ごとにししおどしが鳴ります")
+                }
+                Section {
                     Button("はじめの説明をもう一度見る", systemImage: "book") { didOnboard = false }
+                }
+                Section("音の出典") {
+                    Text("川: jackthemurray (CC0) / 風: ezwa (パブリックドメイン) / 鳥のさえずり: Robert EA Harvey (CC BY-SA 4.0) / ししおどし: Fg2 (パブリックドメイン)。いずれも Wikimedia Commons")
+                        .font(.dsCaption)
+                        .foregroundStyle(Theme.Palette.secondaryText)
                 }
                 Section {
                     Button("記録をすべて消す", systemImage: "trash", role: .destructive) { confirmsDeleteAll = true }

@@ -1,0 +1,24 @@
+Sound credits (all free to use)
+
+river.m4a
+  "433589 jackthemurray stream-river-water-up-close" by jackthemurray
+  https://commons.wikimedia.org/wiki/File:433589_jackthemurray_stream-river-water-up-close.wav
+  License: CC0
+
+wind.m4a
+  "Gentle breeze and birds singing" by ezwa
+  https://commons.wikimedia.org/wiki/File:Gentle_breeze_and_birds_singing.ogg
+  License: Public domain
+
+birds.m4a
+  "Birdsong Bourne Woods 2020-04-27 0722" by Robert EA Harvey
+  https://commons.wikimedia.org/wiki/File:Birdsong_Bourne_Woods_2020-04-27_0722.mp3
+  License: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)
+
+shishiodoshi.m4a
+  "Shishiodoshi-LS100103" by Fg2 (recorded at Shisen-do, Kyoto)
+  https://commons.wikimedia.org/wiki/File:Shishiodoshi-LS100103.ogg
+  License: Public domain
+
+All were converted to mono AAC. River and wind are looped with a 3-second crossfade in the app.
+The whisk (chasen) sound is synthesized in code.

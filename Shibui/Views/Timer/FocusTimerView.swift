@@ -14,6 +14,7 @@ struct FocusTimerView: View {
     @State private var startedAt: Date?
     @State private var endAt: Date?
     @State private var finished = false
+    @AppStorage(SoundBank.ambientVolumeKey) private var volume = 0.6
 
     private static let notificationID = "focus-timer-end"
 
@@ -46,6 +47,7 @@ struct FocusTimerView: View {
                     .accessibilityLabel("残り \(Int(remaining) / 60)分")
                 }
                 Spacer()
+                volumeSlider
                 Button(finished ? "閉じる" : "終了") { stop() }
                     .font(.headline)
                     .foregroundStyle(Theme.Palette.text)
@@ -63,6 +65,7 @@ struct FocusTimerView: View {
                 .pickerStyle(.segmented)
                 .padding(.horizontal, Theme.Spacing.xl)
                 Spacer()
+                volumeSlider
                 VStack(spacing: Theme.Spacing.s) {
                     Button { start() } label: {
                         Label("はじめる", systemImage: "timer")
@@ -93,6 +96,8 @@ struct FocusTimerView: View {
         startedAt = now
         endAt = end
         Haptics.selection()
+        // 自然の音がずっと流れ、5分ごとにししおどしが「カコン」
+        SoundBank.shared.startAmbient(shishiEvery: 300)
         // 終わる時刻に通知(アプリを閉じていても届く)
         Task {
             let center = UNUserNotificationCenter.current()
@@ -108,11 +113,13 @@ struct FocusTimerView: View {
     private func complete() {
         guard !finished else { return }
         finished = true
+        SoundBank.shared.stopAmbient()
         Haptics.success()
         record(until: endAt ?? .now, completed: true)
     }
 
     private func stop() {
+        SoundBank.shared.stopAmbient()
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [Self.notificationID])
         if !finished { record(until: .now, completed: false) }
         onDone()
@@ -122,6 +129,19 @@ struct FocusTimerView: View {
         guard let startedAt else { return }
         context.insert(FocusSession(startedAt: startedAt, endedAt: end, plannedMinutes: minutes, completed: completed, matchaID: matchaID))
         try? context.save()
+    }
+
+    /// 自然の音の音量(0〜100%)
+    private var volumeSlider: some View {
+        HStack(spacing: Theme.Spacing.m) {
+            Image(systemName: "speaker.fill").foregroundStyle(Theme.Palette.secondaryText)
+            WhiteSlider(value: $volume, label: "自然の音の音量") { SoundBank.shared.applyVolume() }
+            Text("\(Int(volume * 100))%")
+                .font(.dsCaption.monospacedDigit())
+                .foregroundStyle(Theme.Palette.secondaryText)
+                .frame(width: 44, alignment: .trailing)
+        }
+        .padding(.horizontal, Theme.Spacing.xl)
     }
 
     static func format(_ t: TimeInterval) -> String {

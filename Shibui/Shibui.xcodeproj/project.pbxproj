@@ -8,11 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		01E17A6C98EA974C57049C90 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA78D9BDB9607A57D4CF72A /* MainTabView.swift */; };
+		0B59B282650E5868981C81ED /* CREDITS.txt in Resources */ = {isa = PBXBuildFile; fileRef = 631A45B922E68836FEE6CB8A /* CREDITS.txt */; };
 		0DD227DFBD83ED515FD39875 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4E0134F33017E59CDC489E /* OnboardingView.swift */; };
 		171F1940FE0A1247F1DE7EE1 /* SettingsScrollTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5690F6AA9C6DB755D8919EF /* SettingsScrollTests.swift */; };
+		1BD043BFB46FB85A6F8E7CF1 /* SoundBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */; };
 		254BC8A104C78A980716F0C1 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D905260C023C259E8FED4969 /* ReviewView.swift */; };
 		27342E2854EC59C08CD6F18F /* chasen_tines_inner.obj in Resources */ = {isa = PBXBuildFile; fileRef = BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */; };
 		2F62FAB594940440F866A95F /* IppukuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29CD8030EDFE4B138CF0D65E /* IppukuView.swift */; };
+		36CC081133F9E4DF3EF9D3F9 /* river.m4a in Resources */ = {isa = PBXBuildFile; fileRef = A2E90426BF18D4E0860DA1FC /* river.m4a */; };
+		387D1D8EA0BB0326157B2F7F /* WhiteSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D2A2CE20F21D8CEAADFB45 /* WhiteSlider.swift */; };
 		43A0F73DEF28312C28BDC789 /* Records.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242ECD94824029EA6F2F7C85 /* Records.swift */; };
 		4E8BAF01B55371002535256B /* chasen_handle.obj in Resources */ = {isa = PBXBuildFile; fileRef = D6085C317848DE5EF3811E52 /* chasen_handle.obj */; };
 		515C13F1C660C35C043DFD7B /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEE805E42620D02DC2C3931 /* Messages.swift */; };
@@ -22,11 +26,14 @@
 		6C3EDB7CAF6E509FB10343D8 /* Pickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8844868F280DE82CE5C5B814 /* Pickers.swift */; };
 		6EE43B272095A54ED26EFAA1 /* chasen_thread.obj in Resources */ = {isa = PBXBuildFile; fileRef = 1E1C5545C96633203177CA3E /* chasen_thread.obj */; };
 		72A158DA9E079BDB9C124607 /* FocusTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71A1B44AE379668366256BA /* FocusTimerView.swift */; };
+		76139F034221DEDFC8903FA8 /* wind.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 23A863ABFEB7D40ECCAAA2DE /* wind.m4a */; };
 		8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */ = {isa = PBXBuildFile; fileRef = 68D816B2DD6715A530FF2740 /* chawan.obj */; };
 		8ECA4F5040D72427422946CE /* rikyu.riv in Resources */ = {isa = PBXBuildFile; fileRef = 0B3DE3DAB9D6556F6F596B35 /* rikyu.riv */; };
+		9B2558AA5DB67CA65C0CBA86 /* birds.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 8843D1711B2BFB5AB74F45E6 /* birds.m4a */; };
 		9CDF2E51E818ABD4FE6088A9 /* TemaeConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8222BAE0B36963A54C3BE782 /* TemaeConstants.swift */; };
 		9F3852126C490F704DF960E9 /* chasen_tines_outer.obj in Resources */ = {isa = PBXBuildFile; fileRef = F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */; };
 		C398012896ACFEE343B98226 /* TeaScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B1D0CA450A1A864D89FA0E /* TeaScene.swift */; };
+		C62C75D7BA235351798725F0 /* shishiodoshi.m4a in Resources */ = {isa = PBXBuildFile; fileRef = BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */; };
 		C668CC69836B916CE1B19961 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80D9182EA02986A07E8C589 /* SettingsView.swift */; };
 		D120F3BDB60662A96AD513B5 /* TemaeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A368E64CB76EBDFFF74C39A8 /* TemaeView.swift */; };
 		D1B7C0F77E4727A6FBB4BBB4 /* Scoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF36C1BEC8F23FBB4BFD248A /* Scoring.swift */; };
@@ -51,19 +58,26 @@
 		19794A5048322D5107B86A91 /* TeaArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaArt.swift; sourceTree = "<group>"; };
 		1E1C5545C96633203177CA3E /* chasen_thread.obj */ = {isa = PBXFileReference; path = chasen_thread.obj; sourceTree = "<group>"; };
 		1FA78D9BDB9607A57D4CF72A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		23A863ABFEB7D40ECCAAA2DE /* wind.m4a */ = {isa = PBXFileReference; path = wind.m4a; sourceTree = "<group>"; };
 		242ECD94824029EA6F2F7C85 /* Records.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Records.swift; sourceTree = "<group>"; };
 		24C4AD58D13F998189C1CB78 /* MotionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionService.swift; sourceTree = "<group>"; };
 		29CD8030EDFE4B138CF0D65E /* IppukuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IppukuView.swift; sourceTree = "<group>"; };
 		2F96B19FA8AD1791E07CF3B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		35D2A2CE20F21D8CEAADFB45 /* WhiteSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteSlider.swift; sourceTree = "<group>"; };
 		41F6E5D876C58859D10DFBDC /* Shibui.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shibui.entitlements; sourceTree = "<group>"; };
+		631A45B922E68836FEE6CB8A /* CREDITS.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CREDITS.txt; sourceTree = "<group>"; };
 		64B1D0CA450A1A864D89FA0E /* TeaScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaScene.swift; sourceTree = "<group>"; };
 		68D816B2DD6715A530FF2740 /* chawan.obj */ = {isa = PBXFileReference; path = chawan.obj; sourceTree = "<group>"; };
 		7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShibuiApp.swift; sourceTree = "<group>"; };
 		8222BAE0B36963A54C3BE782 /* TemaeConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemaeConstants.swift; sourceTree = "<group>"; };
+		8843D1711B2BFB5AB74F45E6 /* birds.m4a */ = {isa = PBXFileReference; path = birds.m4a; sourceTree = "<group>"; };
 		8844868F280DE82CE5C5B814 /* Pickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pickers.swift; sourceTree = "<group>"; };
+		9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundBank.swift; sourceTree = "<group>"; };
+		A2E90426BF18D4E0860DA1FC /* river.m4a */ = {isa = PBXFileReference; path = river.m4a; sourceTree = "<group>"; };
 		A368E64CB76EBDFFF74C39A8 /* TemaeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemaeView.swift; sourceTree = "<group>"; };
 		AA0424EA8BFBAC796F58DF5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */ = {isa = PBXFileReference; path = chasen_tines_inner.obj; sourceTree = "<group>"; };
+		BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */ = {isa = PBXFileReference; path = shishiodoshi.m4a; sourceTree = "<group>"; };
 		BF36C1BEC8F23FBB4BFD248A /* Scoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scoring.swift; sourceTree = "<group>"; };
 		C1E46B566A7DEE89C3554B6E /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DesignSystem; path = ../DesignSystem; sourceTree = SOURCE_ROOT; };
 		C80D9182EA02986A07E8C589 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -118,8 +132,21 @@
 				8844868F280DE82CE5C5B814 /* Pickers.swift */,
 				CC09D44EEFF2D2BC8DC81F75 /* RikyuView.swift */,
 				19794A5048322D5107B86A91 /* TeaArt.swift */,
+				35D2A2CE20F21D8CEAADFB45 /* WhiteSlider.swift */,
 			);
 			path = Parts;
+			sourceTree = "<group>";
+		};
+		1682FF52BC135E5084AD16A7 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				8843D1711B2BFB5AB74F45E6 /* birds.m4a */,
+				631A45B922E68836FEE6CB8A /* CREDITS.txt */,
+				A2E90426BF18D4E0860DA1FC /* river.m4a */,
+				BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */,
+				23A863ABFEB7D40ECCAAA2DE /* wind.m4a */,
+			);
+			path = Sounds;
 			sourceTree = "<group>";
 		};
 		206B63AC024AE03F12289643 /* Root */ = {
@@ -177,6 +204,7 @@
 				41F6E5D876C58859D10DFBDC /* Shibui.entitlements */,
 				7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */,
 				01E7984660FBCD9C4AB2A8A6 /* Models3D */,
+				1682FF52BC135E5084AD16A7 /* Sounds */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -195,6 +223,7 @@
 			isa = PBXGroup;
 			children = (
 				24C4AD58D13F998189C1CB78 /* MotionService.swift */,
+				9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -332,12 +361,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FD27A1A38EB5774A88FFB06 /* Assets.xcassets in Resources */,
+				0B59B282650E5868981C81ED /* CREDITS.txt in Resources */,
+				9B2558AA5DB67CA65C0CBA86 /* birds.m4a in Resources */,
 				4E8BAF01B55371002535256B /* chasen_handle.obj in Resources */,
 				6EE43B272095A54ED26EFAA1 /* chasen_thread.obj in Resources */,
 				27342E2854EC59C08CD6F18F /* chasen_tines_inner.obj in Resources */,
 				9F3852126C490F704DF960E9 /* chasen_tines_outer.obj in Resources */,
 				8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */,
 				8ECA4F5040D72427422946CE /* rikyu.riv in Resources */,
+				36CC081133F9E4DF3EF9D3F9 /* river.m4a in Resources */,
+				C62C75D7BA235351798725F0 /* shishiodoshi.m4a in Resources */,
+				76139F034221DEDFC8903FA8 /* wind.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,10 +395,12 @@
 				D1B7C0F77E4727A6FBB4BBB4 /* Scoring.swift in Sources */,
 				C668CC69836B916CE1B19961 /* SettingsView.swift in Sources */,
 				E9800038EE98926552AB8CA3 /* ShibuiApp.swift in Sources */,
+				1BD043BFB46FB85A6F8E7CF1 /* SoundBank.swift in Sources */,
 				E6B84020FBF579F2BDA39529 /* TeaArt.swift in Sources */,
 				C398012896ACFEE343B98226 /* TeaScene.swift in Sources */,
 				9CDF2E51E818ABD4FE6088A9 /* TemaeConstants.swift in Sources */,
 				D120F3BDB60662A96AD513B5 /* TemaeView.swift in Sources */,
+				387D1D8EA0BB0326157B2F7F /* WhiteSlider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -422,7 +458,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 22;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -535,7 +571,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 22;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

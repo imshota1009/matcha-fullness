@@ -66,7 +66,12 @@ struct ResultView: View {
     var body: some View {
         VStack(spacing: Theme.Spacing.m) {
             Spacer()
-            ChawanView(foam: 1, smoothness: Double(session.foamStage) / 3, size: 140)
+            // 抹茶の缶(Unity で作った絵。本物らしく見えるよう、この絵だけ陰影をつけている)
+            Image("TeaCan")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 170)
+                .accessibilityHidden(true)
             HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Text("\(shown)")
                     .font(.system(size: 64, weight: .bold, design: .rounded))

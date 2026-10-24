@@ -19,6 +19,12 @@ struct TemaeView: View {
             // 茶碗は、上のダイナミックアイランドにかからない範囲で最大(左右ははみ出してよい)
             TeaSceneView(model: model)
                 .padding(.top, 8)
+            // なぞる場所を薄く示す: 点てるときは縦の往復の矢印、仕上げは丸めた矢印
+            if model.phase == .whisk || model.phase == .finish {
+                TraceGuide(phase: model.phase, center: model.rimCenter, radius: model.rimRadius)
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+            }
             if model.phase == .rotate || model.phase == .done {
                 RotateRing(model: model)
                     .allowsHitTesting(false)
@@ -39,8 +45,15 @@ struct TemaeView: View {
         }
         .animation(.easeInOut(duration: 0.3), value: model.showsDeskWarning)
         .animation(.easeInOut(duration: 0.4), value: model.phase)
-        .onAppear { model.start(style: style, motion: motion, onFinish: onFinish) }
-        .onDisappear { model.stop() }
+        .onAppear {
+            model.start(style: style, motion: motion, onFinish: onFinish)
+            // 背景の自然の音(設定でオンのとき)。ししおどしは、点てる時間の中でたまに
+            if UserDefaults.standard.bool(forKey: SoundBank.ambientOnKey) { SoundBank.shared.startAmbient(shishiEvery: 75) }
+        }
+        .onDisappear {
+            model.stop()
+            SoundBank.shared.stopAmbient()
+        }
     }
 
     private var guide: some View {
@@ -167,6 +180,7 @@ final class TemaeModel {
             touchStrokes = n
             strokeCount = strokes.count + n
             Haptics.selection()
+            SoundBank.shared.chasen()
             scene?.slosh(direction: Float(lastSign))
             updateLiveFoam()
             if phase == .whisk, strokeCount >= TemaeConstants.targetStrokes, liveFoam >= 40 { phase = .finish }
@@ -318,6 +332,48 @@ final class TemaeModel {
         let center = CGPoint(x: CGFloat(c.x), y: CGFloat(c.y) + view.frame.minY)
         let r = CGFloat(abs(e.x - c.x))
         if abs(center.x - rimCenter.x) > 0.5 || abs(r - rimRadius) > 0.5 { rimCenter = center; rimRadius = r }
+    }
+}
+
+/// なぞる場所を薄く示す案内。点てるときは茶碗の奥から手前までの縦の往復矢印(⇕)、
+/// 仕上げは中央の小さな丸めた矢印(くるっと一周)。白く、ごく薄く表示して、泡の見た目をじゃましない。
+struct TraceGuide: View {
+    let phase: TemaeModel.Phase
+    let center: CGPoint
+    let radius: CGFloat
+
+    var body: some View {
+        Canvas { ctx, _ in
+            guard radius > 20 else { return }
+            let r = radius * 0.62
+            let ink = GraphicsContext.Shading.color(.white.opacity(0.32))
+            let style = StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round)
+            if phase == .whisk {
+                let top = CGPoint(x: center.x, y: center.y - r), bottom = CGPoint(x: center.x, y: center.y + r)
+                var p = Path()
+                p.move(to: top); p.addLine(to: bottom)
+                for (tip, d) in [(top, 1.0), (bottom, -1.0)] {
+                    p.move(to: CGPoint(x: tip.x - 18, y: tip.y + 18 * d)); p.addLine(to: tip); p.addLine(to: CGPoint(x: tip.x + 18, y: tip.y + 18 * d))
+                }
+                ctx.stroke(p, with: ink, style: style)
+            } else {
+                let rr = radius * 0.28
+                var p = Path()
+                p.addArc(center: center, radius: rr, startAngle: .degrees(-90), endAngle: .degrees(210), clockwise: false)
+                ctx.stroke(p, with: ink, style: style)
+                // 矢じり(進む向き)
+                let end = Angle.degrees(210).radians
+                let tip = CGPoint(x: center.x + cos(end) * rr, y: center.y + sin(end) * rr)
+                let dir = CGPoint(x: -sin(end), y: cos(end))
+                let back = CGPoint(x: tip.x - dir.x * 18, y: tip.y - dir.y * 18)
+                let side = CGPoint(x: -dir.y * 12, y: dir.x * 12)
+                var head = Path()
+                head.move(to: CGPoint(x: back.x + side.x, y: back.y + side.y)); head.addLine(to: tip); head.addLine(to: CGPoint(x: back.x - side.x, y: back.y - side.y))
+                ctx.stroke(head, with: ink, style: style)
+            }
+        }
+        .accessibilityElement()
+        .accessibilityLabel(phase == .whisk ? "奥と手前を、まっすぐ往復します" : "中央で、くるっと一周します")
     }
 }
 
