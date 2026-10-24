@@ -1,9 +1,9 @@
 import DesignSystem
+import SwiftData
 import SwiftUI
 
 @main
 struct ShibuiApp: App {
-    @State private var store = TeaStore()
     /// はじめの説明を見終えたか。起動引数 `-resetOnboarding` で未読に戻せる(実機・シミュレーターの確認用)
     @AppStorage("didOnboard") private var didOnboard = false
 
@@ -17,7 +17,7 @@ struct ShibuiApp: App {
         WindowGroup {
             Group {
                 if didOnboard {
-                    RootView()
+                    MainTabView()
                         .transition(.opacity)
                 } else {
                     OnboardingView { didOnboard = true }
@@ -25,7 +25,7 @@ struct ShibuiApp: App {
                 }
             }
             .animation(.spring(duration: 0.4), value: didOnboard)
-            .environment(store)
+            .modelContainer(for: [MatchaSession.self, FocusSession.self])
             .tint(Theme.Palette.accent)
             .preferredColorScheme(Theme.colorScheme)
         }

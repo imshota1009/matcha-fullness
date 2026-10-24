@@ -1,18 +1,19 @@
 import XCTest
 
-/// 設定のシートを一番下までスクロールして、画面を残す(白い余白が出ないかの確認用)
+/// タブを順に開いて画面を残す(見た目の確認用)。設定は一番下までスクロールして、白い余白が出ないかも見る
 final class SettingsScrollTests: XCTestCase {
-    func testScrollSettingsToBottom() {
+    func testTabs() {
         let app = XCUIApplication()
-        app.launchArguments = ["-didOnboard", "YES", "-sheet", ProcessInfo.processInfo.environment["SHEET"] ?? "history"]
+        app.launchArguments = ["-didOnboard", "YES"]
         app.launch()
         sleep(3)
-        print("BEFORE", app.scrollViews.firstMatch.frame, app.buttons["記録をすべて消す"].frame)
-        for _ in 0..<6 { app.swipeUp(); usleep(400_000) }
-        sleep(3)
-        print("AFTER", app.scrollViews.firstMatch.frame, app.buttons["記録をすべて消す"].frame)
-        let shot = XCTAttachment(screenshot: app.screenshot()); shot.lifetime = .keepAlways; add(shot)
-        try? app.screenshot().pngRepresentation.write(to: URL(fileURLWithPath: NSTemporaryDirectory() + "settings-bottom.png"))
-        print("SHOT:" + NSTemporaryDirectory() + "settings-bottom.png")
+        for (name, file) in [("振り返り", "tab-review"), ("設定", "tab-settings")] {
+            app.tabBars.buttons[name].tap()
+            sleep(2)
+            if name == "設定" { for _ in 0..<4 { app.swipeUp() }; sleep(2) }
+            let path = NSTemporaryDirectory() + file + ".png"
+            try? app.screenshot().pngRepresentation.write(to: URL(fileURLWithPath: path))
+            print("SHOT:" + path)
+        }
     }
 }

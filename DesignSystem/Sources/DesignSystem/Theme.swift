@@ -13,7 +13,7 @@ public enum Theme {
     // MARK: - 色(白・黒・グレー + アクセント1色 + 警告の朱色)
 
     public enum Palette {
-        // 渋分の4色: 抹茶・黒に近い茶(焦茶)・白・灰。ほかの色は使わない
+        // 色の役割(SPEC 4章): 地=生成り、文字=墨、抹茶=アクセント、集中=藍、警告=朱。値はデザイン担当が確定するまで仮
         /// 抹茶
         public static let matcha = Color(red: 0.36, green: 0.47, blue: 0.22)
         /// 焦茶(黒に近い茶)
@@ -40,8 +40,11 @@ public enum Theme {
         /// 正常・進行中(抹茶で表す)
         public static var positive: Color { matcha }
         /// 注意・警告も4色の範囲で表す(色だけに頼らず、アイコンと文字で伝える)
-        public static var caution: Color { text }
-        public static var vermilion: Color { text }
+        public static var caution: Color { vermilion }
+        /// 朱(警告。机に置いていないときなど)。純粋な赤ではなく、オレンジ寄りの赤
+        public static let vermilion = Color(red: 0.85, green: 0.33, blue: 0.20)
+        /// 藍(集中。タイマー、振り返りの集中の塗りつぶし)
+        public static let ai = Color(red: 0.16, green: 0.27, blue: 0.45)
     }
 
     // MARK: - 余白(4 の倍数)
