@@ -67,6 +67,13 @@ struct IppukuView: View {
             motion.start(onWhisk: { date in if mode == .gyro { whisk(at: date) } })
         }
         .onDisappear { motion.setWhiskHandler(nil) }
+        // 起動引数 `-ippukuStep kakejiku` で掛け軸から始める(画面確認用)
+        .task {
+            if UserDefaults.standard.string(forKey: "ippukuStep") == "kakejiku" {
+                ichiji = "英単語を三十"
+                step = .kakejiku
+            }
+        }
     }
 
     private var title: String {
@@ -216,8 +223,7 @@ struct IppukuView: View {
     private var kakejikuView: some View {
         VStack(spacing: Theme.Spacing.l) {
             Spacer()
-            KakejikuView(text: ichiji.trimmingCharacters(in: .whitespaces), height: 340)
-                .transition(.move(edge: .top).combined(with: .opacity))
+            KakejikuView(text: ichiji.trimmingCharacters(in: .whitespaces), height: 340, unrolls: true)
             Text("スマホを伏せると、石臼が回りはじめます")
                 .font(.dsBody)
                 .foregroundStyle(Theme.Palette.text)
@@ -228,7 +234,7 @@ struct IppukuView: View {
         }
         .task {
             // 一事を決めたら自動で集中へ(F6)
-            try? await Task.sleep(for: .seconds(3))
+            try? await Task.sleep(for: .seconds(1.0 + Double(ichiji.count) * 0.55 + 2.0))
             if step == .kakejiku { go(.ishiusu) }
         }
     }

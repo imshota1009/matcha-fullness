@@ -14,10 +14,10 @@ public static class ChasenBuilder
     {
         var root = new GameObject("Chasen");
         // 持ち手(竹の筒)と節
-        Add(root, Cylinder(0.13f, 0f, 0.9f), Bamboo);
+        var handle = Cylinder(0.13f, 0f, 0.9f); Add(root, handle, Bamboo);
         Add(root, Cylinder(0.135f, 0.55f, 0.58f), BambooDark);
         // 糸
-        Add(root, Cylinder(0.145f, 0.9f, 0.96f), Thread);
+        var thread = Cylinder(0.145f, 0.9f, 0.96f); Add(root, thread, Thread);
         // 外側の穂: 外へ広がり、先は内へ巻く
         var outer = new List<Vector3[]>();
         for (int i = 0; i < 72; i++)
@@ -26,7 +26,7 @@ public static class ChasenBuilder
             var d = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
             outer.Add(new[] { d * 0.13f + Vector3.up * 0.96f, d * 0.30f + Vector3.up * 1.40f, d * 0.44f + Vector3.up * 1.85f, d * 0.40f + Vector3.up * 2.02f, d * 0.33f + Vector3.up * 2.05f });
         }
-        Add(root, Tines(outer, 0.012f), Bamboo);
+        var outerMesh = Tines(outer, 0.012f); Add(root, outerMesh, Bamboo);
         // 内側の穂: 中心で束ねる
         var inner = new List<Vector3[]>();
         for (int i = 0; i < 36; i++)
@@ -35,10 +35,15 @@ public static class ChasenBuilder
             var d = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
             inner.Add(new[] { d * 0.10f + Vector3.up * 0.96f, d * 0.12f + Vector3.up * 1.50f, d * 0.04f + Vector3.up * 2.02f });
         }
-        Add(root, Tines(inner, 0.014f), BambooDark);
+        var innerMesh = Tines(inner, 0.014f); Add(root, innerMesh, BambooDark);
 
         var outDir = Path.Combine(Application.dataPath, "../Export");
         Directory.CreateDirectory(outDir);
+        // アプリ(SceneKit)で動かすための 3D モデル。部品ごとに書き出し、色はアプリ側でつける
+        File.WriteAllText(Path.Combine(outDir, "chasen_handle.obj"), ChawanBuilder.ToObj(handle));
+        File.WriteAllText(Path.Combine(outDir, "chasen_thread.obj"), ChawanBuilder.ToObj(thread));
+        File.WriteAllText(Path.Combine(outDir, "chasen_tines_outer.obj"), ChawanBuilder.ToObj(outerMesh));
+        File.WriteAllText(Path.Combine(outDir, "chasen_tines_inner.obj"), ChawanBuilder.ToObj(innerMesh));
         // 真上から(穂を下にして茶碗に入れたところを、上から見る = 持ち手の端と、その周りに広がる穂)
         root.transform.rotation = Quaternion.Euler(180, 0, 0);
         Render(Path.Combine(outDir, "chasen_top.png"), new Vector3(0, 5, 0), Quaternion.Euler(90, 0, 0), 0.5f, Vector3.zero);

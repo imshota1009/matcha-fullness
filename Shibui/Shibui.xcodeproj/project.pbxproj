@@ -11,18 +11,26 @@
 		1B42F778C3C6ED056941B8C7 /* TeaStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47DAED829E39281D4145F9D /* TeaStore.swift */; };
 		1BD043BFB46FB85A6F8E7CF1 /* SoundBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */; };
 		1E60BE9AC6B692DA000D6399 /* SNSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C0140F1D1E5C96BC753C77 /* SNSView.swift */; };
+		27342E2854EC59C08CD6F18F /* chasen_tines_inner.obj in Resources */ = {isa = PBXBuildFile; fileRef = BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */; };
 		2F62FAB594940440F866A95F /* IppukuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29CD8030EDFE4B138CF0D65E /* IppukuView.swift */; };
 		418BF3996D03A8D1191B43BE /* ShibuiWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A50B316535C1E8D8BB68D313 /* ShibuiWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		421F4D32349C10A02FBA474A /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8665F7910DB623C1AB4AF262 /* SwiftUI.framework */; };
+		4E8BAF01B55371002535256B /* chasen_handle.obj in Resources */ = {isa = PBXBuildFile; fileRef = D6085C317848DE5EF3811E52 /* chasen_handle.obj */; };
 		55499FF6811B53C5992A2EEF /* ShibuiWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015ECE37B3000AF30755A09E /* ShibuiWidget.swift */; };
+		57218950A4259B537217577C /* YujiSyuku-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 32F66273A5E2AD701ADE7100 /* YujiSyuku-OFL.txt */; };
 		5F15E2A8D7F1302EECFF798F /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = D7116FF1702F1AF26D0D3654 /* DesignSystem */; };
 		5FD27A1A38EB5774A88FFB06 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0424EA8BFBAC796F58DF5A /* Assets.xcassets */; };
+		6EE43B272095A54ED26EFAA1 /* chasen_thread.obj in Resources */ = {isa = PBXBuildFile; fileRef = 1E1C5545C96633203177CA3E /* chasen_thread.obj */; };
 		756B3AF16F6BC0852D324AF8 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6C5C8FDAC76C8C34BB3644 /* SharedStore.swift */; };
+		8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */ = {isa = PBXBuildFile; fileRef = 68D816B2DD6715A530FF2740 /* chawan.obj */; };
 		8E9279F55715F2BF3A93FE41 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = C543329568C634D6D1696078 /* DesignSystem */; };
 		9701D091EB35AC5A60816B2C /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B22F2D08EEF648DEE68F496F /* MockData.swift */; };
+		9F3852126C490F704DF960E9 /* chasen_tines_outer.obj in Resources */ = {isa = PBXBuildFile; fileRef = F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */; };
 		B746FAC4F7581B11CFC27263 /* EntranceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4172681D23BFDB7E396D23 /* EntranceView.swift */; };
 		C0BE525245676357992E290C /* IshiusuScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1610BEA1F0D1A4BF6B9D07F3 /* IshiusuScreen.swift */; };
+		C398012896ACFEE343B98226 /* TeaScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B1D0CA450A1A864D89FA0E /* TeaScene.swift */; };
 		C5D684D49BD093E2AE8C0239 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD4A1B4A3972F79F98B3C4D /* WidgetKit.framework */; };
+		C60D0AAA04C8E51EA3E1C59E /* YujiSyuku.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 446300BCCCC1914F083565E3 /* YujiSyuku.ttf */; };
 		D120F3BDB60662A96AD513B5 /* TemaeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A368E64CB76EBDFFF74C39A8 /* TemaeView.swift */; };
 		D6AAD73E330DE7777DAB91BE /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6C5C8FDAC76C8C34BB3644 /* SharedStore.swift */; };
 		E6B84020FBF579F2BDA39529 /* TeaArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19794A5048322D5107B86A91 /* TeaArt.swift */; };
@@ -59,11 +67,16 @@
 		015ECE37B3000AF30755A09E /* ShibuiWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShibuiWidget.swift; sourceTree = "<group>"; };
 		1610BEA1F0D1A4BF6B9D07F3 /* IshiusuScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IshiusuScreen.swift; sourceTree = "<group>"; };
 		19794A5048322D5107B86A91 /* TeaArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaArt.swift; sourceTree = "<group>"; };
+		1E1C5545C96633203177CA3E /* chasen_thread.obj */ = {isa = PBXFileReference; path = chasen_thread.obj; sourceTree = "<group>"; };
 		24C4AD58D13F998189C1CB78 /* MotionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionService.swift; sourceTree = "<group>"; };
 		29C0140F1D1E5C96BC753C77 /* SNSView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SNSView.swift; sourceTree = "<group>"; };
 		29CD8030EDFE4B138CF0D65E /* IppukuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IppukuView.swift; sourceTree = "<group>"; };
 		2F96B19FA8AD1791E07CF3B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		32F66273A5E2AD701ADE7100 /* YujiSyuku-OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "YujiSyuku-OFL.txt"; sourceTree = "<group>"; };
 		41F6E5D876C58859D10DFBDC /* Shibui.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shibui.entitlements; sourceTree = "<group>"; };
+		446300BCCCC1914F083565E3 /* YujiSyuku.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = YujiSyuku.ttf; sourceTree = "<group>"; };
+		64B1D0CA450A1A864D89FA0E /* TeaScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaScene.swift; sourceTree = "<group>"; };
+		68D816B2DD6715A530FF2740 /* chawan.obj */ = {isa = PBXFileReference; path = chawan.obj; sourceTree = "<group>"; };
 		7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShibuiApp.swift; sourceTree = "<group>"; };
 		81FB531B07F92884F38E6E2E /* ShibuiWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShibuiWidget.entitlements; sourceTree = "<group>"; };
 		8665F7910DB623C1AB4AF262 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -75,11 +88,14 @@
 		AA0424EA8BFBAC796F58DF5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ACD4A1B4A3972F79F98B3C4D /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		B22F2D08EEF648DEE68F496F /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
+		BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */ = {isa = PBXFileReference; path = chasen_tines_inner.obj; sourceTree = "<group>"; };
 		C1E46B566A7DEE89C3554B6E /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DesignSystem; path = ../DesignSystem; sourceTree = SOURCE_ROOT; };
 		C47DAED829E39281D4145F9D /* TeaStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaStore.swift; sourceTree = "<group>"; };
+		D6085C317848DE5EF3811E52 /* chasen_handle.obj */ = {isa = PBXFileReference; path = chasen_handle.obj; sourceTree = "<group>"; };
 		D92576DC66D3E244DECC4749 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		ED4E0134F33017E59CDC489E /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		ED6C5C8FDAC76C8C34BB3644 /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
+		F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */ = {isa = PBXFileReference; path = chasen_tines_outer.obj; sourceTree = "<group>"; };
 		FEE59A74ACD8615401187F4E /* Shibui.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Shibui.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -105,6 +121,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		01E7984660FBCD9C4AB2A8A6 /* Models3D */ = {
+			isa = PBXGroup;
+			children = (
+				D6085C317848DE5EF3811E52 /* chasen_handle.obj */,
+				1E1C5545C96633203177CA3E /* chasen_thread.obj */,
+				BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */,
+				F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */,
+				68D816B2DD6715A530FF2740 /* chawan.obj */,
+			);
+			path = Models3D;
+			sourceTree = "<group>";
+		};
 		10C415B6578ABC1C462D30FC /* Packages */ = {
 			isa = PBXGroup;
 			children = (
@@ -160,6 +188,8 @@
 				2F96B19FA8AD1791E07CF3B6 /* Info.plist */,
 				41F6E5D876C58859D10DFBDC /* Shibui.entitlements */,
 				7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */,
+				F7A1E7234E4762C58D5D5818 /* Fonts */,
+				01E7984660FBCD9C4AB2A8A6 /* Models3D */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -176,6 +206,7 @@
 			isa = PBXGroup;
 			children = (
 				29CD8030EDFE4B138CF0D65E /* IppukuView.swift */,
+				64B1D0CA450A1A864D89FA0E /* TeaScene.swift */,
 				A368E64CB76EBDFFF74C39A8 /* TemaeView.swift */,
 			);
 			path = Ippuku;
@@ -262,6 +293,15 @@
 				015ECE37B3000AF30755A09E /* ShibuiWidget.swift */,
 			);
 			path = Widget;
+			sourceTree = "<group>";
+		};
+		F7A1E7234E4762C58D5D5818 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				32F66273A5E2AD701ADE7100 /* YujiSyuku-OFL.txt */,
+				446300BCCCC1914F083565E3 /* YujiSyuku.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -356,6 +396,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FD27A1A38EB5774A88FFB06 /* Assets.xcassets in Resources */,
+				57218950A4259B537217577C /* YujiSyuku-OFL.txt in Resources */,
+				C60D0AAA04C8E51EA3E1C59E /* YujiSyuku.ttf in Resources */,
+				4E8BAF01B55371002535256B /* chasen_handle.obj in Resources */,
+				6EE43B272095A54ED26EFAA1 /* chasen_thread.obj in Resources */,
+				27342E2854EC59C08CD6F18F /* chasen_tines_inner.obj in Resources */,
+				9F3852126C490F704DF960E9 /* chasen_tines_outer.obj in Resources */,
+				8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,6 +425,7 @@
 				E9800038EE98926552AB8CA3 /* ShibuiApp.swift in Sources */,
 				1BD043BFB46FB85A6F8E7CF1 /* SoundBank.swift in Sources */,
 				E6B84020FBF579F2BDA39529 /* TeaArt.swift in Sources */,
+				C398012896ACFEE343B98226 /* TeaScene.swift in Sources */,
 				1B42F778C3C6ED056941B8C7 /* TeaStore.swift in Sources */,
 				D120F3BDB60662A96AD513B5 /* TemaeView.swift in Sources */,
 			);
@@ -438,7 +486,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -533,7 +581,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

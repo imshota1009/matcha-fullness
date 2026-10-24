@@ -189,7 +189,7 @@ private struct PageDots: View {
 
 /// オンボーディングの文言。案が決まったらここだけ書き換える。
 enum OnboardingContent {
-    static let appName = "渋分"
+    static let appName = "おてまえ"
     static let stampText = "渋"
     static let tagline = "渋々でいい。\n一服したら、渋い時間が始まる。"
     static let valuesTitle = "一服の流れ"

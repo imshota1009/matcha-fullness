@@ -57,7 +57,7 @@ struct EntranceView: View {
 
     var body: some View {
         NavigationStack {
-            DSScreen("渋分") {
+            DSScreen("おてまえ") {
                 VStack(spacing: Theme.Spacing.xs) {
                     Text("今日は")
                         .font(.dsCaption)

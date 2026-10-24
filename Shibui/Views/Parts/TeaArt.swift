@@ -118,14 +118,30 @@ struct ShishiOdoshiView: View {
 struct KakejikuView: View {
     var text: String
     var height: CGFloat = 320
+    /// true のとき、上から掛け軸が下りてきて、下り終わってから文字が出る
+    var unrolls = false
+    @State private var unrolled = false
+    @State private var textShown = false
 
     var body: some View {
+        scroll
+            .scaleEffect(x: 1, y: unrolls && !unrolled ? 0.04 : 1, anchor: .top)
+            .opacity(unrolls && !unrolled ? 0 : 1)
+            .task {
+                guard unrolls else { textShown = true; return }
+                withAnimation(.easeOut(duration: 0.9)) { unrolled = true }
+                try? await Task.sleep(for: .seconds(0.95))
+                textShown = true
+            }
+    }
+
+    private var scroll: some View {
         VStack(spacing: 0) {
             Capsule().fill(Theme.Palette.kogecha).frame(width: height * 0.42, height: height * 0.03)
             ZStack {
                 Rectangle().fill(Theme.Palette.hai.opacity(0.35))
                 Rectangle().fill(Theme.Palette.shiro).padding(.horizontal, height * 0.035).padding(.vertical, height * 0.06)
-                VerticalText(text: text, fontSize: height * 0.075)
+                VerticalText(text: text, fontSize: height * 0.085, brush: true, writing: unrolls, started: textShown)
                     .padding(.vertical, height * 0.1)
             }
             .frame(width: height * 0.36, height: height * 0.9)
@@ -141,6 +157,11 @@ struct VerticalText: View {
     var text: String
     var fontSize: CGFloat
     var perColumn = 10
+    /// 筆文字(Yuji Syuku)で書く
+    var brush = false
+    /// true のとき、1文字ずつ筆で書いていくように上から現れる(started になってから)
+    var writing = false
+    var started = true
 
     var body: some View {
         let chars = Array(text)
@@ -148,11 +169,10 @@ struct VerticalText: View {
         HStack(alignment: .top, spacing: fontSize * 0.4) {
             ForEach(Array(columns.enumerated().reversed()), id: \.offset) { _, column in
                 VStack(spacing: fontSize * 0.08) {
-                    ForEach(Array(column.enumerated()), id: \.offset) { _, ch in
-                        Text(String(ch))
-                            .font(.system(size: fontSize, weight: .medium, design: .serif))
-                            .foregroundStyle(Theme.Palette.kogecha)
-                            .rotationEffect("ー〜…—「」（）".contains(ch) ? .degrees(90) : .zero)
+                    ForEach(Array(column.enumerated()), id: \.offset) { i, ch in
+                        let order = columns.prefix(while: { $0 != column }).reduce(0) { $0 + $1.count } + i
+                        BrushChar(ch: ch, fontSize: fontSize, brush: brush,
+                                  delay: writing ? Double(order) * 0.55 : nil, started: started)
                     }
                 }
             }
@@ -175,5 +195,41 @@ struct SeededRandom {
         ChawanView(foam: 0.8, size: 160)
         IshiusuView(angle: 20, powder: 0.5, size: 160)
         HStack { ShishiOdoshiView(water: 0.6, tipped: false); KakejikuView(text: "英単語を三十", height: 200) }
+    }
+}
+
+/// 1文字。writing のときは、筆が上から下へ走るように墨が現れ、最後ににじみが引いて締まる
+private struct BrushChar: View {
+    let ch: Character
+    let fontSize: CGFloat
+    let brush: Bool
+    /// nil なら最初から表示
+    let delay: Double?
+    let started: Bool
+    @State private var drawn: CGFloat = 0
+    @State private var settled = false
+
+    var body: some View {
+        Text(String(ch))
+            .font(brush ? .custom("YujiSyuku-Regular", fixedSize: fontSize) : .system(size: fontSize, weight: .medium, design: .serif))
+            .foregroundStyle(Theme.Palette.kogecha)
+            .rotationEffect("ー〜…—「」（）".contains(ch) ? .degrees(90) : .zero)
+            .blur(radius: delay == nil || settled ? 0 : 0.8)
+            .mask(alignment: .top) {
+                // 上から下へ、少し斜めに筆が進む
+                Rectangle()
+                    .frame(height: fontSize * 1.3 * (delay == nil ? 1 : drawn))
+                    .frame(maxHeight: .infinity, alignment: .top)
+            }
+            .onChange(of: started, initial: true) { _, go in
+                guard go, let delay else { return }
+                Task {
+                    try? await Task.sleep(for: .seconds(delay))
+                    withAnimation(.timingCurve(0.6, 0, 0.3, 1, duration: 0.5)) { drawn = 1 }
+                    Haptics.selection()
+                    try? await Task.sleep(for: .seconds(0.45))
+                    withAnimation(.easeOut(duration: 0.3)) { settled = true }
+                }
+            }
     }
 }

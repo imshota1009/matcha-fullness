@@ -155,7 +155,7 @@ public static class ChawanBuilder
         cam.targetTexture = null;
     }
 
-    static string ToObj(Mesh mesh)
+    internal static string ToObj(Mesh mesh)
     {
         var sb = new StringBuilder("# 渋分 茶碗 (Unity ChawanBuilder)\no Chawan\n");
         foreach (var v in mesh.vertices) sb.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "v {0} {1} {2}\n", -v.x, v.y, v.z);

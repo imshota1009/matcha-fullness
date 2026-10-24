@@ -212,13 +212,14 @@ struct ModePicker: View {
 /// 茶碗の種類を選ぶ(横に並べた4つ)
 struct ChawanPicker: View {
     @Binding var selection: ChawanStyle
+    @State private var previewing: ChawanStyle?
 
     var body: some View {
         HStack(spacing: Theme.Spacing.s) {
             ForEach(ChawanStyle.allCases) { style in
                 Button {
                     Haptics.selection()
-                    selection = style
+                    previewing = style
                 } label: {
                     VStack(spacing: Theme.Spacing.xs) {
                         ZStack {
@@ -236,9 +237,14 @@ struct ChawanPicker: View {
                     .contentShape(.rect)
                 }
                 .buttonStyle(PressScaleStyle())
-                .accessibilityLabel("茶碗 \(style.name)")
+                .accessibilityLabel("茶碗 \(style.name)。押すと 3D で見られます")
                 .accessibilityAddTraits(selection == style ? .isSelected : [])
             }
+        }
+        // 起動引数 `-previewChawan oribe` などで開いた状態にできる(画面確認用)
+        .task { previewing = UserDefaults.standard.string(forKey: "previewChawan").flatMap(ChawanStyle.init(rawValue:)) }
+        .sheet(item: $previewing) { style in
+            ChawanPreviewSheet(style: style) { selection = style }
         }
     }
 }

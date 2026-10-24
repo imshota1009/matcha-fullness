@@ -95,7 +95,7 @@ struct ShibuiWidget: Widget {
         StaticConfiguration(kind: "ShibuiWidget", provider: Provider()) { entry in
             ShibuiWidgetView(entry: entry)
         }
-        .configurationDisplayName("渋分")
+        .configurationDisplayName("おてまえ")
         .description("今日取り戻した抹茶の杯数と、今日の一事を表示します。")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
