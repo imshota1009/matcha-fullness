@@ -9,3 +9,17 @@ shishiodoshi.m4a
   https://commons.wikimedia.org/wiki/File:Shishiodoshi-LS100103.ogg
   License: Public domain
   Changes: converted to mono AAC, looped with a crossfade in the app.
+
+uguisu.m4a (spring)
+  "Uguisu5707" by Jnn
+  https://commons.wikimedia.org/wiki/File:Uguisu5707.ogg
+  License: CC BY 2.1 JP (https://creativecommons.org/licenses/by/2.1/jp/)
+  Changes: converted to mono AAC, looped with a crossfade in the app.
+
+suzumushi.m4a (autumn)
+  "Suzumushi 06z3286" by ISAKA Yoji (cory)
+  https://commons.wikimedia.org/wiki/File:Suzumushi_06z3286.ogg
+  License: CC BY 2.1 JP (https://creativecommons.org/licenses/by/2.1/jp/)
+  Changes: converted to mono AAC, looped with a crossfade in the app.
+
+Summer wind chime (furin) and winter kettle sounds are synthesized in code.

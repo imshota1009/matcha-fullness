@@ -78,6 +78,12 @@ struct EntranceView: View {
                 .padding(.top, Theme.Spacing.xl)
                 .accessibilityElement(children: .combine)
 
+                Text(Season.current.line)
+                    .font(.dsCaption)
+                    .foregroundStyle(Theme.Palette.secondaryText)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, Theme.Spacing.s)
+
                 // 今週(月〜日)。たてた日に色がつく。休んでも何も減らない
                 Button { showsHistory = true } label: {
                     VStack(spacing: Theme.Spacing.m) {
@@ -129,6 +135,8 @@ struct EntranceView: View {
                 default: break
                 }
             }
+            // 季節の景色(桜・風鈴・もみじ・雪)を、うしろで静かに
+            .overlay { SeasonLayer().ignoresSafeArea() }
             .sheet(isPresented: $showsHistory) { HistoryView() }
             .sheet(isPresented: $showsSettings) { SettingsView() }
         }
