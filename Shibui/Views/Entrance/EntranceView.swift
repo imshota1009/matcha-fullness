@@ -1,10 +1,9 @@
 import DesignSystem
 import SwiftUI
 
-/// 体験の流れ。入口 → (SNSの区切り) → 一服 → 石臼 → 次の一服 → …
+/// 体験の流れ。ホーム → 一杯(点てる → 結果)→ ホーム
 enum Stage: Equatable {
     case entrance
-    case sns
     case ippuku
 }
 
@@ -20,23 +19,14 @@ struct RootView: View {
             switch scene {
             case .entrance:
                 EntranceView(go: go)
-            case .sns:
-                SNSView(go: go)
             case .ippuku:
                 IppukuView(motion: motion, go: go)
             }
         }
         .transition(.opacity)
         .animation(.easeInOut(duration: 0.5), value: scene)
-        .onOpenURL { url in if url.host() == "sns" { go(.sns) } }
-        // 起動引数 `-scene sns|ippuku` で場面を指定して開ける(画面確認・デモ準備用)
-        .task {
-            switch UserDefaults.standard.string(forKey: "scene") {
-            case "sns": scene = .sns
-            case "ippuku": scene = .ippuku
-            default: break
-            }
-        }
+        // 起動引数 `-scene ippuku` で点てる画面から開ける(画面確認・デモ準備用)
+        .task { if UserDefaults.standard.string(forKey: "scene") == "ippuku" { scene = .ippuku } }
     }
 
     private func go(_ next: Stage) {
@@ -45,7 +35,7 @@ struct RootView: View {
 }
 
 /// ホーム。やることは1つ「抹茶をたてて、集中する」だけ。
-/// 上に今日たてた杯数と今週の記録、ランクを小さく。くわしい記録は左上から(段階的に見せる)。
+/// 今日たてた杯数と、今日いちばんの集中の目安。くわしい記録は左上から(段階的に見せる)。
 struct EntranceView: View {
     @Environment(TeaStore.self) private var store
     let go: (Stage) -> Void
@@ -70,7 +60,7 @@ struct EntranceView: View {
                             .font(.headline)
                     }
                     .foregroundStyle(Theme.Palette.text)
-                    Text(today.isEmpty ? "今日はまだです" : "今日いちばんの集中度 \(today.map(\.score).max() ?? 0)")
+                    Text(today.isEmpty ? "今日はまだです" : "今日いちばんの集中の目安 \(today.map(\.score).max() ?? 0)")
                         .font(.dsCaption)
                         .foregroundStyle(Theme.Palette.secondaryText)
                 }
@@ -78,48 +68,18 @@ struct EntranceView: View {
                 .padding(.top, Theme.Spacing.xl)
                 .accessibilityElement(children: .combine)
 
-                // 今週(月〜日)。たてた日に色がつく。休んでも何も減らない
-                Button { showsHistory = true } label: {
-                    VStack(spacing: Theme.Spacing.m) {
-                        WeekRow(days: record.servedDays)
-                        RankProgress(total: record.totalPoints)
-                    }
-                    .padding(Theme.Spacing.m)
-                    .background(Theme.Palette.surface, in: .rect(cornerRadius: Theme.Radius.m))
-                    .contentShape(.rect)
-                }
-                .buttonStyle(PressScaleStyle())
-                .padding(.top, Theme.Spacing.xl)
-                .accessibilityHint("押すと、くわしい記録が見られます")
-
-                // 今日決めた「やること」があれば、かけじくで
-                if let last = record.servings.last, Calendar.current.isDateInToday(last.date), !last.ichiji.isEmpty {
-                    SectionHeader("今日やること")
-                    HStack {
-                        Spacer()
-                        KakejikuView(text: last.ichiji, height: 200)
-                        Spacer()
-                    }
-                    .padding(.vertical, Theme.Spacing.m)
-                }
             } bottom: {
                 PrimaryButton("抹茶をたてる", systemImage: "cup.and.saucer") { go(.ippuku) }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button { showsHistory = true } label: {
-                        Image(systemName: "chart.bar")
-                            .frame(width: Theme.Size.minTouch, height: Theme.Size.minTouch)
-                    }
-                    .accessibilityLabel("記録")
+                    FlatCircleButton(systemImage: "chart.bar", label: "記録") { showsHistory = true }
                 }
+                .sharedBackgroundVisibility(.hidden)
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { showsSettings = true } label: {
-                        Image(systemName: "gearshape")
-                            .frame(width: Theme.Size.minTouch, height: Theme.Size.minTouch)
-                    }
-                    .accessibilityLabel("設定")
+                    FlatCircleButton(systemImage: "gearshape", label: "設定") { showsSettings = true }
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
             // 起動引数 `-sheet history|settings` で開いた状態にできる(画面確認用)
             .task {
@@ -152,38 +112,5 @@ struct BackToEntrance: View {
                 .contentShape(.rect)
         }
         .accessibilityLabel("入口へ戻る")
-    }
-}
-
-/// 今週の7日(月〜日)。たてた日は抹茶色、今日は輪で示す
-struct WeekRow: View {
-    let days: Set<Date>
-
-    var body: some View {
-        var cal = Calendar.current
-        cal.firstWeekday = 2
-        let today = cal.startOfDay(for: .now)
-        let start = cal.dateInterval(of: .weekOfYear, for: today)?.start ?? today
-        let labels = ["月", "火", "水", "木", "金", "土", "日"]
-        return HStack {
-            ForEach(0..<7, id: \.self) { d in
-                let date = cal.date(byAdding: .day, value: d, to: start) ?? start
-                let done = days.contains(date)
-                VStack(spacing: Theme.Spacing.xs) {
-                    Text(labels[d])
-                        .font(.caption2)
-                        .foregroundStyle(Theme.Palette.secondaryText)
-                    ZStack {
-                        Circle().fill(done ? Theme.Palette.matcha : Theme.Palette.separator.opacity(date > today ? 0.4 : 1))
-                        if done { Image(systemName: "checkmark").font(.caption2.weight(.bold)).foregroundStyle(Theme.Palette.shiro) }
-                    }
-                    .frame(width: 26, height: 26)
-                    .overlay { if date == today { Circle().stroke(Theme.Palette.text, lineWidth: 1.5).padding(-3) } }
-                }
-                .frame(maxWidth: .infinity)
-            }
-        }
-        .accessibilityElement()
-        .accessibilityLabel("今週は \(days.filter { $0 >= start }.count) 日、抹茶をたてました")
     }
 }

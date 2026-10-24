@@ -2,54 +2,30 @@ import CoreMotion
 import Foundation
 import Observation
 
-/// 振る(茶筅)と、伏せる(石臼)を検出する。
-/// 小さな振り幅でも拾えるように、しきい値は低めにしている(強く振らなくても点てられる)。
+/// 机に置いているか(画面が上向きで水平)と、茶碗(iPhone)を回した角度を検出する。
 @Observable
 final class MotionService {
     private let manager = CMMotionManager()
-    /// 画面が下を向いているか
-    private(set) var isFaceDown = false
     /// 画面を上にして、ほぼ水平に置かれているか
     private(set) var isFlatFaceUp = true
     /// センサーが使えるか(シミュレーターでは使えない)
     var isAvailable: Bool { manager.isDeviceMotionAvailable }
-
-    private var onWhisk: ((Date) -> Void)?
     /// 机の上で回した角度(ラジアン)を、更新のたびに渡す(茶碗を回す動作)
     var onTurn: ((Double) -> Void)?
-    private var lastWhisk = Date.distantPast
-    private var wasAbove = false
 
-    func start(onWhisk: ((Date) -> Void)? = nil) {
-        self.onWhisk = onWhisk
+    func start() {
         guard manager.isDeviceMotionAvailable, !manager.isDeviceMotionActive else { return }
         manager.deviceMotionUpdateInterval = 1.0 / 60
         manager.startDeviceMotionUpdates(to: .main) { [weak self] motion, _ in
             guard let self, let motion else { return }
-            self.isFaceDown = motion.gravity.z > 0.8
             self.isFlatFaceUp = motion.gravity.z < -0.92
             self.onTurn?(motion.rotationRate.z * self.manager.deviceMotionUpdateInterval)
-            let a = motion.userAcceleration
-            let r = motion.rotationRate
-            let magnitude = (a.x * a.x + a.y * a.y + a.z * a.z).squareRoot()
-            let spin = (r.x * r.x + r.y * r.y + r.z * r.z).squareRoot()
-            // 振る(加速度)か、回す(ジャイロ)のどちらかがしきい値を越えた瞬間を1回として数える
-            // 続けて数えないよう 0.12 秒あける
-            let above = magnitude > 0.35 || spin > 3.0
-            let now = Date()
-            if above, !self.wasAbove, now.timeIntervalSince(self.lastWhisk) > 0.12 {
-                self.lastWhisk = now
-                self.onWhisk?(now)
-            }
-            self.wasAbove = above
         }
     }
 
-    func setWhiskHandler(_ handler: ((Date) -> Void)?) { onWhisk = handler }
-
     func stop() {
         manager.stopDeviceMotionUpdates()
-        onWhisk = nil
+        onTurn = nil
     }
 }
 

@@ -123,14 +123,34 @@ public struct CloseButton: View {
     public init() {}
 
     public var body: some View {
-        Button { dismiss() } label: {
-            Image(systemName: "xmark")
+        FlatCircleButton(systemImage: "xmark", label: "閉じる") { dismiss() }
+    }
+}
+
+/// 丸いボタン。iOS 標準のガラス表現は使わず、単色の丸だけのフラットな形にする(影・ぼかしなし)。
+/// ツールバーに置くときは、ToolbarItem に `.sharedBackgroundVisibility(.hidden)` を付けてガラスを消す。
+public struct FlatCircleButton: View {
+    private let systemImage: String
+    private let label: String
+    private let action: () -> Void
+
+    public init(systemImage: String, label: String, action: @escaping () -> Void) {
+        self.systemImage = systemImage
+        self.label = label
+        self.action = action
+    }
+
+    public var body: some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
                 .font(.body.weight(.semibold))
-                .foregroundStyle(Theme.Palette.secondaryText)
+                .foregroundStyle(Theme.Palette.text)
                 .frame(width: Theme.Size.minTouch, height: Theme.Size.minTouch)
-                .contentShape(.rect)
+                .background(Theme.Palette.surface, in: .circle)
+                .contentShape(.circle)
         }
-        .accessibilityLabel("閉じる")
+        .buttonStyle(PressScaleStyle())
+        .accessibilityLabel(label)
     }
 }
 

@@ -67,30 +67,6 @@ struct Serving: Codable, Identifiable, Hashable {
     }
 }
 
-/// 段位。茶点が貯まるほど上がり、下がることはない
-struct Rank {
-    let name: String
-    let threshold: Int
-
-    static let all = [
-        Rank(name: "見習い", threshold: 0),
-        Rank(name: "初級", threshold: 300),
-        Rank(name: "中級", threshold: 1_000),
-        Rank(name: "上級", threshold: 2_500),
-        Rank(name: "名人", threshold: 5_000),
-    ]
-
-    static func current(for points: Int) -> Rank { all.last { points >= $0.threshold } ?? all[0] }
-    static func next(for points: Int) -> Rank? { all.first { points < $0.threshold } }
-
-    /// 次の段位までの進み具合(0〜1)
-    static func progress(for points: Int) -> Double {
-        guard let next = next(for: points) else { return 1 }
-        let now = current(for: points)
-        return Double(points - now.threshold) / Double(next.threshold - now.threshold)
-    }
-}
-
 /// アプリ全体の記録。アプリとウィジェットで共有する。習慣づくりのため、記録は消さずに残す。
 struct TeaRecord: Codable, Hashable {
     /// 挽き上がって、まだ点てていない抹茶(杯)
@@ -137,8 +113,6 @@ struct TeaRecord: Codable, Hashable {
 
     var latestIchiji: String? { servings.last?.ichiji }
 
-    /// 茶点の合計(一服の点数 + 集中のぶん)。減ることはない
-    var totalPoints: Int { servings.reduce(0) { $0 + $1.points } + focusSessions * Self.focusPoints }
 
     var bestScore: Int { servings.map(\.score).max() ?? 0 }
 

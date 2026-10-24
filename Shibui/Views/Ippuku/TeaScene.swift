@@ -445,7 +445,7 @@ struct ChawanPreviewSheet: View {
             .padding(.top, Theme.Spacing.s)
             .navigationTitle(style.name)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { CloseButton() } }
+            .toolbar { ToolbarItem(placement: .topBarTrailing) { CloseButton() }.sharedBackgroundVisibility(.hidden) }
         }
         .presentationDragIndicator(.visible)
         .onAppear {

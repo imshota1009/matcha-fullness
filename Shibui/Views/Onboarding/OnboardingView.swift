@@ -14,7 +14,6 @@ struct OnboardingView: View {
     @State private var bowNow = false
 
     private let pageCount = 4
-    @AppStorage(WhiskMode.storageKey) private var mode = WhiskMode.gyro
     @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
 
     var body: some View {
@@ -137,23 +136,18 @@ struct OnboardingView: View {
         .padding(.horizontal, Theme.Spacing.l)
     }
 
-    /// 3ページ目: 点て方を選ぶ(あとで設定から変えられる)
+    /// 3ページ目: 茶碗を選ぶ(あとで設定から変えられる)
     private var modePage: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.m) {
             Spacer()
-            RikyuSays(line: "どちらでも大丈夫。あとで変えられます。", size: 80)
+            RikyuSays(line: "好きな茶碗をどうぞ。あとで変えられます。", size: 80)
                 .id(page == 2)
-            Text("たて方と茶碗を選んでください")
+            Text("茶碗を選んでください")
                 .font(.dsTitle)
                 .foregroundStyle(Theme.Palette.text)
             Text("あとから設定で変えられます。")
                 .font(.dsCaption)
                 .foregroundStyle(Theme.Palette.secondaryText)
-            ModePicker(selection: $mode)
-            Text("茶碗")
-                .font(.dsSection)
-                .foregroundStyle(Theme.Palette.secondaryText)
-                .padding(.top, Theme.Spacing.s)
             ChawanPicker(selection: $style)
             Spacer()
         }
@@ -213,9 +207,9 @@ enum OnboardingContent {
     static let tagline = "渋々でいい。\n一杯たてたら、渋い時間が始まる。"
     static let valuesTitle = "使い方の流れ"
     static let values: [(symbol: String, title: String, detail: String)] = [
-        ("drop", "ししおどしで、区切る", "SNSを見すぎたら「カコン」と鳴ってお知らせします。"),
-        ("hand.wave", "抹茶をたてる", "指か、スマホを振って抹茶をたてる。うまさが点数になります。"),
-        ("scroll", "やることを、かけじくに", "たて終わったら、次にやることを一言。かけじくになります。"),
+        ("iphone", "机に置いて、指で点てる", "スマホを茶碗に、指を茶せんに見立てて、まっすぐ往復します。"),
+        ("arrow.trianglehead.clockwise", "仕上げて、回す", "くるっと仕上げて、茶碗(スマホ)を時計回りに2回まわします。"),
+        ("checkmark.seal", "集中の目安がわかる", "点て方のていねいさが点数になります。作業の前の儀式に。"),
     ]
     static let readyTitle = "どうぞ、お入りください"
     static let readyMessage = "まずは、おもてなしの一杯から。"
