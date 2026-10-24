@@ -3,7 +3,7 @@ import SwiftUI
 
 @main
 struct ShibuiApp: App {
-    @State private var store = KakiStore()
+    @State private var store = TeaStore()
     /// はじめの説明を見終えたか。起動引数 `-resetOnboarding` で未読に戻せる(実機・シミュレーターの確認用)
     @AppStorage("didOnboard") private var didOnboard = false
 
@@ -17,10 +17,8 @@ struct ShibuiApp: App {
         WindowGroup {
             Group {
                 if didOnboard {
-                    NavigationStack {
-                        HomeView()
-                    }
-                    .transition(.opacity)
+                    RootView()
+                        .transition(.opacity)
                 } else {
                     OnboardingView { didOnboard = true }
                         .transition(.opacity)

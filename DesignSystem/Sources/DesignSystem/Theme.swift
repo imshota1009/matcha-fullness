@@ -13,26 +13,35 @@ public enum Theme {
     // MARK: - 色(白・黒・グレー + アクセント1色 + 警告の朱色)
 
     public enum Palette {
+        // 渋分の4色: 抹茶・黒に近い茶(焦茶)・白・灰。ほかの色は使わない
+        /// 抹茶
+        public static let matcha = Color(red: 0.36, green: 0.47, blue: 0.22)
+        /// 焦茶(黒に近い茶)
+        public static let kogecha = Color(red: 0.17, green: 0.12, blue: 0.09)
+        /// 白(生成り寄り)
+        public static let shiro = Color(red: 0.98, green: 0.975, blue: 0.96)
+        /// 灰
+        public static let hai = Color(red: 0.47, green: 0.45, blue: 0.43)
+
         /// 画面の背景
-        public static var background: Color { Theme.base == .light ? Color(white: 0.99) : Color(white: 0.06) }
+        public static var background: Color { Theme.base == .light ? shiro : kogecha }
         /// 一段上の面(シート・入力欄など)。影ではなく色の差で階層を作る
-        public static var surface: Color { Theme.base == .light ? Color(white: 0.955) : Color(white: 0.13) }
+        public static var surface: Color { Theme.base == .light ? Color(red: 0.93, green: 0.925, blue: 0.91) : Color(red: 0.24, green: 0.19, blue: 0.15) }
         /// 本文
-        public static var text: Color { Theme.base == .light ? Color(white: 0.08) : Color(white: 0.96) }
-        /// 補足の文字(背景とのコントラスト 4.5:1 以上を保つ濃さ)
-        public static var secondaryText: Color { Theme.base == .light ? Color(white: 0.40) : Color(white: 0.66) }
+        public static var text: Color { Theme.base == .light ? kogecha : shiro }
+        /// 補足の文字(背景とのコントラスト 4.5:1 以上)
+        public static var secondaryText: Color { Theme.base == .light ? hai : Color(red: 0.72, green: 0.70, blue: 0.67) }
         /// 区切り線
-        public static var separator: Color { Theme.base == .light ? Color(white: 0.88) : Color(white: 0.22) }
-        /// アクセント(主要操作に使う)。案が決まったら1色だけ差し替える
-        public static var accent: Color { Theme.base == .light ? Color(white: 0.08) : Color(white: 0.96) }
+        public static var separator: Color { Theme.base == .light ? Color(red: 0.86, green: 0.85, blue: 0.83) : Color(red: 0.32, green: 0.27, blue: 0.23) }
+        /// アクセント(主要操作)= 抹茶
+        public static var accent: Color { matcha }
         /// アクセントの上に載る文字
-        public static var onAccent: Color { Theme.base == .light ? .white : .black }
-        /// 警告・期限・破壊的操作。純粋な赤ではなく朱色(色覚の多様性に配慮)
-        public static let vermilion = Color(red: 0.89, green: 0.31, blue: 0.18)
-        /// 正常・進行中(JIS C0448 の緑)
-        public static let positive = Color(red: 0.16, green: 0.55, blue: 0.33)
-        /// 注意(JIS C0448 の黄。文字には使わず、アイコンと併用する)
-        public static let caution = Color(red: 0.86, green: 0.62, blue: 0.10)
+        public static var onAccent: Color { shiro }
+        /// 正常・進行中(抹茶で表す)
+        public static var positive: Color { matcha }
+        /// 注意・警告も4色の範囲で表す(色だけに頼らず、アイコンと文字で伝える)
+        public static var caution: Color { text }
+        public static var vermilion: Color { text }
     }
 
     // MARK: - 余白(4 の倍数)

@@ -121,7 +121,7 @@ struct OnboardingView: View {
     private var ready: some View {
         VStack(spacing: Theme.Spacing.l) {
             Spacer()
-            ImoView(ripeness: stamped ? 1 : 0, size: 120, showsString: true)
+            ChawanView(foam: stamped ? 1 : 0, smoothness: 1, size: 140)
             VStack(spacing: Theme.Spacing.s) {
                 Text(OnboardingContent.readyTitle)
                     .font(.dsTitle)
@@ -165,18 +165,18 @@ private struct PageDots: View {
 
 /// オンボーディングの文言。案が決まったらここだけ書き換える。
 enum OnboardingContent {
-    static let appName = "ほしいも"
+    static let appName = "渋分"
     static let stampText = "渋"
-    static let tagline = "その欲しいも、干してから。\n待てる人は、渋くてかっこいい。"
-    static let valuesTitle = "使い方"
+    static let tagline = "渋々でいい。\n一服したら、渋い時間が始まる。"
+    static let valuesTitle = "一服の流れ"
     static let values: [(symbol: String, title: String, detail: String)] = [
-        ("arrow.down.to.line", "欲しい物を、吊るす", "すぐには買わず、干し芋や干し柿にして軒下へ。"),
-        ("clock", "待つと、干し上がる", "日がたつほど、生の芋が甘い干し芋の色へ。"),
-        ("checkmark.seal", "食べごろに、決める", "それでも欲しければ買う。いらなければ見送って、お金が浮く。"),
+        ("drop", "鹿威しで、区切る", "SNSを見すぎたら「カコン」。茶室へご案内します。"),
+        ("hand.wave", "振って、一服", "スマホを振って抹茶を点て、ひと息ついて、次の一事を決める。"),
+        ("circle.dotted", "伏せて、石臼を回す", "伏せている間だけ抹茶が挽ける。挽いた抹茶で次の一服を。"),
     ]
-    static let readyTitle = "さあ、吊るしましょう"
-    static let readyMessage = "最初の「欲しい」を、軒下へ。"
-    static let startTitle = "はじめる"
+    static let readyTitle = "どうぞ、お入りください"
+    static let readyMessage = "まずは、おもてなしの一杯から。"
+    static let startTitle = "茶室に入る"
 }
 
 #Preview {
