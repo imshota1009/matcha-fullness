@@ -327,6 +327,7 @@ final class TemaeModel {
         let all = Scoring.foam(strokes)
         let rotate = Scoring.rotateScore(turns)
         let result = TemaeResult(score: Scoring.total(foam: all.foam, finish: finishScore, rotate: rotate),
+                                 meanSide: all.meanSide, cv: all.cv, strokes: all.n,
                                  foam: Int(all.foam.rounded()), line: Int(all.line.rounded()), rhythm: Int(all.rhythm.rounded()),
                                  count: Int(all.count.rounded()), finish: Int(finishScore.rounded()), rotate: Int(rotate.rounded()))
         Task { @MainActor [weak self] in

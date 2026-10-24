@@ -38,24 +38,28 @@ enum Scoring {
         return Stroke(length: length, duration: b.t - a.t, sideRatio: sd / length)
     }
 
-    struct Foam { var line: Double; var rhythm: Double; var count: Double; var foam: Double }
+    struct Foam { var line: Double; var rhythm: Double; var count: Double; var foam: Double
+        /// 横ブレの比率の平均 ē、ストローク時間の変動係数 CV、有効なストロークの数 N(講評に使う)
+        var meanSide = 0.0, cv = 0.0, n = 0 }
 
     /// 泡スコア F と、その3要素。`window` が指定されたら直近のストロークだけで直線性・リズムを計算する(量は全数)
     static func foam(_ all: [Stroke], window: Int? = nil) -> Foam {
         let ks = window.map { Array(all.suffix($0)) } ?? all
         let n = ks.count
-        var line = 0.0, rhythm = 0.0
+        var line = 0.0, rhythm = 0.0, meanSide = 0.0, cvOut = 0.0
         if n >= 3 {
             let e = ks.map(\.sideRatio).reduce(0, +) / Double(n)
+            meanSide = e
             line = 100 * clamp((TemaeConstants.lineWorst - e) / (TemaeConstants.lineWorst - TemaeConstants.lineBest))
             let mu = ks.map(\.duration).reduce(0, +) / Double(n)
             let sd = (ks.map { ($0.duration - mu) * ($0.duration - mu) }.reduce(0, +) / Double(n)).squareRoot()
             let cv = mu > 0 ? sd / mu : 1
+            cvOut = cv
             rhythm = 100 * clamp((TemaeConstants.rhythmWorst - cv) / (TemaeConstants.rhythmWorst - TemaeConstants.rhythmBest))
         }
         let count = 100 * min(Double(all.count) / Double(TemaeConstants.targetStrokes), 1)
         let f = TemaeConstants.weightLine * line + TemaeConstants.weightRhythm * rhythm + TemaeConstants.weightCount * count
-        return Foam(line: line, rhythm: rhythm, count: count, foam: f)
+        return Foam(line: line, rhythm: rhythm, count: count, foam: f, meanSide: meanSide, cv: cvOut, n: all.count)
     }
 
     /// 仕上げ: 回転の合計(度)と平均の速さ(半径/秒)
@@ -101,6 +105,10 @@ enum Scoring {
 /// 点前の結果(記録と結果画面に渡す)
 struct TemaeResult {
     var score: Int
+    /// 講評に使う生の値(ē・CV・N)
+    var meanSide = 0.0
+    var cv = 0.0
+    var strokes = 0
     var foam: Int
     var line: Int
     var rhythm: Int

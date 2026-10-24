@@ -23,6 +23,7 @@
 		3EE95BD613E009BFC690F78E /* NatureMixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570E7C1C60396A60C47A55C4 /* NatureMixer.swift */; };
 		41C9249353F1C67EBD995EAA /* shishi_nodes.obj in Resources */ = {isa = PBXBuildFile; fileRef = BDC942E45EF78DA7C5FE52E7 /* shishi_nodes.obj */; };
 		43A0F73DEF28312C28BDC789 /* Records.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242ECD94824029EA6F2F7C85 /* Records.swift */; };
+		4CB28AA9288C520239AC87FC /* Kouhyou.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C0033341E695617BF50D58 /* Kouhyou.swift */; };
 		4E8BAF01B55371002535256B /* chasen_handle.obj in Resources */ = {isa = PBXBuildFile; fileRef = D6085C317848DE5EF3811E52 /* chasen_handle.obj */; };
 		515C13F1C660C35C043DFD7B /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEE805E42620D02DC2C3931 /* Messages.swift */; };
 		51D74AF002E746D6B2D2D82E /* ChashitsuBackdrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C192EBC91CB60BDAFFFF4 /* ChashitsuBackdrop.swift */; };
@@ -73,6 +74,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		00C0033341E695617BF50D58 /* Kouhyou.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kouhyou.swift; sourceTree = "<group>"; };
 		0B3DE3DAB9D6556F6F596B35 /* rikyu.riv */ = {isa = PBXFileReference; path = rikyu.riv; sourceTree = "<group>"; };
 		175ED488074D9EC320169462 /* Rank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rank.swift; sourceTree = "<group>"; };
 		19794A5048322D5107B86A91 /* TeaArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaArt.swift; sourceTree = "<group>"; };
@@ -274,6 +276,7 @@
 			children = (
 				6404654AA66AAFB9E5A39DC7 /* HealthRecorder.swift */,
 				DE2FADAD54C531F190BFF487 /* IppukuIntent.swift */,
+				00C0033341E695617BF50D58 /* Kouhyou.swift */,
 				24C4AD58D13F998189C1CB78 /* MotionService.swift */,
 				AA6BDE7082D250853FA01848 /* Reminders.swift */,
 				9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */,
@@ -452,6 +455,7 @@
 				C91C7429E7787FBE0D2DB936 /* HealthRecorder.swift in Sources */,
 				E755B8DEFB38516A90EE9134 /* IppukuIntent.swift in Sources */,
 				2F62FAB594940440F866A95F /* IppukuView.swift in Sources */,
+				4CB28AA9288C520239AC87FC /* Kouhyou.swift in Sources */,
 				B9A31FA225363E29915757F4 /* LiquidShader.swift in Sources */,
 				01E17A6C98EA974C57049C90 /* MainTabView.swift in Sources */,
 				515C13F1C660C35C043DFD7B /* Messages.swift in Sources */,
@@ -534,7 +538,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = 32;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -647,7 +651,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = 32;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

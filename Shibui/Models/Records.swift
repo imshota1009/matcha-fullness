@@ -22,6 +22,14 @@ final class MatchaSession {
     var messageID: Int
     /// 操作モード。いまは常に「指」(将来の振るモードのために残す)
     var mode: String
+    /// 講評に使う生の値(ē = 横ブレの比率の平均、CV = リズムのばらつき、N = 往復の数)
+    var meanSide: Double = 0
+    var cv: Double = 0
+    var strokes: Int = 0
+    /// お点前の講評(5章 L-6。任意)
+    var review: String?
+    var goodPoint: String?
+    var nextFocus: String?
 
     init(startedAt: Date, endedAt: Date = .now, score: Int, foamScore: Int = 0, lineScore: Int = 0, rhythmScore: Int = 0,
          countScore: Int = 0, finishScore: Int = 0, rotateScore: Int = 0, foamStage: Int = 0, messageID: Int = 0) {

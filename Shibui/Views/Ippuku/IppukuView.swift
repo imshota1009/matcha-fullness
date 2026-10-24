@@ -56,6 +56,9 @@ struct TeaFlowView: View {
         let new = MatchaSession(startedAt: startedAt, score: r.score, foamScore: r.foam, lineScore: r.line, rhythmScore: r.rhythm,
                                 countScore: r.count, finishScore: r.finish, rotateScore: r.rotate, foamStage: FoamStage.of(r.foam),
                                 messageID: Messages.pick(at: startedAt, usedToday: usedToday))
+        new.meanSide = r.meanSide
+        new.cv = r.cv
+        new.strokes = r.strokes
         context.insert(new)
         try? context.save()
         // ヘルスケアの「マインドフルネス」に、点てていた時間を書き込む(設定でオンのとき)
@@ -77,6 +80,15 @@ struct ResultView: View {
     private var points: Int { sessions.reduce(0) { $0 + $1.score } }
     private var before: Int { points - session.score }
     private var promoted: Bool { Rank.current(for: points) != Rank.current(for: before) }
+    /// お点前の講評(はじめは定型文、AI ができたら差しかえる)
+    @State private var kouhyou: Kouhyou?
+    @State private var byAI = false
+
+    private var kouhyouInput: KouhyouInput {
+        let previous = sessions.filter { $0.startedAt < session.startedAt }.max { $0.startedAt < $1.startedAt }?.score
+        return KouhyouInput(meanSide: session.meanSide, cv: session.cv, strokes: session.strokes, foam: session.foamScore,
+                            finish: session.finishScore, rotate: session.rotateScore, total: session.score, previous: previous)
+    }
 
     var body: some View {
         VStack(spacing: Theme.Spacing.m) {
@@ -99,6 +111,27 @@ struct ResultView: View {
             Text("泡: \(FoamStage.names[session.foamStage])")
                 .font(.dsCaption)
                 .foregroundStyle(Theme.Palette.secondaryText)
+            // お点前の講評(5章 L-6)
+            if let k = kouhyou {
+                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                    Text(k.review)
+                        .font(.system(.body, design: .serif))
+                        .foregroundStyle(Theme.Palette.text)
+                    Label(k.goodPoint, systemImage: "circle.circle")
+                        .font(.dsCaption)
+                        .foregroundStyle(Theme.Palette.matcha)
+                    Label(k.nextFocus, systemImage: "arrow.forward.circle")
+                        .font(.dsCaption)
+                        .foregroundStyle(Theme.Palette.secondaryText)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(Theme.Spacing.m)
+                .background(Theme.Palette.surface, in: .rect(cornerRadius: Theme.Radius.m))
+                .padding(.horizontal, Theme.Spacing.screen)
+                .transition(.opacity)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("講評。\(k.review)。良かった点、\(k.goodPoint)。次に意識すること、\(k.nextFocus)")
+            }
             Text(Messages.text(session.messageID))
                 .font(.system(.body, design: .serif))
                 .foregroundStyle(Theme.Palette.text)
@@ -142,6 +175,20 @@ struct ResultView: View {
             withAnimation { shown = session.score }
             Haptics.impact()
             if promoted { Haptics.success() }
+        }
+        .task {
+            // まず数値から決まる定型文をすぐ出し、端末内の AI の講評ができたら差しかえる(画面は待たせない)
+            if let saved = session.review, let g = session.goodPoint, let n = session.nextFocus {
+                kouhyou = Kouhyou(review: saved, goodPoint: g, nextFocus: n)
+                return
+            }
+            withAnimation { kouhyou = KouhyouMaker.fallback(kouhyouInput) }
+            if let ai = await KouhyouMaker.generate(kouhyouInput) {
+                withAnimation { kouhyou = ai; byAI = true }
+                session.review = ai.review
+                session.goodPoint = ai.goodPoint
+                session.nextFocus = ai.nextFocus
+            }
         }
     }
 }
