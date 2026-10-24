@@ -5,7 +5,7 @@ import UserNotifications
 
 /// 集中タイマー(全画面)。時間は hh:mm のリングで決める(5 分〜3 時間)。
 /// 見た目: 地面の水たまり(奥行きのある楕円)が残り時間の円グラフ。文字も水たまりと同じ平面に置く。
-/// その横のししおどしに、かけいから水が少しずつ溜まり、5分ごとに傾いて水たまりへ水を落とし、戻るときに「カコン」。
+/// その横のししおどしに、かけいから水が少しずつ溜まり、1分ごとに傾いて水たまりへ水を落とし、戻るときに「カコン」。
 /// 残り時間は終了予定の時刻から計算する(アプリを閉じてもずれない)。終わると通知と振動。
 /// 「終了」でいつでも止められ、実際に集中した時間を記録する。
 struct FocusTimerView: View {
@@ -22,7 +22,7 @@ struct FocusTimerView: View {
     /// ししおどしが傾く間隔(秒)。起動引数 `-shishiCycle 秒` で短くできる(画面確認用)
     private var cycle: Double {
         let v = UserDefaults.standard.double(forKey: "shishiCycle")
-        return v > 0 ? v : 300
+        return v > 0 ? v : 60
     }
 
     var body: some View {

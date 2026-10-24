@@ -18,6 +18,14 @@ enum LiquidShader {
     static let surface = """
     float lqHash(float2 p) { return fract(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }
 
+    // なめらかなノイズ(値ノイズ)と、その重ね合わせ。泡のムラ(場所による濃い・薄い)に使う
+    float lqNoise(float2 p) {
+        float2 i = floor(p), f = fract(p);
+        float2 u = f * f * (3.0 - 2.0 * f);
+        return mix(mix(lqHash(i), lqHash(i + float2(1, 0)), u.x), mix(lqHash(i + float2(0, 1)), lqHash(i + float2(1, 1)), u.x), u.y);
+    }
+    float lqFbm(float2 p) { return 0.55 * lqNoise(p) + 0.30 * lqNoise(p * 2.13 + 7.1) + 0.15 * lqNoise(p * 4.37 + 3.3); }
+
     // 段階 s の泡の層。泡の中なら 1、外なら 0(ふちは少しだけなめらかに)
     float lqBubbles(float2 uv, float foam, float radius, float density, float salt) {
         float cell = radius * density;
@@ -47,12 +55,23 @@ enum LiquidShader {
     float4 fl = flowTex.sample(sm, uv);
     float2 oA = (fl.rg - 0.5) * 0.30;
     float2 oB = (fl.ba - 0.5) * 0.30;
-    float foam = sim.r;
+    float rawFoam = sim.r;
     float size = sim.g;
+    // ムラ: 流れに乗って動く大きめのノイズで、泡の量を場所ごとに上下させる。泡が中くらいのときほど強く、
+    // 点て上がり(泡が多い)に近づくほど弱くなって、きめ細かく揃っていく
+    float2 nA = (uv + oA) * 5.0, nB = (uv + oB) * 5.0 + 11.0;
+    float patch = lqFbm(nA) * flowWA + lqFbm(nB) * flowWB;           // 0〜1
+    float swirl = lqFbm(nA * 2.7 + 4.0) * flowWA + lqFbm(nB * 2.7 + 4.0) * flowWB;
+    float uneven = 4.0 * rawFoam * (1.0 - rawFoam);                    // 泡が半分くらいのとき最大
+    float foam = clamp(rawFoam + (patch - 0.5) * 0.7 * uneven + (swirl - 0.5) * 0.15 * rawFoam, 0.0, 1.0);
 
     float3 dark = float3(0.20, 0.33, 0.12);
     float3 light = float3(0.72, 0.79, 0.45);
     float3 col = mix(dark, light, pow(foam, 0.8));
+    // 泡の下に、ところどころ濃い抹茶が透けて見える筋(流れに乗って動く)
+    col = mix(col, dark * 1.15, smoothstep(0.62, 0.78, swirl) * 0.35 * uneven);
+    // ふっくら盛り上がった所は、わずかに明るく
+    col *= 1.0 + (patch - 0.5) * 0.06 * rawFoam;
 
     // 明暗(液面の傾きから、2〜3段階でうっすら)
     float e = 1.0 / 96.0;

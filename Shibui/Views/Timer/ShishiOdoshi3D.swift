@@ -29,7 +29,11 @@ final class ShishiScene {
         root.addChildNode(TeaScene.load("shishi_posts", color: wood))
         root.addChildNode(TeaScene.load("shishi_axle", color: wood))
         root.addChildNode(pivot)
-        pivot.addChildNode(TeaScene.load("shishi_tube", color: bamboo))
+        // 竹筒の斜めの切り口は、水を受けるとき上を向く(かけいの水が入る向き)。
+        // 書き出した形は切り口が下向きだったので、筒の軸のまわりに半回転させて上向きにする
+        let tube = TeaScene.load("shishi_tube", color: bamboo)
+        tube.eulerAngles.x = .pi
+        pivot.addChildNode(tube)
         pivot.addChildNode(TeaScene.load("shishi_nodes", color: bambooDark))
         // 竹筒の中の水(節から口のほうへ溜まる)
         let w = TeaScene.load("shishi_water", color: waterColor)
@@ -48,16 +52,15 @@ final class ShishiScene {
         let kakeiBase = SCNVector3(-(0.82 + 0.9 * cos(0.25)), 0.86 + 0.9 * sin(0.25), 0)
         kakeiNode.position = kakeiBase
         root.addChildNode(kakeiNode)
-        // かけいが生えてくる壁(しっくいの白壁と、上に瓦の焦茶の帯)。筒の根元が壁に埋まって見える
-        let wall = SCNNode(geometry: SCNBox(width: 0.5, height: 2.6, length: 1.4, chamferRadius: 0.02))
-        wall.geometry?.firstMaterial?.diffuse.contents = UIColor(red: 0.90, green: 0.87, blue: 0.80, alpha: 1)
-        wall.geometry?.firstMaterial?.lightingModel = .lambert
-        wall.position = SCNVector3(kakeiBase.x - 0.22, kakeiBase.y - 0.75, -0.1)
-        root.addChildNode(wall)
-        let cap = SCNNode(geometry: SCNBox(width: 0.62, height: 0.12, length: 1.5, chamferRadius: 0.02))
-        cap.geometry?.firstMaterial?.diffuse.contents = UIColor(red: 0.20, green: 0.16, blue: 0.13, alpha: 1)
-        cap.position = SCNVector3(wall.position.x, wall.position.y + 1.33, wall.position.z)
-        root.addChildNode(cap)
+        // かけいの根元から、画面の端の外まで同じ竹をのばす(壁は置かない)
+        let reach: Float = 4.0
+        let away = SIMD2<Float>(-cos(0.25), sin(0.25))   // 口から根元へ向かう向き(反転した座標で)
+        let ext = SCNNode(geometry: SCNCylinder(radius: 0.05, height: CGFloat(reach)))
+        ext.geometry?.firstMaterial?.diffuse.contents = bambooDark
+        ext.geometry?.firstMaterial?.lightingModel = .lambert
+        ext.position = SCNVector3(kakeiBase.x + away.x * reach / 2, kakeiBase.y + away.y * reach / 2, 0)
+        ext.eulerAngles.z = atan2(away.y, away.x) - .pi / 2
+        root.addChildNode(ext)
 
         // かけいから落ちる細い水
         dripSystem.birthRate = 60
