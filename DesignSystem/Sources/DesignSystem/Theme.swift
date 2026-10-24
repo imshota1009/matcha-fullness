@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// 色・余白・角丸・文字の値をまとめた場所。画面側では数値を直書きせず、ここを参照する。
-/// ベースの明暗(ライト / ダーク)は CLAUDE.md の【当日記入】。決まったら `Theme.base` を書き換えるだけで全画面が切り替わる。
+/// ベースの明暗はライトに決定(CLAUDE.md)。変えるときは `Theme.base` を書き換えるだけで全画面が切り替わる。
 public enum Theme {
     public enum Base { case light, dark }
 
