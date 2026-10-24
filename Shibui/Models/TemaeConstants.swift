@@ -51,7 +51,11 @@ enum TemaeConstants {
     /// 泡の拡散(1フレームあたり)と、流れに運ばれる強さ
     static let foamDiffusion: Float = 0.30, foamAdvection: Float = 0.9
     /// 点てている間、泡が面全体へならされていく速さ(1秒あたり)。上手に点てれば 5〜8 秒で面全体をおおう
-    static let foamMixing: Float = 0.22
+    static let foamMixing: Float = 0.07
+    /// 流れの残りやすさ(1フレームあたり)。大きいほど、茶筅を止めても泡がしばらく漂う
+    static let flowKeep: Float = 0.975
+    /// 泡の粒を流れで運ぶ「ずらし量」をリセットする周期(秒)。2枚を半周期ずらして交互に使う
+    static let flowMapPeriod: Float = 3.0
     /// 泡が生まれる強さ
     static let foamBirth: Float = 0.03
     /// 点てている間、泡が泡スコアの上限まで細かくなっていく速さ(1秒あたり)

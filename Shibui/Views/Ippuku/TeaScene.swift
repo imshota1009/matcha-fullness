@@ -152,6 +152,10 @@ final class LiquidSurface {
     private var v = [Float](repeating: 0, count: n * n)      // 流れ(y)
     private var foam = [Float](repeating: 0, count: n * n)   // 泡の量(0〜1)
     private var size = [Float](repeating: 1, count: n * n)   // 泡の大きさ(1=粗い 〜 0=きめ細かい)
+    /// 泡の粒を流れで運ぶ「ずらし量」(フローマップ。uv の単位)。A と B を半周期ずらしてリセットし、重ねて使う
+    private var oax = [Float](repeating: 0, count: n * n), oay = [Float](repeating: 0, count: n * n)
+    private var obx = [Float](repeating: 0, count: n * n), oby = [Float](repeating: 0, count: n * n)
+    private var flowTime: Float = 0
     private let inside: [Bool]
     private var frame = 0
     var onGeometry: ((SCNGeometry) -> Void)?
@@ -206,11 +210,14 @@ final class LiquidSurface {
                 // 茶筅は液を押し流す。押した方向が盛り上がり、後ろがくぼむ
                 u[i] += input.velocity.x * 0.08 * w
                 v[i] += input.velocity.y * 0.08 * w
-                // 茶筅の穂が液を外へ押し広げる
+                // 茶筅の穂が液を外へ押し広げ、横にも小さな渦を作る(泡が横へも運ばれる)
                 let len = simd_length(rel)
                 if len > 0.001 {
-                    u[i] += rel.x / len * min(speed, 3) * 0.03 * w
-                    v[i] += rel.y / len * min(speed, 3) * 0.03 * w
+                    u[i] += rel.x / len * min(speed, 3) * 0.06 * w
+                    v[i] += rel.y / len * min(speed, 3) * 0.06 * w
+                    let swirl = sin(flowTime * 7 + Float(i % 7)) * min(speed, 3) * 0.05 * w
+                    u[i] += -dir.y * swirl
+                    v[i] += dir.x * swirl
                 }
                 let front = simd_dot(rel, dir) / rc
                 hv[i] += 0.0035 * min(speed, 3) * front * w
@@ -250,7 +257,8 @@ final class LiquidSurface {
         for i in 0..<(n * n) where inside[i] { h[i] = max(-0.04, min(0.04, h[i] - mean)) }
 
         // 流れは少しずつ弱まり、泡は流れに運ばれて広がる
-        for i in 0..<(n * n) { u[i] *= 0.9; v[i] *= 0.9 }
+        for i in 0..<(n * n) { u[i] *= TemaeConstants.flowKeep; v[i] *= TemaeConstants.flowKeep }
+        advectFlowMap(dt: dt)
         advect(&foam, dt: dt)
         advect(&size, dt: dt)
         blur(&foam, TemaeConstants.foamDiffusion)
@@ -334,6 +342,34 @@ final class LiquidSurface {
         }
     }
 
+    /// フローマップを進める: ずらし量 o を流れで運び、その分だけずらす(o_new(x) = o(x − v·dt) − v·dt)。
+    /// 周期ごとに 0 に戻す(A と B は半周期ずれている)。戻すときは重みが 0 なので、見た目は切れ目なくつながる
+    private func advectFlowMap(dt: Float) {
+        let n = Self.n
+        let T = TemaeConstants.flowMapPeriod
+        let before = flowTime
+        flowTime += dt
+        if Int(before / T) != Int(flowTime / T) { oax = oax.map { _ in 0 }; oay = oay.map { _ in 0 } }
+        if Int(before / T + 0.5) != Int(flowTime / T + 0.5) { obx = obx.map { _ in 0 }; oby = oby.map { _ in 0 } }
+        // 流れ(液面の座標/秒)を uv(0〜1)の単位に
+        let toUV = 1 / (TeaScene.liquidRadius * 2)
+        let k = dt * Float(n - 1) * toUV
+        let ax = oax, ay = oay, bx = obx, by = oby
+        for y in 1..<(n - 1) {
+            for x in 1..<(n - 1) {
+                let i = y * n + x
+                guard inside[i] else { continue }
+                let vx = u[i] * toUV * dt, vy = v[i] * toUV * dt
+                guard abs(vx) + abs(vy) > 1e-6 else { continue }
+                let back = SIMD2(Float(x) - u[i] * k, Float(y) - v[i] * k)
+                oax[i] = max(-0.15, min(0.15, sample(ax, back) - vx))
+                oay[i] = max(-0.15, min(0.15, sample(ay, back) - vy))
+                obx[i] = max(-0.15, min(0.15, sample(bx, back) - vx))
+                oby[i] = max(-0.15, min(0.15, sample(by, back) - vy))
+            }
+        }
+    }
+
     private func blur(_ f: inout [Float], _ k: Float) {
         let n = Self.n, src = f
         for y in 1..<(n - 1) {
@@ -394,6 +430,9 @@ final class LiquidSurface {
     /// 前は CPU で 640×640 の絵に泡を最大1万4千個描いていて、1回 12〜37ms かかり、茶筅が遅れる原因になっていた。
     private let simTexture = SCNMaterialProperty()
     private var simBytes = [UInt8](repeating: 0, count: n * n * 4)
+    /// フローマップ(r,g = ずらし量 A、b,a = ずらし量 B。±0.15 を 0〜255 に)
+    private let flowTexture = SCNMaterialProperty()
+    private var flowBytes = [UInt8](repeating: 128, count: n * n * 4)
 
     private func redraw() {
         let n = Self.n
@@ -412,6 +451,20 @@ final class LiquidSurface {
                       bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)?.makeImage()
         }
         simTexture.contents = image
+        func enc(_ o: Float) -> UInt8 { UInt8(max(0, min(255, (o / 0.15 * 0.5 + 0.5) * 255))) }
+        for i in 0..<(n * n) {
+            flowBytes[i * 4] = enc(oax[i]); flowBytes[i * 4 + 1] = enc(oay[i])
+            flowBytes[i * 4 + 2] = enc(obx[i]); flowBytes[i * 4 + 3] = enc(oby[i])
+        }
+        flowTexture.contents = flowBytes.withUnsafeMutableBytes { buf in
+            CGContext(data: buf.baseAddress, width: n, height: n, bitsPerComponent: 8, bytesPerRow: n * 4, space: cs,
+                      bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)?.makeImage()
+        }
+        // A と B の重み(三角波。リセットする瞬間は重み 0)
+        let T = TemaeConstants.flowMapPeriod
+        let pa = (flowTime / T).truncatingRemainder(dividingBy: 1), pb = (flowTime / T + 0.5).truncatingRemainder(dividingBy: 1)
+        material.setValue(NSNumber(value: 1 - abs(2 * pa - 1)), forKey: "flowWA")
+        material.setValue(NSNumber(value: 1 - abs(2 * pb - 1)), forKey: "flowWB")
         material.setValue(NSNumber(value: min(1, sum / Float(n * n) * 2)), forKey: "foamAvg")
     }
 
@@ -422,6 +475,13 @@ final class LiquidSurface {
         simTexture.wrapS = .clamp
         simTexture.wrapT = .clamp
         material.setValue(simTexture, forKey: "simTex")
+        flowTexture.minificationFilter = .linear
+        flowTexture.magnificationFilter = .linear
+        flowTexture.wrapS = .clamp
+        flowTexture.wrapT = .clamp
+        material.setValue(flowTexture, forKey: "flowTex")
+        material.setValue(NSNumber(value: Float(0.5)), forKey: "flowWA")
+        material.setValue(NSNumber(value: Float(0.5)), forKey: "flowWB")
         material.setValue(NSNumber(value: Float(0)), forKey: "foamAvg")
         // diffuseTexcoord を使うため、白い 1 画素の画像を貼っておく(色だけだと座標が渡らない)
         material.diffuse.contents = UIGraphicsImageRenderer(size: CGSize(width: 1, height: 1)).image { ctx in

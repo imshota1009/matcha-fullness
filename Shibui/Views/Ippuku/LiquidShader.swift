@@ -1,7 +1,10 @@
 import Foundation
 
 /// 抹茶の液面を GPU で描くシェーダー(SceneKit のシェーダーモディファイア。中身は Metal)。
-/// CPU から受け取るのは 96×96 のテクスチャ simTex だけ: r = 泡の量、g = 泡の大きさ(1=粗い〜0=きめ細かい)、b = 液面の高さ。
+/// CPU から受け取るのは 96×96 のテクスチャ2枚:
+/// - simTex: r = 泡の量、g = 泡の大きさ(1=粗い〜0=きめ細かい)、b = 液面の高さ
+/// - flowTex: 泡の粒を流れで運ぶ「ずらし量」(フローマップ)。2枚(A・B)を半周期ずらしてリセットし、重みで重ねる。
+///   これで泡の粒が、その場で出たり消えたりするのではなく、液の流れに乗って漂う
 /// 1画素ずつ、次を計算する(SPEC 5章「泡と波の表現」C・D):
 /// - 色: 泡が多いほど、濃く暗い緑 → 淡く明るい抹茶色
 /// - 泡: 画面を泡の大きさに合わせたマス目に区切り、マスごとの乱数で泡の位置と出るかどうかを決める(手続き的な泡)。
@@ -31,12 +34,19 @@ enum LiquidShader {
 
     #pragma arguments
     texture2d<float> simTex;
+    texture2d<float> flowTex;
     float foamAvg;
+    float flowWA;
+    float flowWB;
 
     #pragma body
     constexpr sampler sm(filter::linear, address::clamp_to_edge);
     float2 uv = _surface.diffuseTexcoord;
     float4 sim = simTex.sample(sm, uv);
+    // フローマップ: 泡の粒を描く位置を、液の流れで運んだ分だけずらす(A と B を重みで重ねる)
+    float4 fl = flowTex.sample(sm, uv);
+    float2 oA = (fl.rg - 0.5) * 0.30;
+    float2 oB = (fl.ba - 0.5) * 0.30;
     float foam = sim.r;
     float size = sim.g;
 
@@ -60,12 +70,14 @@ enum LiquidShader {
         int s = lower + k;
         float w = k == 0 ? (1.0 - t) : t;
         if (w < 0.01) { continue; }
-        float b = lqBubbles(uv, foam, radii[s], density[s], float(s) * 13.0);
+        float b = lqBubbles(uv + oA, foam, radii[s], density[s], float(s) * 13.0) * flowWA
+                + lqBubbles(uv + oB, foam, radii[s], density[s], float(s) * 13.0 + 5.0) * flowWB;
         float3 bubble = s <= 1 ? min(float3(1.0), col + float3(0.10, 0.10, 0.06)) : light + float3(0.06);
         col = mix(col, bubble, b * w * (s <= 1 ? 0.55 : 0.6));
         // 抹茶の粒(細かい泡の中に、濃い緑の点を少し)
         if (s >= 2) {
-            float g2 = lqBubbles(uv + 0.37, foam, 1.0 / 640.0, 14.0, 91.0);
+            float g2 = lqBubbles(uv + oA + 0.37, foam, 1.0 / 640.0, 14.0, 91.0) * flowWA
+                     + lqBubbles(uv + oB + 0.37, foam, 1.0 / 640.0, 14.0, 96.0) * flowWB;
             col = mix(col, float3(0.27, 0.40, 0.15), g2 * w * 0.7);
         }
     }
