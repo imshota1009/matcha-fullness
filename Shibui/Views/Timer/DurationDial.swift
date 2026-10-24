@@ -1,12 +1,12 @@
 import DesignSystem
 import SwiftUI
 
-/// 集中する時間を、リングをなぞって決める(hh:mm で表示)。
-/// つまみを時計回りに1周させると 60 分。何周でもでき、5 分きざみで 5 分〜3 時間。
-/// 5 分ごとに軽い触覚。リングを使わない人のために、−/+ ボタンでも変えられる(代替経路)。
+/// 集中する時間を、リングをなぞって決める(h:mm で表示)。
+/// つまみを時計回りに1周させると 60 分。何周でもでき、1 分きざみで 1 分〜9 時間 59 分。
+/// 1 分ごとに軽い触覚。リングを使わない人のために、−/+ ボタン(5 分ずつ)でも変えられる(代替経路)。
 struct DurationDial: View {
     @Binding var minutes: Int
-    private let step = 5, minValue = 5, maxValue = 180
+    private let step = 1, buttonStep = 5, minValue = 1, maxValue = 599
     @State private var lastAngle: Double?
     @State private var raw: Double = 0
 
@@ -38,7 +38,7 @@ struct DurationDial: View {
                         .frame(width: 32, height: 32)
                         .position(x: c.x + cos(a) * r, y: c.y + sin(a) * r)
                     VStack(spacing: 2) {
-                        Text(String(format: "%02d:%02d", minutes / 60, minutes % 60))
+                        Text(String(format: "%d:%02d", minutes / 60, minutes % 60))
                             .font(.system(size: 52, weight: .semibold, design: .rounded).monospacedDigit())
                             .foregroundStyle(Theme.Palette.text)
                             .contentTransition(.numericText())
@@ -67,13 +67,13 @@ struct DurationDial: View {
             }
             .frame(height: 280)
             HStack(spacing: Theme.Spacing.xl) {
-                FlatCircleButton(systemImage: "minus", label: "5分へらす") { set(minutes - step) }
-                FlatCircleButton(systemImage: "plus", label: "5分ふやす") { set(minutes + step) }
+                FlatCircleButton(systemImage: "minus", label: "5分へらす") { set(minutes - buttonStep) }
+                FlatCircleButton(systemImage: "plus", label: "5分ふやす") { set(minutes + buttonStep) }
             }
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("集中する時間 \(minutes / 60)時間\(minutes % 60)分")
-        .accessibilityAdjustableAction { dir in set(minutes + (dir == .increment ? step : -step)) }
+        .accessibilityAdjustableAction { dir in set(minutes + (dir == .increment ? buttonStep : -buttonStep)) }
     }
 
     private func set(_ v: Int) {

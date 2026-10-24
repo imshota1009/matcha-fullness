@@ -156,11 +156,6 @@ final class LiquidSurface {
     private var frame = 0
     var onGeometry: ((SCNGeometry) -> Void)?
 
-    /// 泡を描く点の位置(x, y は 0〜1、z はその点に泡が出る泡の量のしきい値)
-    private static let stipple: [SIMD3<Float>] = {
-        var g = SeededRandom(seed: 31)
-        return (0..<14000).map { _ in SIMD3(Float(g.next()), Float(g.next()), Float(0.04 + 0.92 * g.next())) }
-    }()
 
     init() {
         let n = Self.n
@@ -172,6 +167,7 @@ final class LiquidSurface {
         geometry = SCNGeometry(sources: src, elements: [idx])
         material.lightingModel = .lambert
         geometry.materials = [material]
+        setupShader()
         redraw()
     }
 
@@ -285,7 +281,7 @@ final class LiquidSurface {
 
         frame += 1
         updateMesh()
-        if frame % 2 == 0 { redraw() }
+        redraw()  // 96×96 の値を渡すだけなので毎フレームでよい
     }
 
     // MARK: 格子の道具
@@ -391,75 +387,47 @@ final class LiquidSurface {
         onGeometry?(g)
     }
 
-    // MARK: 描画(テクスチャ)
+    // MARK: 描画(GPU)
+
+    /// シミュレーションの値(泡の量・泡の大きさ・液面の高さ)を、96×96 の小さなテクスチャにして GPU へ渡す。
+    /// 色・泡・抹茶の粒・明暗・縁の輪は、GPU のシェーダー(LiquidShader)が1画素ずつ描く。
+    /// 前は CPU で 640×640 の絵に泡を最大1万4千個描いていて、1回 12〜37ms かかり、茶筅が遅れる原因になっていた。
+    private let simTexture = SCNMaterialProperty()
+    private var simBytes = [UInt8](repeating: 0, count: n * n * 4)
 
     private func redraw() {
-        let size = 640, t = 128
-        let R = TeaScene.liquidRadius
-        let dark = TemaeConstants.liquidDark, light = TemaeConstants.foamLight
-        var px = [UInt8](repeating: 255, count: t * t * 4)
-        for y in 0..<t {
-            for x in 0..<t {
-                let p = SIMD2((Float(x) / Float(t - 1) * 2 - 1) * R, (Float(y) / Float(t - 1) * 2 - 1) * R)
-                let f = min(1, max(0, value(foam, at: p)))
-                // 泡が多い所ほど明るく不透明に
-                var c = dark + (light - dark) * pow(f, 0.8)
-                // 液面の起伏は、明暗をうっすら2〜3段階で(気づかない程度)
-                let e: Float = 0.02
-                let slope = value(h, at: p + SIMD2(e, 0)) - value(h, at: p - SIMD2(e, 0)) + value(h, at: p - SIMD2(0, e)) - value(h, at: p + SIMD2(0, e))
-                let step: Float = slope > 0.004 ? 0.035 : slope < -0.004 ? -0.035 : 0
-                c = c * (1 + step)
-                let i = (y * t + x) * 4
-                px[i] = UInt8(min(1, c.x) * 255); px[i + 1] = UInt8(min(1, c.y) * 255); px[i + 2] = UInt8(min(1, c.z) * 255)
-            }
+        let n = Self.n
+        var sum: Float = 0
+        for i in 0..<(n * n) {
+            let f = min(1, max(0, foam[i])), sz = min(1, max(0, size[i]))
+            simBytes[i * 4] = UInt8(f * 255)
+            simBytes[i * 4 + 1] = UInt8(sz * 255)
+            simBytes[i * 4 + 2] = UInt8(min(1, max(0, h[i] / 0.08 + 0.5)) * 255)
+            simBytes[i * 4 + 3] = inside[i] ? 255 : 0
+            sum += f
         }
         let cs = CGColorSpaceCreateDeviceRGB()
-        guard let small = CGContext(data: &px, width: t, height: t, bitsPerComponent: 8, bytesPerRow: t * 4, space: cs,
-                                    bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)?.makeImage(),
-              let ctx = CGContext(data: nil, width: size, height: size, bitsPerComponent: 8, bytesPerRow: 0, space: cs,
-                                  bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return }
-        ctx.interpolationQuality = .high
-        ctx.draw(small, in: CGRect(x: 0, y: 0, width: size, height: size))
-
-        let scale = CGFloat(size) / CGFloat(2 * R)
-        let radii = TemaeConstants.bubbleRadius
-        for (k, s) in Self.stipple.enumerated() {
-            let p = SIMD2((s.x * 2 - 1) * R, (s.y * 2 - 1) * R)
-            guard simd_length(p) < R * 0.97 else { continue }
-            let f = value(foam, at: p)
-            guard f > s.z else { continue }
-            let sz = min(1, max(0, value(self.size, at: p)))
-            // 泡の大きさ(1=粗い〜0=きめ細かい)を 0〜3 の連続した段階にし、となりの2段階を混ぜて描く。
-            // 点ごとに決まった乱数で振り分けるので、段階が変わるときは前の泡と次の泡が混ざりながら入れかわる
-            let level = (1 - sz) * 3
-            let lower = min(2, Int(level)), mix = level - Float(lower)
-            let pick = Float((k &* 2_654_435_761) % 1000) / 1000
-            let stage = pick < mix ? lower + 1 : lower
-            let r = radii[stage]
-            let c = CGPoint(x: CGFloat(p.x + R) * scale, y: CGFloat(p.y + R) * scale)
-            if stage <= 1 {
-                // 大きい泡: 輪郭だけの円はやめ、液より少し明るい、ふんわりした丸(塗りのみ)
-                guard k % (stage == 0 ? 6 : 3) == 0 else { continue }
-                let base = dark + (light - dark) * min(1, pow(f, 0.8) * 1.2)
-                ctx.setFillColor(UIColor(red: CGFloat(min(1, base.x + 0.10)), green: CGFloat(min(1, base.y + 0.10)), blue: CGFloat(min(1, base.z + 0.06)), alpha: 0.55).cgColor)
-                ctx.fillEllipse(in: CGRect(x: c.x - r, y: c.y - r, width: r * 2, height: r * 2))
-            } else {
-                // 細かい泡は、一つ一つが見えないほど小さな点の集まり(ほぼ均一なマットな面)
-                ctx.setFillColor(UIColor(red: CGFloat(light.x + 0.06), green: CGFloat(light.y + 0.06), blue: CGFloat(light.z + 0.06), alpha: 0.55).cgColor)
-                ctx.fillEllipse(in: CGRect(x: c.x - r, y: c.y - r, width: r * 2, height: r * 2))
-                // 抹茶の粒(濃い緑の小さな点)を少しだけ
-                if k % 23 == 0 {
-                    ctx.setFillColor(TemaeConstants.speck.cgColor)
-                    ctx.fillEllipse(in: CGRect(x: c.x - 1, y: c.y - 1, width: 2, height: 2))
-                }
-            }
+        let image = simBytes.withUnsafeMutableBytes { buf in
+            CGContext(data: buf.baseAddress, width: n, height: n, bitsPerComponent: 8, bytesPerRow: n * 4, space: cs,
+                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)?.makeImage()
         }
-        // 茶碗の内壁との境目に、細く明るい輪
-        let foamAvg = foam.reduce(0, +) / Float(foam.count)
-        ctx.setStrokeColor(TemaeConstants.rimLight.withAlphaComponent(CGFloat(0.3 + 0.6 * min(1, foamAvg * 2))).cgColor)
-        ctx.setLineWidth(5)
-        ctx.strokeEllipse(in: CGRect(x: 4, y: 4, width: size - 8, height: size - 8))
-        material.diffuse.contents = ctx.makeImage()
+        simTexture.contents = image
+        material.setValue(NSNumber(value: min(1, sum / Float(n * n) * 2)), forKey: "foamAvg")
+    }
+
+    /// 液面のマテリアルに、GPU で描くシェーダーをつける
+    private func setupShader() {
+        simTexture.minificationFilter = .linear
+        simTexture.magnificationFilter = .linear
+        simTexture.wrapS = .clamp
+        simTexture.wrapT = .clamp
+        material.setValue(simTexture, forKey: "simTex")
+        material.setValue(NSNumber(value: Float(0)), forKey: "foamAvg")
+        // diffuseTexcoord を使うため、白い 1 画素の画像を貼っておく(色だけだと座標が渡らない)
+        material.diffuse.contents = UIGraphicsImageRenderer(size: CGSize(width: 1, height: 1)).image { ctx in
+            UIColor.white.setFill(); ctx.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
+        }
+        material.shaderModifiers = [.surface: LiquidShader.surface]
     }
 }
 
