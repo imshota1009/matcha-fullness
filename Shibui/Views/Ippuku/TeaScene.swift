@@ -429,17 +429,20 @@ final class LiquidSurface {
             let f = value(foam, at: p)
             guard f > s.z else { continue }
             let sz = min(1, max(0, value(self.size, at: p)))
-            // 泡の大きさ(1=粗い〜0=きめ細かい)から段階を決め、その段階の半径で描く
-            let stage = sz > 0.75 ? 0 : sz > 0.5 ? 1 : sz > 0.25 ? 2 : 3
+            // 泡の大きさ(1=粗い〜0=きめ細かい)を 0〜3 の連続した段階にし、となりの2段階を混ぜて描く。
+            // 点ごとに決まった乱数で振り分けるので、段階が変わるときは前の泡と次の泡が混ざりながら入れかわる
+            let level = (1 - sz) * 3
+            let lower = min(2, Int(level)), mix = level - Float(lower)
+            let pick = Float((k &* 2_654_435_761) % 1000) / 1000
+            let stage = pick < mix ? lower + 1 : lower
             let r = radii[stage]
             let c = CGPoint(x: CGFloat(p.x + R) * scale, y: CGFloat(p.y + R) * scale)
             if stage <= 1 {
-                // 大きい泡は数を少なく、液より少し明るい輪郭の円(グラデーションなし)
-                guard k % (stage == 0 ? 9 : 4) == 0 else { continue }
-                let base = dark + (light - dark) * pow(f, 0.8) * 1.15
-                ctx.setStrokeColor(UIColor(red: CGFloat(min(1, base.x + 0.12)), green: CGFloat(min(1, base.y + 0.12)), blue: CGFloat(min(1, base.z + 0.08)), alpha: 0.9).cgColor)
-                ctx.setLineWidth(1.4)
-                ctx.strokeEllipse(in: CGRect(x: c.x - r, y: c.y - r, width: r * 2, height: r * 2))
+                // 大きい泡: 輪郭だけの円はやめ、液より少し明るい、ふんわりした丸(塗りのみ)
+                guard k % (stage == 0 ? 6 : 3) == 0 else { continue }
+                let base = dark + (light - dark) * min(1, pow(f, 0.8) * 1.2)
+                ctx.setFillColor(UIColor(red: CGFloat(min(1, base.x + 0.10)), green: CGFloat(min(1, base.y + 0.10)), blue: CGFloat(min(1, base.z + 0.06)), alpha: 0.55).cgColor)
+                ctx.fillEllipse(in: CGRect(x: c.x - r, y: c.y - r, width: r * 2, height: r * 2))
             } else {
                 // 細かい泡は、一つ一つが見えないほど小さな点の集まり(ほぼ均一なマットな面)
                 ctx.setFillColor(UIColor(red: CGFloat(light.x + 0.06), green: CGFloat(light.y + 0.06), blue: CGFloat(light.z + 0.06), alpha: 0.55).cgColor)

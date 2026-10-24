@@ -15,6 +15,7 @@
 		254BC8A104C78A980716F0C1 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D905260C023C259E8FED4969 /* ReviewView.swift */; };
 		27342E2854EC59C08CD6F18F /* chasen_tines_inner.obj in Resources */ = {isa = PBXBuildFile; fileRef = BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */; };
 		2F62FAB594940440F866A95F /* IppukuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29CD8030EDFE4B138CF0D65E /* IppukuView.swift */; };
+		32603C0A9E275A5622F489FB /* Fusuma.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FFC025933A196D0FD29EFF /* Fusuma.swift */; };
 		36CC081133F9E4DF3EF9D3F9 /* river.m4a in Resources */ = {isa = PBXBuildFile; fileRef = A2E90426BF18D4E0860DA1FC /* river.m4a */; };
 		387D1D8EA0BB0326157B2F7F /* WhiteSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D2A2CE20F21D8CEAADFB45 /* WhiteSlider.swift */; };
 		43A0F73DEF28312C28BDC789 /* Records.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242ECD94824029EA6F2F7C85 /* Records.swift */; };
@@ -28,6 +29,7 @@
 		72A158DA9E079BDB9C124607 /* FocusTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71A1B44AE379668366256BA /* FocusTimerView.swift */; };
 		76139F034221DEDFC8903FA8 /* wind.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 23A863ABFEB7D40ECCAAA2DE /* wind.m4a */; };
 		8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */ = {isa = PBXBuildFile; fileRef = 68D816B2DD6715A530FF2740 /* chawan.obj */; };
+		877DF850A26B69616077A289 /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4765AD634CC4D538F24439CB /* OnboardingTests.swift */; };
 		8ECA4F5040D72427422946CE /* rikyu.riv in Resources */ = {isa = PBXBuildFile; fileRef = 0B3DE3DAB9D6556F6F596B35 /* rikyu.riv */; };
 		9B2558AA5DB67CA65C0CBA86 /* birds.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 8843D1711B2BFB5AB74F45E6 /* birds.m4a */; };
 		9CDF2E51E818ABD4FE6088A9 /* TemaeConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8222BAE0B36963A54C3BE782 /* TemaeConstants.swift */; };
@@ -37,6 +39,7 @@
 		C668CC69836B916CE1B19961 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80D9182EA02986A07E8C589 /* SettingsView.swift */; };
 		D120F3BDB60662A96AD513B5 /* TemaeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A368E64CB76EBDFFF74C39A8 /* TemaeView.swift */; };
 		D1B7C0F77E4727A6FBB4BBB4 /* Scoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF36C1BEC8F23FBB4BFD248A /* Scoring.swift */; };
+		E5530817981D055098821677 /* Rank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175ED488074D9EC320169462 /* Rank.swift */; };
 		E6B84020FBF579F2BDA39529 /* TeaArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19794A5048322D5107B86A91 /* TeaArt.swift */; };
 		E9800038EE98926552AB8CA3 /* ShibuiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */; };
 		EFF68298DF8762074127A073 /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 0DB94AD0C965CDC1CD53B003 /* RiveRuntime */; };
@@ -55,6 +58,7 @@
 
 /* Begin PBXFileReference section */
 		0B3DE3DAB9D6556F6F596B35 /* rikyu.riv */ = {isa = PBXFileReference; path = rikyu.riv; sourceTree = "<group>"; };
+		175ED488074D9EC320169462 /* Rank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rank.swift; sourceTree = "<group>"; };
 		19794A5048322D5107B86A91 /* TeaArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaArt.swift; sourceTree = "<group>"; };
 		1E1C5545C96633203177CA3E /* chasen_thread.obj */ = {isa = PBXFileReference; path = chasen_thread.obj; sourceTree = "<group>"; };
 		1FA78D9BDB9607A57D4CF72A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -63,8 +67,10 @@
 		24C4AD58D13F998189C1CB78 /* MotionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionService.swift; sourceTree = "<group>"; };
 		29CD8030EDFE4B138CF0D65E /* IppukuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IppukuView.swift; sourceTree = "<group>"; };
 		2F96B19FA8AD1791E07CF3B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		31FFC025933A196D0FD29EFF /* Fusuma.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fusuma.swift; sourceTree = "<group>"; };
 		35D2A2CE20F21D8CEAADFB45 /* WhiteSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteSlider.swift; sourceTree = "<group>"; };
 		41F6E5D876C58859D10DFBDC /* Shibui.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shibui.entitlements; sourceTree = "<group>"; };
+		4765AD634CC4D538F24439CB /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
 		631A45B922E68836FEE6CB8A /* CREDITS.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CREDITS.txt; sourceTree = "<group>"; };
 		64B1D0CA450A1A864D89FA0E /* TeaScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaScene.swift; sourceTree = "<group>"; };
 		68D816B2DD6715A530FF2740 /* chawan.obj */ = {isa = PBXFileReference; path = chawan.obj; sourceTree = "<group>"; };
@@ -129,6 +135,7 @@
 		12D62C613792FB6B9C2AA551 /* Parts */ = {
 			isa = PBXGroup;
 			children = (
+				31FFC025933A196D0FD29EFF /* Fusuma.swift */,
 				8844868F280DE82CE5C5B814 /* Pickers.swift */,
 				CC09D44EEFF2D2BC8DC81F75 /* RikyuView.swift */,
 				19794A5048322D5107B86A91 /* TeaArt.swift */,
@@ -182,6 +189,7 @@
 		416A88F9093D5A3C6D790F38 /* UITests */ = {
 			isa = PBXGroup;
 			children = (
+				4765AD634CC4D538F24439CB /* OnboardingTests.swift */,
 				D5690F6AA9C6DB755D8919EF /* SettingsScrollTests.swift */,
 			);
 			path = UITests;
@@ -241,6 +249,7 @@
 			isa = PBXGroup;
 			children = (
 				DDEE805E42620D02DC2C3931 /* Messages.swift */,
+				175ED488074D9EC320169462 /* Rank.swift */,
 				242ECD94824029EA6F2F7C85 /* Records.swift */,
 				BF36C1BEC8F23FBB4BFD248A /* Scoring.swift */,
 				8222BAE0B36963A54C3BE782 /* TemaeConstants.swift */,
@@ -383,12 +392,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				72A158DA9E079BDB9C124607 /* FocusTimerView.swift in Sources */,
+				32603C0A9E275A5622F489FB /* Fusuma.swift in Sources */,
 				2F62FAB594940440F866A95F /* IppukuView.swift in Sources */,
 				01E17A6C98EA974C57049C90 /* MainTabView.swift in Sources */,
 				515C13F1C660C35C043DFD7B /* Messages.swift in Sources */,
 				F1F6A1C22771A6A4C2C5C10B /* MotionService.swift in Sources */,
 				0DD227DFBD83ED515FD39875 /* OnboardingView.swift in Sources */,
 				6C3EDB7CAF6E509FB10343D8 /* Pickers.swift in Sources */,
+				E5530817981D055098821677 /* Rank.swift in Sources */,
 				43A0F73DEF28312C28BDC789 /* Records.swift in Sources */,
 				254BC8A104C78A980716F0C1 /* ReviewView.swift in Sources */,
 				66C26DBE9748558AE67B0237 /* RikyuView.swift in Sources */,
@@ -408,6 +419,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				877DF850A26B69616077A289 /* OnboardingTests.swift in Sources */,
 				171F1940FE0A1247F1DE7EE1 /* SettingsScrollTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -458,7 +470,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 23;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -571,7 +583,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 23;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

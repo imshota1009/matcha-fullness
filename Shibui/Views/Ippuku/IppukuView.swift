@@ -13,6 +13,8 @@ struct TeaFlowView: View {
     @State private var startedAt = Date()
     @State private var session: MatchaSession?
     @State private var timerOpen = false
+    /// 茶碗が出る前に、襖が開く
+    @State private var doorsOpen = false
 
     var body: some View {
         ZStack {
@@ -40,6 +42,7 @@ struct TeaFlowView: View {
                     .transition(.opacity)
             }
         }
+        .overlay { if !doorsOpen { FusumaOpening { doorsOpen = true } } }
         .animation(.easeInOut(duration: 0.4), value: session?.id)
         .onAppear { startedAt = .now }
     }
@@ -62,6 +65,12 @@ struct ResultView: View {
     let onClose: () -> Void
     let onTimer: () -> Void
     @State private var shown = 0
+    @Query private var sessions: [MatchaSession]
+
+    /// これまでの点の合計(この一杯を含む)と、この一杯の前の合計
+    private var points: Int { sessions.reduce(0) { $0 + $1.score } }
+    private var before: Int { points - session.score }
+    private var promoted: Bool { Rank.current(for: points) != Rank.current(for: before) }
 
     var body: some View {
         VStack(spacing: Theme.Spacing.m) {
@@ -88,6 +97,9 @@ struct ResultView: View {
                 .font(.system(.body, design: .serif))
                 .foregroundStyle(Theme.Palette.text)
                 .multilineTextAlignment(.center)
+                .padding(.horizontal, Theme.Spacing.xl)
+                .padding(.top, Theme.Spacing.s)
+            RankBar(points: points, gained: session.score, promoted: promoted)
                 .padding(.horizontal, Theme.Spacing.xl)
                 .padding(.top, Theme.Spacing.s)
             Text("スコアは所作のていねいさから出した目安です(根拠は調査中)")
@@ -123,6 +135,36 @@ struct ResultView: View {
             }
             withAnimation { shown = session.score }
             Haptics.impact()
+            if promoted { Haptics.success() }
         }
+    }
+}
+
+/// ランクと、次のランクまでの進み具合。上がったときは「昇格」と出す
+struct RankBar: View {
+    let points: Int
+    var gained: Int? = nil
+    var promoted = false
+
+    var body: some View {
+        let rank = Rank.current(for: points)
+        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(promoted ? "昇格 \(rank.name)" : rank.name)
+                    .font(.system(.headline, design: .serif))
+                    .foregroundStyle(promoted ? Theme.Palette.matcha : Theme.Palette.text)
+                Text(rank.tier)
+                    .font(.dsCaption)
+                    .foregroundStyle(Theme.Palette.secondaryText)
+                Spacer()
+                if let gained { Text("+\(gained)点").font(.dsCaption.monospacedDigit()).foregroundStyle(Theme.Palette.matcha) }
+            }
+            ProgressView(value: Rank.progress(for: points))
+                .tint(Theme.Palette.matcha)
+            Text(Rank.next(for: points).map { "次の「\($0.name)」まで \($0.threshold - points)点" } ?? "最上位です")
+                .font(.caption2.monospacedDigit())
+                .foregroundStyle(Theme.Palette.secondaryText)
+        }
+        .accessibilityElement(children: .combine)
     }
 }

@@ -23,7 +23,8 @@ enum TemaeConstants {
     static let finishSlow = 1.0, finishFast = 2.0
 
     /// 回す: 1回の目標角度・成立の許容幅・点数が 0 になる差(度)・静止の時間(秒)・回数
-    static let rotateTarget = 45.0, rotateTolerance = 15.0, rotateZeroAt = 30.0
+    /// 【変更 10/25】90° を2回、合計 180°(開発者の指示)
+    static let rotateTarget = 90.0, rotateTolerance = 20.0, rotateZeroAt = 45.0
     static let rotateHold = 0.5, rotateTimes = 2
     /// 時計回りを正にするための符号(実機で確認する。VERIFY)
     static let clockwiseSign = -1.0

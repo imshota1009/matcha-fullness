@@ -20,12 +20,11 @@ struct OnboardingView: View {
         VStack(spacing: 0) {
             HStack {
                 Spacer()
-                if page < pageCount - 1 {
-                    Button("スキップ") { finish() }
-                        .font(.dsCaption.weight(.medium))
-                        .foregroundStyle(Theme.Palette.secondaryText)
-                        .frame(minWidth: Theme.Size.minTouch, minHeight: Theme.Size.minTouch)
-                }
+                // どのページからでも抜けられる(脱出性)
+                Button("スキップ") { finish() }
+                    .font(.dsCaption.weight(.medium))
+                    .foregroundStyle(Theme.Palette.secondaryText)
+                    .frame(minWidth: Theme.Size.minTouch, minHeight: Theme.Size.minTouch)
             }
             .frame(height: Theme.Size.minTouch)
             .padding(.horizontal, Theme.Spacing.screen)

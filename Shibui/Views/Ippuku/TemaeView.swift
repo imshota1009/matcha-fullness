@@ -5,7 +5,7 @@ import SwiftUI
 /// 点てる(本体)。机に置いた iPhone を茶碗に、指を茶筅に見立てる(SPEC 5章 A〜C)。
 /// 1. 点てる: 指を縦にまっすぐ往復。往復ごとに振動。泡は採点(泡スコア)に合わせてリアルタイムに変わる
 /// 2. 仕上げ: ゆっくり小さく「くるっ」と約300°回して、指を離す
-/// 3. 回す: 茶碗を持ち上げ、時計回りに 45° ずつ 2回まわす(0.5秒止めると1回)。液面は空間に固定して回さない
+/// 3. 回す: 茶碗を持ち上げ、時計回りに 90° ずつ 2回(合計 180°)まわす(0.5秒止めると1回)。液面は空間に固定して回さない
 /// 机に置いていないときは入力を止め、朱色で知らせる。茶碗・茶筅は Unity のモデル、液面は LiquidSurface。
 struct TemaeView: View {
     let motion: MotionService
@@ -123,7 +123,7 @@ final class TemaeModel {
         case .rotate:
             if counterClockwise { "時計回りに回します ↻" }
             else if turnAngle - (turns.last.map { _ in turns.reduce(0, +) } ?? 0) > TemaeConstants.rotateTarget + TemaeConstants.rotateTolerance { "少し戻しましょう" }
-            else { turns.isEmpty ? "茶碗を持ち上げて、時計回りに2回まわしましょう" : "もう1回、時計回りに" }
+            else { turns.isEmpty ? "茶碗を持ち上げて、時計回りに90°ずつ2回まわしましょう" : "もう1回、時計回りに" }
         case .done: "どうぞ"
         }
     }
@@ -378,7 +378,7 @@ struct TraceGuide: View {
 }
 
 /// 回した量がひと目でわかる目盛りのリング(SPEC 5章 C。Face ID の登録画面のような進捗リング)。
-/// 茶碗の縁の外側に 2° ごとの短い目盛り。回す範囲(0〜90°)だけ薄い墨で出し、回した角度まで抹茶色に点灯する。
+/// 茶碗の縁の外側に 2° ごとの短い目盛り。回す範囲(0〜180°)だけ薄い墨で出し、回した角度まで抹茶色に点灯する。
 /// 回しすぎた分は朱。茶碗の手前(下)に「正面」の印。
 struct RotateRing: View {
     let model: TemaeModel
@@ -391,7 +391,8 @@ struct RotateRing: View {
             let done = model.turns.reduce(0, +)
             let upper = done + TemaeConstants.rotateTarget + TemaeConstants.rotateTolerance
             // 開始位置は手前(画面の下)。時計回り = 画面上でも時計回り
-            for k in 0...45 {
+            let total = TemaeConstants.rotateTarget * Double(TemaeConstants.rotateTimes)
+            for k in 0...Int(total / 2) {
                 let deg = Double(k) * 2
                 let a = (90 + deg) * .pi / 180
                 let inner = CGPoint(x: c.x + cos(a) * r, y: c.y + sin(a) * r)
@@ -405,7 +406,7 @@ struct RotateRing: View {
             }
             // 「1/2」「2/2」
             for (j, label) in ["1/2", "2/2"].enumerated() where model.turns.count > j {
-                let a = (90 + Double(j + 1) * 45 + 6) * .pi / 180
+                let a = (90 + Double(j + 1) * TemaeConstants.rotateTarget + 6) * .pi / 180
                 ctx.draw(Text(label).font(.caption.weight(.semibold)).foregroundStyle(TemaePalette.ink),
                          at: CGPoint(x: c.x + cos(a) * (r + 30), y: c.y + sin(a) * (r + 30)))
             }

@@ -6,7 +6,7 @@ import SwiftUI
 /// 通知時刻は M5 で加える。
 struct SettingsView: View {
     @Environment(\.modelContext) private var context
-    @AppStorage("didOnboard") private var didOnboard = true
+    @State private var showsOnboarding = false
     @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
     @AppStorage(Haptics.storageKey) private var hapticsOn = true
     @State private var confirmsDeleteAll = false
@@ -45,7 +45,7 @@ struct SettingsView: View {
                     Text("川と風の音に、ときどき鳥とししおどし。茶筅の音はいつも鳴ります。タイマー中は自然の音がずっと流れ、5分ごとにししおどしが鳴ります")
                 }
                 Section {
-                    Button("はじめの説明をもう一度見る", systemImage: "book") { didOnboard = false }
+                    Button("はじめの説明をもう一度見る", systemImage: "book") { showsOnboarding = true }
                 }
                 Section("音の出典") {
                     Text("川: jackthemurray (CC0) / 風: ezwa (パブリックドメイン) / 鳥のさえずり: Robert EA Harvey (CC BY-SA 4.0) / ししおどし: Fg2 (パブリックドメイン)。いずれも Wikimedia Commons")
@@ -62,6 +62,10 @@ struct SettingsView: View {
             .background(Theme.Palette.background)
             .navigationTitle("設定")
             .navigationBarTitleDisplayMode(.inline)
+            // はじめの説明は、この画面の上に全画面で開く(閉じると設定に戻る)
+            .fullScreenCover(isPresented: $showsOnboarding) {
+                OnboardingView { showsOnboarding = false }
+            }
             .confirmationDialog("記録をすべて消しますか?", isPresented: $confirmsDeleteAll, titleVisibility: .visible) {
                 Button("すべて消す", role: .destructive) {
                     try? context.delete(model: MatchaSession.self)

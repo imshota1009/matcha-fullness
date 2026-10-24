@@ -45,6 +45,8 @@ struct WaitingView: View {
                             .foregroundStyle(Theme.Palette.secondaryText)
                     }
                 }
+                RankBar(points: sessions.reduce(0) { $0 + $1.score })
+                    .padding(.horizontal, Theme.Spacing.xl)
                 Spacer()
                 PrimaryButton("点てる", systemImage: "cup.and.saucer") { flowOpen = true }
                     .padding(.horizontal, Theme.Spacing.screen)
