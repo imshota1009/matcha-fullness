@@ -21,10 +21,12 @@
 		57218950A4259B537217577C /* YujiSyuku-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 32F66273A5E2AD701ADE7100 /* YujiSyuku-OFL.txt */; };
 		5F15E2A8D7F1302EECFF798F /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = D7116FF1702F1AF26D0D3654 /* DesignSystem */; };
 		5FD27A1A38EB5774A88FFB06 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0424EA8BFBAC796F58DF5A /* Assets.xcassets */; };
+		66C26DBE9748558AE67B0237 /* RikyuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC09D44EEFF2D2BC8DC81F75 /* RikyuView.swift */; };
 		6EE43B272095A54ED26EFAA1 /* chasen_thread.obj in Resources */ = {isa = PBXBuildFile; fileRef = 1E1C5545C96633203177CA3E /* chasen_thread.obj */; };
 		756B3AF16F6BC0852D324AF8 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6C5C8FDAC76C8C34BB3644 /* SharedStore.swift */; };
 		8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */ = {isa = PBXBuildFile; fileRef = 68D816B2DD6715A530FF2740 /* chawan.obj */; };
 		8E9279F55715F2BF3A93FE41 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = C543329568C634D6D1696078 /* DesignSystem */; };
+		8ECA4F5040D72427422946CE /* rikyu.riv in Resources */ = {isa = PBXBuildFile; fileRef = 0B3DE3DAB9D6556F6F596B35 /* rikyu.riv */; };
 		9701D091EB35AC5A60816B2C /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B22F2D08EEF648DEE68F496F /* MockData.swift */; };
 		9B2558AA5DB67CA65C0CBA86 /* birds.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 8843D1711B2BFB5AB74F45E6 /* birds.m4a */; };
 		9F3852126C490F704DF960E9 /* chasen_tines_outer.obj in Resources */ = {isa = PBXBuildFile; fileRef = F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */; };
@@ -37,6 +39,7 @@
 		D6AAD73E330DE7777DAB91BE /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6C5C8FDAC76C8C34BB3644 /* SharedStore.swift */; };
 		E6B84020FBF579F2BDA39529 /* TeaArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19794A5048322D5107B86A91 /* TeaArt.swift */; };
 		E9800038EE98926552AB8CA3 /* ShibuiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */; };
+		EFF68298DF8762074127A073 /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 0DB94AD0C965CDC1CD53B003 /* RiveRuntime */; };
 		F1F6A1C22771A6A4C2C5C10B /* MotionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C4AD58D13F998189C1CB78 /* MotionService.swift */; };
 		F74E753F6BEA48EEF13E025F /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DFB255B5F9AFF723AEEF1E /* HistoryView.swift */; };
 /* End PBXBuildFile section */
@@ -67,6 +70,7 @@
 
 /* Begin PBXFileReference section */
 		015ECE37B3000AF30755A09E /* ShibuiWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShibuiWidget.swift; sourceTree = "<group>"; };
+		0B3DE3DAB9D6556F6F596B35 /* rikyu.riv */ = {isa = PBXFileReference; path = rikyu.riv; sourceTree = "<group>"; };
 		1610BEA1F0D1A4BF6B9D07F3 /* IshiusuScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IshiusuScreen.swift; sourceTree = "<group>"; };
 		19794A5048322D5107B86A91 /* TeaArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaArt.swift; sourceTree = "<group>"; };
 		1E1C5545C96633203177CA3E /* chasen_thread.obj */ = {isa = PBXFileReference; path = chasen_thread.obj; sourceTree = "<group>"; };
@@ -95,6 +99,7 @@
 		BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */ = {isa = PBXFileReference; path = chasen_tines_inner.obj; sourceTree = "<group>"; };
 		C1E46B566A7DEE89C3554B6E /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DesignSystem; path = ../DesignSystem; sourceTree = SOURCE_ROOT; };
 		C47DAED829E39281D4145F9D /* TeaStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaStore.swift; sourceTree = "<group>"; };
+		CC09D44EEFF2D2BC8DC81F75 /* RikyuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RikyuView.swift; sourceTree = "<group>"; };
 		D6085C317848DE5EF3811E52 /* chasen_handle.obj */ = {isa = PBXFileReference; path = chasen_handle.obj; sourceTree = "<group>"; };
 		D92576DC66D3E244DECC4749 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		ED4E0134F33017E59CDC489E /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -109,6 +114,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F15E2A8D7F1302EECFF798F /* DesignSystem in Frameworks */,
+				EFF68298DF8762074127A073 /* RiveRuntime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,6 +154,7 @@
 		12D62C613792FB6B9C2AA551 /* Parts */ = {
 			isa = PBXGroup;
 			children = (
+				CC09D44EEFF2D2BC8DC81F75 /* RikyuView.swift */,
 				19794A5048322D5107B86A91 /* TeaArt.swift */,
 			);
 			path = Parts;
@@ -199,6 +206,7 @@
 			children = (
 				AA0424EA8BFBAC796F58DF5A /* Assets.xcassets */,
 				2F96B19FA8AD1791E07CF3B6 /* Info.plist */,
+				0B3DE3DAB9D6556F6F596B35 /* rikyu.riv */,
 				41F6E5D876C58859D10DFBDC /* Shibui.entitlements */,
 				7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */,
 				F7A1E7234E4762C58D5D5818 /* Fonts */,
@@ -338,6 +346,7 @@
 			name = Shibui;
 			packageProductDependencies = (
 				D7116FF1702F1AF26D0D3654 /* DesignSystem */,
+				0DB94AD0C965CDC1CD53B003 /* RiveRuntime */,
 			);
 			productName = Shibui;
 			productReference = FEE59A74ACD8615401187F4E /* Shibui.app */;
@@ -391,6 +400,7 @@
 			mainGroup = 3A42E90B0B203772587A055D;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				F4816530EFDB3840F334FE93 /* XCRemoteSwiftPackageReference "rive-ios" */,
 				E244049FFE4520AFF79A1340 /* XCLocalSwiftPackageReference "../DesignSystem" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -419,6 +429,7 @@
 				27342E2854EC59C08CD6F18F /* chasen_tines_inner.obj in Resources */,
 				9F3852126C490F704DF960E9 /* chasen_tines_outer.obj in Resources */,
 				8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */,
+				8ECA4F5040D72427422946CE /* rikyu.riv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,6 +447,7 @@
 				9701D091EB35AC5A60816B2C /* MockData.swift in Sources */,
 				F1F6A1C22771A6A4C2C5C10B /* MotionService.swift in Sources */,
 				0DD227DFBD83ED515FD39875 /* OnboardingView.swift in Sources */,
+				66C26DBE9748558AE67B0237 /* RikyuView.swift in Sources */,
 				1E60BE9AC6B692DA000D6399 /* SNSView.swift in Sources */,
 				756B3AF16F6BC0852D324AF8 /* SharedStore.swift in Sources */,
 				E9800038EE98926552AB8CA3 /* ShibuiApp.swift in Sources */,
@@ -502,7 +514,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -597,7 +609,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -703,7 +715,23 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		F4816530EFDB3840F334FE93 /* XCRemoteSwiftPackageReference "rive-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rive-app/rive-ios";
+			requirement = {
+				kind = exactVersion;
+				version = 6.27.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		0DB94AD0C965CDC1CD53B003 /* RiveRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F4816530EFDB3840F334FE93 /* XCRemoteSwiftPackageReference "rive-ios" */;
+			productName = RiveRuntime;
+		};
 		C543329568C634D6D1696078 /* DesignSystem */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DesignSystem;

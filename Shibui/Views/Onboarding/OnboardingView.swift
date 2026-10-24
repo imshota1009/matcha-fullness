@@ -1,7 +1,7 @@
 import DesignSystem
 import SwiftUI
 
-/// はじめの説明(3ページ)。Mobbin の Crouton(ようこそ)・Klarna(価値を3行)・Things 3(短く、すぐ使える)を参考にした。
+/// はじめの説明(4ページ)。案内役のりきゅうさんが話しかける。Mobbin の Crouton(ようこそ)・Klarna(価値を3行)・Things 3(短く、すぐ使える)を参考にした。
 /// - 主要操作は下部の1ボタンだけ。左右スワイプでもページを移れる
 /// - どのページからでも「スキップ」で抜けられる(脱出性)
 /// - 文言は `OnboardingContent` の1か所で差し替える
@@ -10,6 +10,8 @@ struct OnboardingView: View {
     /// 起動引数 `-onboardingPage N` で最初のページを指定できる(画面確認用)
     @State private var page = UserDefaults.standard.integer(forKey: "onboardingPage")
     @State private var stamped = false
+    @State private var greeting = false
+    @State private var bowNow = false
 
     private let pageCount = 4
     @AppStorage(WhiskMode.storageKey) private var mode = WhiskMode.gyro
@@ -70,7 +72,19 @@ struct OnboardingView: View {
     private var welcome: some View {
         VStack(spacing: Theme.Spacing.l) {
             Spacer()
-            Image("ChasenSide").resizable().scaledToFit().frame(height: 200)
+            // りきゅうさんが手をふりながらあいさつし、そのあとおじぎをする
+            RikyuView(size: 300, mood: 1, talking: greeting, bows: bowNow, waves: page == 0)
+                .task(id: page) {
+                    guard page == 0 else { return }
+                    bowNow = false
+                    greeting = true
+                    try? await Task.sleep(for: .seconds(1.8))
+                    greeting = false
+                    bowNow = true
+                }
+            Text("ようこそ。いっしょに抹茶をたてましょう")
+                .font(.dsBody)
+                .foregroundStyle(Theme.Palette.text)
             VStack(spacing: Theme.Spacing.s) {
                 Text(OnboardingContent.appName)
                     .font(.dsTitle)
@@ -91,10 +105,13 @@ struct OnboardingView: View {
     private var values: some View {
         VStack(alignment: .leading, spacing: 0) {
             Spacer()
+            RikyuSays(line: "流れは、この3つだけですよ。")
+                .id(page == 1)
+                .padding(.bottom, Theme.Spacing.m)
             Text(OnboardingContent.valuesTitle)
                 .font(.dsTitle)
                 .foregroundStyle(Theme.Palette.text)
-                .padding(.bottom, Theme.Spacing.l)
+                .padding(.bottom, Theme.Spacing.s)
             ForEach(OnboardingContent.values, id: \.title) { item in
                 HStack(alignment: .top, spacing: Theme.Spacing.m) {
                     Image(systemName: item.symbol)
@@ -124,6 +141,8 @@ struct OnboardingView: View {
     private var modePage: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.m) {
             Spacer()
+            RikyuSays(line: "どちらでも大丈夫。あとで変えられます。", size: 80)
+                .id(page == 2)
             Text("たて方と茶碗を選んでください")
                 .font(.dsTitle)
                 .foregroundStyle(Theme.Palette.text)
@@ -145,7 +164,11 @@ struct OnboardingView: View {
     private var ready: some View {
         VStack(spacing: Theme.Spacing.l) {
             Spacer()
-            ChawanView(foam: stamped ? 1 : 0, smoothness: 1, size: 140)
+            ZStack(alignment: .bottomTrailing) {
+                RikyuView(size: 180, talking: page == 3 && greeting, bows: stamped)
+                ChawanView(foam: stamped ? 1 : 0, smoothness: 1, size: 70)
+                    .offset(x: 40)
+            }
             VStack(spacing: Theme.Spacing.s) {
                 Text(OnboardingContent.readyTitle)
                     .font(.dsTitle)
@@ -194,8 +217,8 @@ enum OnboardingContent {
     static let tagline = "渋々でいい。\n一杯たてたら、渋い時間が始まる。"
     static let valuesTitle = "使い方の流れ"
     static let values: [(symbol: String, title: String, detail: String)] = [
-        ("drop", "ししおどしで、区切る", "SNSを見すぎたら「カコン」。茶室へご案内します。"),
-        ("hand.wave", "振って、抹茶をたてる", "スマホを振って抹茶をたて、ひと息ついて、次にやることを決める。"),
+        ("drop", "ししおどしで、区切る", "SNSを見すぎたら「カコン」と鳴ってお知らせします。"),
+        ("hand.wave", "抹茶をたてる", "指か、スマホを振って抹茶をたてる。うまさが点数になります。"),
         ("timer", "うら返して、集中する", "スマホをうら返している間が集中タイム。終わったら、また一杯。"),
     ]
     static let readyTitle = "どうぞ、お入りください"

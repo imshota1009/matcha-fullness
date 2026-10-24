@@ -14,10 +14,13 @@ settings:
     SWIFT_VERSION: "5.0"
     TARGETED_DEVICE_FAMILY: "1"
     MARKETING_VERSION: "1.0"
-    CURRENT_PROJECT_VERSION: "14"
+    CURRENT_PROJECT_VERSION: "15"
 packages:
   DesignSystem:
     path: ../DesignSystem
+  RiveRuntime:
+    url: https://github.com/rive-app/rive-ios
+    exactVersion: 6.27.0
 targets:
   Shibui:
     type: application
@@ -31,6 +34,7 @@ targets:
       - Mock
     dependencies:
       - package: DesignSystem
+      - package: RiveRuntime
       - target: ShibuiWidget
     entitlements:
       path: App/Shibui.entitlements
