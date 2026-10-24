@@ -14,7 +14,7 @@ settings:
     SWIFT_VERSION: "5.0"
     TARGETED_DEVICE_FAMILY: "1"
     MARKETING_VERSION: "1.0"
-    CURRENT_PROJECT_VERSION: "16"
+    CURRENT_PROJECT_VERSION: "17"
 packages:
   DesignSystem:
     path: ../DesignSystem
@@ -84,3 +84,20 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.imshota1009.spajam2026.shibui.widget
+  ShibuiUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    dependencies:
+      - target: Shibui
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.imshota1009.spajam2026.shibui.uitests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  Shibui:
+    build:
+      targets:
+        Shibui: all
+    test:
+      targets: [ShibuiUITests]

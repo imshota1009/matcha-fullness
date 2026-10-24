@@ -29,10 +29,6 @@ struct RootView: View {
         .transition(.opacity)
         .animation(.easeInOut(duration: 0.5), value: scene)
         .onOpenURL { url in if url.host() == "sns" { go(.sns) } }
-        // 抹茶をたてている間だけ、鳥のさえずりを流す(フェードで出入り)
-        .onChange(of: scene, initial: true) { _, now in
-            if now == .ippuku { SoundBank.shared.startAmbient() } else { SoundBank.shared.stopAmbient() }
-        }
         // 起動引数 `-scene sns|ippuku` で場面を指定して開ける(画面確認・デモ準備用)
         .task {
             switch UserDefaults.standard.string(forKey: "scene") {

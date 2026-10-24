@@ -12,8 +12,17 @@ struct IppukuView: View {
     let motion: MotionService
     let go: (Stage) -> Void
 
-    enum Step { case whisk, settle, result, breath, ichiji, kakejiku }
-    @State private var step = Step.whisk
+    enum Step { case whisk, settle, result, breath, ichiji, kakejiku
+        init(launchArgument: String?) {
+            switch launchArgument {
+            case "breath": self = .breath
+            case "kakejiku": self = .kakejiku
+            default: self = .whisk
+            }
+        }
+    }
+    // 起動引数 `-ippukuStep breath|kakejiku` で途中から始められる(画面確認用)
+    @State private var step = Step(launchArgument: UserDefaults.standard.string(forKey: "ippukuStep"))
     @State private var whisks: [Date] = []
     @State private var startedAt: Date?
     @State private var settleStart: Date?
@@ -53,8 +62,8 @@ struct IppukuView: View {
             Group {
                 switch step {
                 case .whisk, .settle: whiskView
-                case .result: if let result { ResultView(result: result, praise: praise, total: store.record.totalPoints) { step = .ichiji; focused = true } }
-                case .breath: BreathView { step = .ichiji; focused = true }
+                case .result: if let result { ResultView(result: result, praise: praise, total: store.record.totalPoints) { step = .breath } }
+                case .breath: HitoikiView { step = .ichiji; focused = true }
                 case .ichiji: ichijiView
                 case .kakejiku: kakejikuView
                 }
@@ -455,5 +464,44 @@ struct BreathView: View {
         }
         .onDisappear { SoundBank.shared.stopMatsukaze() }
         .accessibilityElement(children: .combine)
+    }
+}
+
+/// ひと息(たて終わったあと)。りきゅうさんがお茶を飲むしぐさをくり返し、その間だけ鳥のさえずりが聞こえる。
+/// 30秒で次へ進む。「つづける」でいつでも抜けられる。
+struct HitoikiView: View {
+    let onFinish: () -> Void
+    @State private var start = Date()
+    private let seconds = 30.0
+
+    var body: some View {
+        VStack(spacing: Theme.Spacing.l) {
+            Spacer()
+            RikyuView(size: 300, mood: 4)
+            Text("ひと息。")
+                .font(.system(.title, design: .serif).weight(.semibold))
+                .foregroundStyle(Theme.Palette.text)
+            Text("たてた一杯を味わいながら、鳥の声に耳をすませましょう")
+                .font(.dsBody)
+                .foregroundStyle(Theme.Palette.secondaryText)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, Theme.Spacing.xl)
+            // 残り時間は数字ではなく細い線で
+            TimelineView(.periodic(from: .now, by: 0.2)) { context in
+                let t = min(1, context.date.timeIntervalSince(start) / seconds)
+                Capsule().fill(Theme.Palette.separator).frame(width: 200, height: 4)
+                    .overlay(alignment: .leading) { Capsule().fill(Theme.Palette.matcha).frame(width: 200 * t, height: 4) }
+                    .onChange(of: t >= 1) { _, done in if done { onFinish() } }
+            }
+            Spacer()
+            PrimaryButton("つづける") { onFinish() }
+                .padding(.horizontal, Theme.Spacing.screen)
+                .padding(.bottom, Theme.Spacing.s)
+        }
+        .onAppear {
+            start = .now
+            SoundBank.shared.startAmbient()
+        }
+        .onDisappear { SoundBank.shared.stopAmbient() }
     }
 }

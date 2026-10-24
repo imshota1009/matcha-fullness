@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0B59B282650E5868981C81ED /* CREDITS.txt in Resources */ = {isa = PBXBuildFile; fileRef = 631A45B922E68836FEE6CB8A /* CREDITS.txt */; };
 		0DD227DFBD83ED515FD39875 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4E0134F33017E59CDC489E /* OnboardingView.swift */; };
+		171F1940FE0A1247F1DE7EE1 /* SettingsScrollTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5690F6AA9C6DB755D8919EF /* SettingsScrollTests.swift */; };
 		1B42F778C3C6ED056941B8C7 /* TeaStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47DAED829E39281D4145F9D /* TeaStore.swift */; };
 		1BD043BFB46FB85A6F8E7CF1 /* SoundBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */; };
 		1E60BE9AC6B692DA000D6399 /* SNSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C0140F1D1E5C96BC753C77 /* SNSView.swift */; };
@@ -34,6 +35,7 @@
 		C398012896ACFEE343B98226 /* TeaScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B1D0CA450A1A864D89FA0E /* TeaScene.swift */; };
 		C5D684D49BD093E2AE8C0239 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD4A1B4A3972F79F98B3C4D /* WidgetKit.framework */; };
 		C60D0AAA04C8E51EA3E1C59E /* YujiSyuku.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 446300BCCCC1914F083565E3 /* YujiSyuku.ttf */; };
+		C62C75D7BA235351798725F0 /* shishiodoshi.m4a in Resources */ = {isa = PBXBuildFile; fileRef = BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */; };
 		D120F3BDB60662A96AD513B5 /* TemaeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A368E64CB76EBDFFF74C39A8 /* TemaeView.swift */; };
 		D6AAD73E330DE7777DAB91BE /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6C5C8FDAC76C8C34BB3644 /* SharedStore.swift */; };
 		E6B84020FBF579F2BDA39529 /* TeaArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19794A5048322D5107B86A91 /* TeaArt.swift */; };
@@ -44,6 +46,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B2C6C296F0EDE29A7C7B9D5C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A97050C4493117BF6E6BCF3B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 991A478F781BCE46D1C1FB67;
+			remoteInfo = Shibui;
+		};
 		DCA1366BADDD5A28F2322F73 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A97050C4493117BF6E6BCF3B /* Project object */;
@@ -95,14 +104,17 @@
 		ACD4A1B4A3972F79F98B3C4D /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		B22F2D08EEF648DEE68F496F /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */ = {isa = PBXFileReference; path = chasen_tines_inner.obj; sourceTree = "<group>"; };
+		BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */ = {isa = PBXFileReference; path = shishiodoshi.m4a; sourceTree = "<group>"; };
 		C1E46B566A7DEE89C3554B6E /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DesignSystem; path = ../DesignSystem; sourceTree = SOURCE_ROOT; };
 		C47DAED829E39281D4145F9D /* TeaStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaStore.swift; sourceTree = "<group>"; };
 		CC09D44EEFF2D2BC8DC81F75 /* RikyuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RikyuView.swift; sourceTree = "<group>"; };
+		D5690F6AA9C6DB755D8919EF /* SettingsScrollTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScrollTests.swift; sourceTree = "<group>"; };
 		D6085C317848DE5EF3811E52 /* chasen_handle.obj */ = {isa = PBXFileReference; path = chasen_handle.obj; sourceTree = "<group>"; };
 		D92576DC66D3E244DECC4749 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		ED4E0134F33017E59CDC489E /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		ED6C5C8FDAC76C8C34BB3644 /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
 		F55DD8BDCDF7ABAEF8F4BB90 /* chasen_tines_outer.obj */ = {isa = PBXFileReference; path = chasen_tines_outer.obj; sourceTree = "<group>"; };
+		F8F0B1D132D5CBB68297548F /* ShibuiUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ShibuiUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEE59A74ACD8615401187F4E /* Shibui.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Shibui.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -163,6 +175,7 @@
 			children = (
 				8843D1711B2BFB5AB74F45E6 /* birds.m4a */,
 				631A45B922E68836FEE6CB8A /* CREDITS.txt */,
+				BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */,
 			);
 			path = Sounds;
 			sourceTree = "<group>";
@@ -184,6 +197,7 @@
 				10C415B6578ABC1C462D30FC /* Packages */,
 				8C4A5B977EDB9C9479D6B52D /* Services */,
 				DD12AAC620E0BBC678CC7C6A /* Shared */,
+				416A88F9093D5A3C6D790F38 /* UITests */,
 				EDD6332B4A4615027A771A51 /* Views */,
 				F6F020AF748D0D3A56B04441 /* Widget */,
 				DE3457BB96512DE1FDA3E848 /* Frameworks */,
@@ -197,6 +211,14 @@
 				ED4E0134F33017E59CDC489E /* OnboardingView.swift */,
 			);
 			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		416A88F9093D5A3C6D790F38 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				D5690F6AA9C6DB755D8919EF /* SettingsScrollTests.swift */,
+			);
+			path = UITests;
 			sourceTree = "<group>";
 		};
 		6B25D9F25F3644996A485CAA /* App */ = {
@@ -245,6 +267,7 @@
 			isa = PBXGroup;
 			children = (
 				FEE59A74ACD8615401187F4E /* Shibui.app */,
+				F8F0B1D132D5CBB68297548F /* ShibuiUITests.xctest */,
 				A50B316535C1E8D8BB68D313 /* ShibuiWidget.appex */,
 			);
 			name = Products;
@@ -318,6 +341,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		72005B4D863686FDBEDB131B /* ShibuiUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 53384367CA23857E0575CEDF /* Build configuration list for PBXNativeTarget "ShibuiUITests" */;
+			buildPhases = (
+				F13F609CF2538C57379864FF /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9ABDAD38DBFDBA4E9B582B6C /* PBXTargetDependency */,
+			);
+			name = ShibuiUITests;
+			packageProductDependencies = (
+			);
+			productName = ShibuiUITests;
+			productReference = F8F0B1D132D5CBB68297548F /* ShibuiUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		991A478F781BCE46D1C1FB67 /* Shibui */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 854D8C546CC55A60E3800967 /* Build configuration list for PBXNativeTarget "Shibui" */;
@@ -369,6 +410,11 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					72005B4D863686FDBEDB131B = {
+						DevelopmentTeam = XDBC5QYB9Y;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 991A478F781BCE46D1C1FB67;
+					};
 					991A478F781BCE46D1C1FB67 = {
 						DevelopmentTeam = XDBC5QYB9Y;
 						ProvisioningStyle = Automatic;
@@ -399,6 +445,7 @@
 			targets = (
 				991A478F781BCE46D1C1FB67 /* Shibui */,
 				C663AF26FD3E139910E3B2F7 /* ShibuiWidget */,
+				72005B4D863686FDBEDB131B /* ShibuiUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -419,6 +466,7 @@
 				9F3852126C490F704DF960E9 /* chasen_tines_outer.obj in Resources */,
 				8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */,
 				8ECA4F5040D72427422946CE /* rikyu.riv in Resources */,
+				C62C75D7BA235351798725F0 /* shishiodoshi.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,9 +504,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F13F609CF2538C57379864FF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				171F1940FE0A1247F1DE7EE1 /* SettingsScrollTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9ABDAD38DBFDBA4E9B582B6C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 991A478F781BCE46D1C1FB67 /* Shibui */;
+			targetProxy = B2C6C296F0EDE29A7C7B9D5C /* PBXContainerItemProxy */;
+		};
 		A90A392F12F3C82D4D7D1D80 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C663AF26FD3E139910E3B2F7 /* ShibuiWidget */;
@@ -502,7 +563,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -528,6 +589,23 @@
 			};
 			name = Release;
 		};
+		8573255BA61A5F93292B8BB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.imshota1009.spajam2026.shibui.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Shibui;
+			};
+			name = Debug;
+		};
 		92A79E7C6A6D90C6BF7529FD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -543,6 +621,23 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.imshota1009.spajam2026.shibui;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		9ADA9587DEFF12B520C79CA7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.imshota1009.spajam2026.shibui.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Shibui;
 			};
 			name = Release;
 		};
@@ -597,7 +692,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -681,6 +776,15 @@
 			buildConfigurations = (
 				CFB6F3476FEB1A86B1A590C8 /* Debug */,
 				BF9B75F0BFFA2FA50B0B1E68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		53384367CA23857E0575CEDF /* Build configuration list for PBXNativeTarget "ShibuiUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8573255BA61A5F93292B8BB5 /* Debug */,
+				9ADA9587DEFF12B520C79CA7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

@@ -5,6 +5,7 @@ import AVFoundation
 /// - 茶筅: 振るたびに短い「シャッ」
 /// - 松風: 釜の湯が沸く「ゴー」(呼吸に合わせて強弱をつける)
 /// - 水琴窟: 挽き上がりの「キーン」
+/// - ししおどし(録音、パブリックドメイン): 抹茶をたてる間に流す。出入りはフェードで
 /// - 鳥のさえずり(録音、CC BY-SA 4.0。App/Sounds/CREDITS.txt): 抹茶をたてる間に流す。出入りはフェードで
 @MainActor
 final class SoundBank {
@@ -19,6 +20,10 @@ final class SoundBank {
     private var ambientBuffer: AVAudioPCMBuffer?
     private var fades: [ObjectIdentifier: Task<Void, Never>] = [:]
     private static let ambientVolume: Float = 0.45
+    /// ししおどしの録音(京都・詩仙堂、パブリックドメイン)。抹茶をたてている間、遠くで鳴っているように流す
+    private let shishiNode = AVAudioPlayerNode()
+    private var shishiBuffer: AVAudioPCMBuffer?
+    private static let shishiVolume: Float = 0.5
     private let format = AVAudioFormat(standardFormatWithSampleRate: 44_100, channels: 1)!
 
     private lazy var kakonBuffer = makeKakon()
@@ -37,6 +42,10 @@ final class SoundBank {
         engine.attach(ambientNode)
         engine.connect(ambientNode, to: engine.mainMixerNode, format: ambientBuffer?.format ?? format)
         ambientNode.volume = 0
+        shishiBuffer = Self.loadLoop("shishiodoshi")
+        engine.attach(shishiNode)
+        engine.connect(shishiNode, to: engine.mainMixerNode, format: shishiBuffer?.format ?? format)
+        shishiNode.volume = 0
         matsukazeNode.volume = 0
         try? engine.start()
     }
@@ -61,6 +70,23 @@ final class SoundBank {
             ambientNode.play()
         }
         fade(ambientNode, to: Self.ambientVolume, seconds: seconds)
+    }
+
+    /// ししおどしの音を、ゆっくり大きくして流しはじめる(フェードイン)
+    func startShishi(fade seconds: Double = 2.0) {
+        guard let shishiBuffer else { return }
+        if !engine.isRunning { try? engine.start() }
+        if !shishiNode.isPlaying {
+            shishiNode.volume = 0
+            shishiNode.scheduleBuffer(shishiBuffer, at: nil, options: .loops)
+            shishiNode.play()
+        }
+        fade(shishiNode, to: Self.shishiVolume, seconds: seconds)
+    }
+
+    /// ししおどしの音を、ゆっくり小さくして止める(フェードアウト)
+    func stopShishi(fade seconds: Double = 1.8) {
+        fade(shishiNode, to: 0, seconds: seconds) { [weak self] in self?.shishiNode.stop() }
     }
 
     /// 鳥のさえずりを、ゆっくり小さくして止める(フェードアウト)

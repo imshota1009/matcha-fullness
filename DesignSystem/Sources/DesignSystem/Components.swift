@@ -17,11 +17,14 @@ public struct DSScreen<Content: View, Bottom: View>: View {
 
     public var body: some View {
         ScrollView {
-            content
+            // 中身を1つの VStack にまとめる(まとめないと、シートの中で白い余白までスクロールできてしまう)
+            VStack(alignment: .leading) { content }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, Theme.Spacing.screen)
                 .padding(.bottom, Theme.Spacing.l)
         }
+        // 中身が画面に収まるときは、引っぱってもスクロールしない(白い余白まで行かない)
+        .scrollBounceBehavior(.basedOnSize)
         .background(Theme.Palette.background)
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)

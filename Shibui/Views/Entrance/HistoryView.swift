@@ -6,6 +6,7 @@ import SwiftUI
 /// 連続記録は使わない(1日休んでも途切れず、何も減らない)。
 struct HistoryView: View {
     @Environment(TeaStore.self) private var store
+    @State private var confirmsDeleteAll = false
 
     var body: some View {
         NavigationStack {
@@ -60,11 +61,37 @@ struct HistoryView: View {
                             .foregroundStyle(Theme.Palette.text)
                     }
                     .padding(.vertical, Theme.Spacing.m)
+                    .contentShape(.rect)
                     .accessibilityElement(children: .combine)
+                    // 長押しで、この記録だけ消せる
+                    .contextMenu {
+                        Button("この記録を消す", systemImage: "trash", role: .destructive) {
+                            withAnimation { store.deleteServing(serving.id) }
+                        }
+                    }
+                    .accessibilityAction(named: "この記録を消す") { store.deleteServing(serving.id) }
                     Rectangle().fill(Theme.Palette.separator).frame(height: 1)
+                }
+                if !record.servings.isEmpty {
+                    Text("記録は長押しで1つずつ消せます")
+                        .font(.dsCaption)
+                        .foregroundStyle(Theme.Palette.secondaryText)
+                        .padding(.top, Theme.Spacing.s)
+                    Button(role: .destructive) { confirmsDeleteAll = true } label: {
+                        Label("記録をすべて消す", systemImage: "trash")
+                            .font(.dsBody)
+                            .frame(maxWidth: .infinity, minHeight: Theme.Size.minTouch, alignment: .leading)
+                    }
+                    .padding(.top, Theme.Spacing.l)
                 }
             }
             .toolbar { ToolbarItem(placement: .topBarTrailing) { CloseButton() } }
+            .confirmationDialog("記録をすべて消しますか?", isPresented: $confirmsDeleteAll, titleVisibility: .visible) {
+                Button("すべて消す", role: .destructive) { withAnimation { store.deleteAll() } }
+                Button("やめる", role: .cancel) {}
+            } message: {
+                Text("これまでの一杯・ポイント・ランクがすべて消え、もとに戻せません。")
+            }
         }
         .presentationDragIndicator(.visible)
     }
@@ -133,7 +160,9 @@ struct SettingsView: View {
     var body: some View {
         @Bindable var store = store
         NavigationStack {
-            DSScreen("設定") {
+            // 中身の高さぴったりでスクロールさせる(DSScreen だと、シートの下に白い余白までスクロールできてしまった)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
                 SectionHeader("たて方")
                 ModePicker(selection: $mode)
                     .padding(.top, Theme.Spacing.s)
@@ -163,11 +192,19 @@ struct SettingsView: View {
                         .foregroundStyle(Theme.Palette.text)
                         .frame(maxWidth: .infinity, minHeight: Theme.Size.minTouch, alignment: .leading)
                 }
-                Text("鳥のさえずり: \"Birdsong Bourne Woods 2020-04-27 0722\" by Robert EA Harvey (Wikimedia Commons, CC BY-SA 4.0)")
+                Text("鳥のさえずり: \"Birdsong Bourne Woods 2020-04-27 0722\" by Robert EA Harvey (Wikimedia Commons, CC BY-SA 4.0)\nししおどし: \"Shishiodoshi-LS100103\" by Fg2 (Wikimedia Commons, パブリックドメイン)")
                     .font(.dsCaption)
                     .foregroundStyle(Theme.Palette.secondaryText)
                     .padding(.top, Theme.Spacing.s)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, Theme.Spacing.screen)
+                .padding(.bottom, Theme.Spacing.l)
             }
+            .scrollBounceBehavior(.basedOnSize)
+            .background(Theme.Palette.background)
+            .navigationTitle("設定")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .topBarTrailing) { CloseButton() } }
         }
         .presentationDragIndicator(.visible)

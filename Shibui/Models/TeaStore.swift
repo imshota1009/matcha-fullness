@@ -41,6 +41,18 @@ final class TeaStore {
                       rankBefore: Rank.current(for: before), rankAfter: Rank.current(for: record.totalPoints))
     }
 
+    /// 一杯の記録を消す(茶の記録の画面から)
+    func deleteServing(_ id: UUID) {
+        record.servings.removeAll { $0.id == id }
+        persist()
+    }
+
+    /// 記録をすべて消して、はじめからにする
+    func deleteAll() {
+        record = TeaRecord()
+        persist()
+    }
+
     func setIchiji(_ text: String) {
         guard !record.servings.isEmpty else { return }
         record.servings[record.servings.count - 1].ichiji = text

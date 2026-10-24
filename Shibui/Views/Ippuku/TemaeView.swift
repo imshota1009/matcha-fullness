@@ -27,12 +27,29 @@ struct TemaeView: View {
                     .padding(.top, 8)
                 guide
                     .padding(.bottom, Theme.Spacing.s)
+                // 机に置いてほしい場面で、スマホが水平でなければ知らせる
+                if motion.isAvailable, !motion.isFlatFaceUp, model.needsFlat {
+                    Label("スマホを机に置いてください", systemImage: "iphone.gen3")
+                        .font(.headline)
+                        .foregroundStyle(Theme.Palette.shiro)
+                        .padding(.horizontal, Theme.Spacing.l)
+                        .padding(.vertical, Theme.Spacing.m)
+                        .background(TemaePalette.ink.opacity(0.88), in: .capsule)
+                        .frame(maxHeight: .infinity, alignment: .center)
+                        .transition(.opacity)
+                        .allowsHitTesting(false)
+                }
             }
+            .animation(.easeInOut(duration: 0.3), value: motion.isFlatFaceUp)
         }
         .onAppear {
             model.start(style: style, motion: motion, gyro: gyro, onFinish: onFinish)
+            SoundBank.shared.startShishi()
         }
-        .onDisappear { model.stop() }
+        .onDisappear {
+            model.stop()
+            SoundBank.shared.stopShishi()
+        }
     }
 
     private var guide: some View {
@@ -81,6 +98,9 @@ final class TemaeModel {
 
     private let whiskSeconds = 12.0
     private let turnGoal = 150.0 * .pi / 180
+
+    /// 机に置いて(水平にして)ほしい場面か。振ってたてている間だけは手に持つ
+    var needsFlat: Bool { !(gyro && phase == .whisk) && phase != .done }
 
     var guideText: String {
         switch phase {

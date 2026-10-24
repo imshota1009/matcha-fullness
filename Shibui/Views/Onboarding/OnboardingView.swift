@@ -164,11 +164,7 @@ struct OnboardingView: View {
     private var ready: some View {
         VStack(spacing: Theme.Spacing.l) {
             Spacer()
-            ZStack(alignment: .bottomTrailing) {
-                RikyuView(size: 180, talking: page == 3 && greeting, bows: stamped)
-                ChawanView(foam: stamped ? 1 : 0, smoothness: 1, size: 70)
-                    .offset(x: 40)
-            }
+            RikyuView(size: 220, mood: 1, talking: page == 3 && !stamped, bows: stamped)
             VStack(spacing: Theme.Spacing.s) {
                 Text(OnboardingContent.readyTitle)
                     .font(.dsTitle)

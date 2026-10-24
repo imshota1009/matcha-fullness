@@ -30,7 +30,7 @@ Artboard `Rikyu`(500×500、背景なし) / State Machine `Main`(デフォルト
 
 | Input | 型 | 内容 |
 |---|---|---|
-| `mood` | Number | 0=ふつう、1=うれしい、2=応援、3=集中 |
+| `mood` | Number | 0=ふつう、1=うれしい、2=応援、3=集中、4=お茶を飲む(しぐさをくり返す。追加) |
 | `isTalking` | Boolean | true の間、口の開閉と体・顔の小さな揺れ |
 | `bow` | Trigger | 1.5秒のおじぎ |
 | `wave` | Trigger | 1.6秒の手ふり |

@@ -100,10 +100,10 @@ path(swing, 'Right sleeve', smooth([(-6, -10), (34, 4), (52, 52), (40, 92), (6, 
 
 # --- 茶碗と左手 ---
 bowl = node(upper, 'Bowl', x=-4, y=-70)
+ellipse(bowl, 'Left hand', -22, 14, 40, 24, fill=S, stroke=B, sw=LW)  # 茶碗を下から支える手(手前)
 ellipse(bowl, 'Matcha surface', 0, -10, 52, 11, fill=M)
 path(bowl, 'Tea bowl', [((-32, -10), None, (-31, 14)), ((0, 18), (-18, 19), (18, 19)), ((32, -10), (31, 14), None)], fill=W, stroke=B, sw=LW)
 line(bowl, 'Bowl rim', (-32, -10), (-12, -16), (12, -16), (32, -10), B, 4)
-ellipse(upper, 'Left hand', -26, -56, 40, 24, fill=S, stroke=B, sw=LW)
 path(upper, 'Left sleeve', smooth([(-52, -150), (-88, -126), (-100, -84), (-92, -46), (-60, -40), (-36, -48), (-44, -92)]), fill=G, stroke=B, sw=LW)
 
 # --- 頭(首の位置で傾く) ---
@@ -157,6 +157,7 @@ ellipse(root, 'Left foot', -36, 0, 50, 16, fill=B)
 ellipse(root, 'Right foot', 36, 0, 50, 16, fill=B)
 
 upper.remove(head); upper.insert(1, head)  # 頭は袖より手前(葉のすぐ後ろ)
+upper.remove(bowl); upper.insert(1, bowl)  # 茶碗は頭より手前(飲むとき口元にくる)
 
 # ================= ステートマシン =================
 sm = el(a, 'StateMachine', name='Main'); a.set('defaultStateMachineId', sm.attrib['id'])
@@ -201,14 +202,14 @@ idle = anim('Idle breathing and blink', 360, [
 l, en, _ = layer('Breath'); st = el(l, 'AnimationState', animationId=idle, x=220, y=0); transition(en, st.attrib['id'], duration=0)
 
 # 表情: 目・口・まゆ・姿勢を連動させる
-groups = ['Smile eyes', 'Happy eyes', 'Bright eyes', 'Quiet eyes']
-mouths = ['Mouth normal', 'Mouth happy', 'Mouth encourage', 'Mouth focus']
-brow_y = [-6, -12, -14, -2]
-brow_sy = [1, 1.05, 1.1, .9]
+groups = ['Smile eyes', 'Happy eyes', 'Bright eyes', 'Quiet eyes', 'Quiet eyes']
+mouths = ['Mouth normal', 'Mouth happy', 'Mouth encourage', 'Mouth focus', 'Mouth focus']
+brow_y = [-6, -12, -14, -2, -4]
+brow_sy = [1, 1.05, 1.1, .9, .95]
 moods = []
-for i, nm in enumerate(['Normal', 'Happy', 'Encourage', 'Focus']):
-    tr = [(g, 'opacity', [(0, 1 if j == i else 0)]) for j, g in enumerate(groups)]
-    tr += [(g, 'opacity', [(0, 1 if j == i else 0)]) for j, g in enumerate(mouths)]
+for i, nm in enumerate(['Normal', 'Happy', 'Encourage', 'Focus', 'Drinking']):
+    tr = [(g, 'opacity', [(0, 1 if groups[i] == g else 0)]) for g in dict.fromkeys(groups)]
+    tr += [(g, 'opacity', [(0, 1 if mouths[i] == g else 0)]) for g in dict.fromkeys(mouths)]
     tr += [('Brows', 'y', [(0, brow_y[i])]), ('Brows', 'scaleY', [(0, brow_sy[i])]),
            ('Seated', 'y', [(0, 8 if i == 3 else 0)]),
            ('Seated', 'scaleY', [(0, .95 if i == 3 else 1)]),
@@ -239,7 +240,7 @@ transition(q, s.attrib['id'], ('isTalking', True), duration=150); transition(s, 
 base = {('Bow torso', 'y'): 0, ('Bow torso', 'scaleY'): 1, ('Head', 'y'): -222, ('Head', 'scaleX'): 1, ('Head', 'scaleY'): 1,
         ('Cap', 'y'): 0, ('Greeting arm', 'rotation'): 0, ('Arm hand', 'rotation'): 0, ('Sleeve swing', 'rotation'): 0, ('Left sleeve', 'rotation'): 0,
         ('Whisk prop', 'opacity'): 0, ('Whisk prop', 'rotation'): 0, ('Fan', 'opacity'): 0, ('Fan', 'scaleX'): .1,
-        ('Leaves', 'opacity'): 0, ('Bowl', 'y'): -70}
+        ('Leaves', 'opacity'): 0, ('Bowl', 'y'): -70, ('Bowl', 'rotation'): 0, ('Head', 'rotation'): 0}
 for i in range(3):
     base[(f'Leaf {i+1}', 'y')] = [-200, -262, -212][i]; base[(f'Leaf {i+1}', 'rotation')] = 0
 acts = {}
@@ -291,6 +292,16 @@ for i in range(3):
     lv[(f'Leaf {i+1}', 'y')] = [(0, y + 30), (30 + i * 4, y + 20), (70, y - 18), (112, y + 18)]
     lv[(f'Leaf {i+1}', 'rotation')] = [(0, -.4), (60, .45), (112, -.25)]
 action('levelUp', 112, lv)
+drink = {
+    ('Bowl', 'y'): [(0, -70), (50, -168), (160, -168), (205, -70), (300, -70)],
+    ('Bowl', 'rotation'): [(0, 0), (50, -.08), (95, -.16), (160, -.08), (205, 0), (300, 0)],
+    ('Greeting arm', 'rotation'): [(0, 0), (54, -.62), (160, -.62), (210, 0), (300, 0)],
+    ('Arm hand', 'rotation'): [(0, 0), (60, .2), (160, .2), (215, 0), (300, 0)],
+    ('Head', 'rotation'): [(0, 0), (60, 0), (95, -.035), (150, -.02), (200, 0), (300, 0)],
+    ('Head', 'y'): [(0, -222), (95, -224), (200, -222), (300, -222)],
+}
+tracks = [(ob, p, drink.get((ob, p), [(0, v), (300, v)])) for (ob, p), v in base.items()]
+acts['drink'] = anim('Drink loop', 300, tracks, True)
 
 l, en, anyst = layer('Gestures')
 rest = el(l, 'AnimationState', animationId=acts['Rest'], x=220, y=0); transition(en, rest.attrib['id'], duration=0)
@@ -299,6 +310,11 @@ for i, name in enumerate(['bow', 'wave', 'whisk', 'cheer', 'levelUp']):
     # どの状態からでも入れる(しぐさの途中でも、次のしぐさにつなぐ)。茶せんの連打は短くつなぐ
     transition(anyst, st.attrib['id'], (name, None), duration=60 if name == 'whisk' else 220)
     transition(st, rest.attrib['id'], exit=True, duration=200)
+# 表情が 4(飲む)の間は、お茶を飲むしぐさをくり返す
+dr = el(l, 'AnimationState', animationId=acts['drink'], x=220, y=260)
+transition(rest, dr.attrib['id'], ('mood', 4), duration=300)
+t = el(dr, 'StateTransition', stateToId=rest.attrib['id'], duration=300)
+el(t, 'TransitionNumberCondition', inputId=inputs['mood'], opValue='notEqual', value=4)
 
 E.indent(R); E.ElementTree(R).write(P / 'scene.rml', encoding='unicode', xml_declaration=True)
 (P / 'rive.yaml').write_text('name: rikyu\nmain: Rikyu\n')

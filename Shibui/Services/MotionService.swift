@@ -9,6 +9,8 @@ final class MotionService {
     private let manager = CMMotionManager()
     /// 画面が下を向いているか
     private(set) var isFaceDown = false
+    /// 画面を上にして、ほぼ水平に置かれているか
+    private(set) var isFlatFaceUp = true
     /// センサーが使えるか(シミュレーターでは使えない)
     var isAvailable: Bool { manager.isDeviceMotionAvailable }
 
@@ -25,6 +27,7 @@ final class MotionService {
         manager.startDeviceMotionUpdates(to: .main) { [weak self] motion, _ in
             guard let self, let motion else { return }
             self.isFaceDown = motion.gravity.z > 0.8
+            self.isFlatFaceUp = motion.gravity.z < -0.92
             self.onTurn?(motion.rotationRate.z * self.manager.deviceMotionUpdateInterval)
             let a = motion.userAcceleration
             let r = motion.rotationRate
