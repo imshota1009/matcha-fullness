@@ -1,0 +1,75 @@
+# Xcode プロジェクトの設計図。.xcodeproj はここから生成する(手で書き換えない)。
+# 生成: cd app/Shibui && xcodegen
+# アプリ名が決まったら name / PRODUCT_BUNDLE_IDENTIFIER / App Group / CFBundleDisplayName を書き換えて再生成する。
+name: Shibui
+options:
+  bundleIdPrefix: com.imshota1009
+  deploymentTarget:
+    iOS: "27.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    DEVELOPMENT_TEAM: XDBC5QYB9Y
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    MARKETING_VERSION: "0.1"
+    CURRENT_PROJECT_VERSION: "1"
+packages:
+  DesignSystem:
+    path: ../DesignSystem
+targets:
+  Shibui:
+    type: application
+    platform: iOS
+    sources:
+      - App
+      - Shared
+      - Models
+      - Views
+      - Services
+      - Mock
+    dependencies:
+      - package: DesignSystem
+      - target: ShibuiWidget
+    entitlements:
+      path: App/Shibui.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.imshota1009.shibui]
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Shibui
+        CFBundleDevelopmentRegion: ja
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        ITSAppUsesNonExemptEncryption: false
+        CFBundleURLTypes:
+          - CFBundleURLSchemes: [shibui]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.imshota1009.shibui
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: ""
+  ShibuiWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Widget
+      - Shared
+    dependencies:
+      - package: DesignSystem
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    entitlements:
+      path: Widget/ShibuiWidget.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.imshota1009.shibui]
+    info:
+      path: Widget/Info.plist
+      properties:
+        CFBundleDisplayName: Shibui
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.imshota1009.shibui.widget
