@@ -1,5 +1,9 @@
 import Foundation
 import FoundationModels
+import OSLog
+
+/// 講評の切り分け用のログ(Xcode のコンソールと Mac の「コンソール」アプリにだけ出る。画面には出さない)
+private let kouhyouLog = Logger(subsystem: "com.imshota1009.spajam2026.shibui", category: "Kouhyou")
 
 /// お点前の講評(5章 L-6)。採点の数値を、茶人が講評するような言葉にする。廃案の「AI の一言」(応援)とは別。
 /// - Foundation Models(端末内の AI)で、講評・良かった点・次に意識すること を型どおりに受け取る(@Generable)
@@ -48,10 +52,33 @@ enum KouhyouMaker {
         return Kouhyou(review: review, goodPoint: best.2, nextFocus: worst.3)
     }
 
+    /// 端末内のモデル(SystemLanguageModel)の状態をログに出す
+    static func logModelState() {
+        let model = SystemLanguageModel.default
+        switch model.availability {
+        case .available:
+            kouhyouLog.notice("availability: available")
+        case .unavailable(let reason):
+            kouhyouLog.notice("availability: unavailable reason=\(String(describing: reason), privacy: .public)")
+        @unknown default:
+            kouhyouLog.notice("availability: unknown")
+        }
+        kouhyouLog.notice("supportsLocale(ja_JP): \(model.supportsLocale(Locale(identifier: "ja_JP")), privacy: .public)")
+        let langs = model.supportedLanguages.map { $0.maximalIdentifier }.sorted().joined(separator: ", ")
+        kouhyouLog.notice("supportedLanguages: \(langs, privacy: .public)")
+    }
+
     /// Foundation Models で講評を作る。使えない・失敗したときは nil(呼び出し側は定型文のまま)
+    /// 使うのは端末内のモデル(SystemLanguageModel.default)。Private Cloud Compute のモデルは使わない
     static func generate(_ x: KouhyouInput) async -> Kouhyou? {
-        guard case .available = SystemLanguageModel.default.availability else { return nil }
+        logModelState()
+        let model = SystemLanguageModel.default
+        guard case .available = model.availability else {
+            kouhyouLog.notice("result: fallback (model unavailable)")
+            return nil
+        }
         let instructions = """
+        The person's locale is ja_JP. 必ず日本語で答えること。
         あなたは茶道の先生です。生徒が抹茶を点てた所作を、短く講評します。
         落ち着いた丁寧語で話し、ほめるときは「渋い」を、落ち着いて味わいがあるという褒め言葉として自然に使います。
         数値をそのまま書かず、誇張や、健康・医療への効果をうたう表現はしません。
@@ -67,10 +94,40 @@ enum KouhyouMaker {
         講評・良かった点・次に意識することを書いてください。次に意識することは、いちばん弱い要素から具体的な所作の言葉で。
         """
         do {
-            let session = LanguageModelSession(instructions: instructions)
-            let response = try await session.respond(to: prompt, generating: Kouhyou.self)
-            return response.content
+            let session = LanguageModelSession(model: model, instructions: instructions)
+            let started = Date()
+            // 20 秒で打ち切る(生成が止まったときに、原因をログに残すため)
+            let content = try await withThrowingTaskGroup(of: Kouhyou?.self) { group in
+                group.addTask { try await session.respond(to: prompt, generating: Kouhyou.self).content }
+                group.addTask { try await Task.sleep(for: .seconds(20)); return nil }
+                let first = try await group.next() ?? nil
+                group.cancelAll()
+                return first
+            }
+            guard let content else {
+                kouhyouLog.notice("result: fallback (timeout 20s)")
+                return nil
+            }
+            kouhyouLog.notice("result: AI in \(String(format: "%.1f", Date().timeIntervalSince(started)), privacy: .public)s review=\(content.review, privacy: .public)")
+            return content
+        } catch let error as LanguageModelSession.GenerationError {
+            let kind: String
+            switch error {
+            case .unsupportedLanguageOrLocale: kind = "unsupportedLanguageOrLocale(言語・ロケール非対応)"
+            case .guardrailViolation: kind = "guardrailViolation(ガードレール)"
+            case .exceededContextWindowSize: kind = "exceededContextWindowSize(コンテキスト超過)"
+            case .assetsUnavailable: kind = "assetsUnavailable(モデル準備中など)"
+            case .decodingFailure: kind = "decodingFailure(型への変換に失敗)"
+            case .rateLimited: kind = "rateLimited"
+            case .concurrentRequests: kind = "concurrentRequests"
+            case .refusal: kind = "refusal(回答を拒否)"
+            case .unsupportedGuide: kind = "unsupportedGuide"
+            @unknown default: kind = "unknown"
+            }
+            kouhyouLog.notice("result: fallback error=\(kind, privacy: .public) detail=\(String(describing: error), privacy: .public)")
+            return nil
         } catch {
+            kouhyouLog.notice("result: fallback error=other detail=\(String(describing: error), privacy: .public)")
             return nil
         }
     }

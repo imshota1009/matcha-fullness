@@ -14,7 +14,13 @@ struct MainTabView: View {
             Tab("振り返り", systemImage: "clock", value: 1) { ReviewView() }
             Tab("設定", systemImage: "gearshape", value: 2) { SettingsView() }
         }
-        .task { LegacyImport.run(into: context) }
+        .task {
+            LegacyImport.run(into: context)
+            // 起動引数 `-kouhyouTest YES` で、講評を1回だけ作ってログに出す(切り分け用。画面は変えない)
+            if UserDefaults.standard.bool(forKey: "kouhyouTest") {
+                _ = await KouhyouMaker.generate(KouhyouInput(meanSide: 0.08, cv: 0.2, strokes: 42, foam: 78, finish: 90, rotate: 85, total: 81, previous: 70))
+            }
+        }
         // 通知をタップして開いたら、点てるタブへ(点てる画面は WaitingView が開く)
         .onChange(of: reminders.openTemae, initial: true) { _, open in if open { tab = 0 } }
     }
