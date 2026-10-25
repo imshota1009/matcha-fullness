@@ -19,11 +19,9 @@ struct FocusTimerView: View {
     @State private var showsSound = false
 
     private static let notificationID = "focus-timer-end"
-    /// ししおどしが傾く間隔(秒)。起動引数 `-shishiCycle 秒` で短くできる(画面確認用)
-    private var cycle: Double {
-        let v = UserDefaults.standard.double(forKey: "shishiCycle")
-        return v > 0 ? v : 60
-    }
+    /// ししおどしが傾く間隔(秒)。設定で 1 秒きざみに変えられる(起動引数 `-shishiCycle 秒` でも)
+    @AppStorage(FocusTimerView.shishiCycleKey) private var cycle = 60.0
+    static let shishiCycleKey = "shishiCycle"
 
     var body: some View {
         VStack(spacing: Theme.Spacing.m) {
@@ -47,11 +45,16 @@ struct FocusTimerView: View {
                 .accessibilityLabel("集中のタイマー")
                 Spacer(minLength: 0)
                 soundButton
-                Button(finished ? "閉じる" : "終了") { stop() }
-                    .font(.headline)
-                    .foregroundStyle(Theme.Palette.text)
-                    .frame(maxWidth: .infinity, minHeight: Theme.Size.primaryButton)
-                    .background(Theme.Palette.surface, in: .capsule)
+                // ボタンの形全体を押せるように、大きさと背景はボタンの中(label)につける
+                Button { stop() } label: {
+                    Text(finished ? "閉じる" : "終了")
+                        .font(.headline)
+                        .foregroundStyle(Theme.Palette.text)
+                        .frame(maxWidth: .infinity, minHeight: Theme.Size.primaryButton)
+                        .background(Theme.Palette.surface, in: .capsule)
+                        .contentShape(.capsule)
+                }
+                .buttonStyle(PressScaleStyle())
                     .padding(.horizontal, Theme.Spacing.screen)
                     .padding(.bottom, Theme.Spacing.s)
             } else {
@@ -218,7 +221,7 @@ struct ShishiOdoshiPond: View {
                     .position(x: w * 0.5, y: h * 0.66)
                     .allowsHitTesting(false)
                 // 水たまり(地面の平面)。輪と文字も同じ平面
-                PondPlane(remainingFraction: remainingFraction, timeText: timeText, water: water)
+                PondPlane(remainingFraction: remainingFraction, timeText: timeText, caption: caption, water: water)
                     .frame(width: min(w * 0.9, 360), height: min(w * 0.9, 360))
                     .rotation3DEffect(.degrees(62), axis: (x: 1, y: 0, z: 0), anchor: .center, perspective: 0.45)
                     .position(x: w * 0.5, y: h * 0.66)
@@ -233,17 +236,6 @@ struct ShishiOdoshiPond: View {
                     }
                     .allowsHitTesting(false)
                 }
-                // 時刻の数字は、水面の少し上に浮かべる(影は水面に映る。PondPlane)
-                VStack(spacing: 2) {
-                    Text(timeText)
-                        .font(.system(size: 60, weight: .semibold, design: .rounded).monospacedDigit())
-                        .foregroundStyle(Theme.Palette.text)
-                    Text(caption)
-                        .font(.dsCaption.weight(.semibold))
-                        .foregroundStyle(Theme.Palette.secondaryText)
-                }
-                .position(x: w * 0.5, y: h * 0.66 - 46)
-                .allowsHitTesting(false)
 
                 // ししおどし(Unity で作った 3D)。水たまりの左上に立ち、傾くと水たまりへ水を落とす
                 ShishiOdoshi3DView(fill: fill, tip: tip, pouring: pouring, waterY: h * 0.66 - 6,
@@ -261,6 +253,7 @@ struct ShishiOdoshiPond: View {
 private struct PondPlane: View {
     let remainingFraction: Double
     let timeText: String
+    let caption: String
     let water: Color
 
     var body: some View {
@@ -276,11 +269,15 @@ private struct PondPlane: View {
                 .stroke(Theme.Palette.ai, style: StrokeStyle(lineWidth: 12, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .padding(22)
-            // 浮かんだ数字の影が、いまの数字の位置で水面に映る(数字と同じ文字を、水面の平面に薄く)
-            Text(timeText)
-                .font(.system(size: 64, weight: .semibold, design: .rounded).monospacedDigit())
-                .foregroundStyle(Color.black.opacity(0.16))
-                .offset(y: 18)
+            // 文字も水面と同じ平面に(水面と同じ角度で寝かせて見せる)
+            VStack(spacing: 4) {
+                Text(timeText)
+                    .font(.system(size: 64, weight: .semibold, design: .rounded).monospacedDigit())
+                    .foregroundStyle(Theme.Palette.ai)
+                Text(caption)
+                    .font(.dsCaption.weight(.semibold))
+                    .foregroundStyle(Theme.Palette.ai.opacity(0.8))
+            }
         }
     }
 }

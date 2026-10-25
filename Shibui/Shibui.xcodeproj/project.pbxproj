@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		012794709D3B6D0707FCCC38 /* TimerButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DCA23313F2C9D2AD55E5294 /* TimerButtonTests.swift */; };
 		01E17A6C98EA974C57049C90 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA78D9BDB9607A57D4CF72A /* MainTabView.swift */; };
 		0B59B282650E5868981C81ED /* CREDITS.txt in Resources */ = {isa = PBXBuildFile; fileRef = 631A45B922E68836FEE6CB8A /* CREDITS.txt */; };
 		0DD227DFBD83ED515FD39875 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4E0134F33017E59CDC489E /* OnboardingView.swift */; };
@@ -118,6 +119,7 @@
 		41F6E5D876C58859D10DFBDC /* Shibui.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shibui.entitlements; sourceTree = "<group>"; };
 		4765AD634CC4D538F24439CB /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
 		4917F535495E11108779A55C /* ActivityMonitorScreenTime.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ActivityMonitorScreenTime.entitlements; sourceTree = "<group>"; };
+		4DCA23313F2C9D2AD55E5294 /* TimerButtonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerButtonTests.swift; sourceTree = "<group>"; };
 		50CB0465C64339119845677E /* AddTimeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTimeTests.swift; sourceTree = "<group>"; };
 		528B5A9043661FF502B10ACE /* ActivityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityMonitor.swift; sourceTree = "<group>"; };
 		561B9B0F5A35BF01E14E8D15 /* shishi_water.obj */ = {isa = PBXFileReference; path = shishi_water.obj; sourceTree = "<group>"; };
@@ -269,6 +271,7 @@
 				4765AD634CC4D538F24439CB /* OnboardingTests.swift */,
 				2B2FCA889D41046A8A6D5CB2 /* ReminderTests.swift */,
 				D5690F6AA9C6DB755D8919EF /* SettingsScrollTests.swift */,
+				4DCA23313F2C9D2AD55E5294 /* TimerButtonTests.swift */,
 			);
 			path = UITests;
 			sourceTree = "<group>";
@@ -572,6 +575,7 @@
 				877DF850A26B69616077A289 /* OnboardingTests.swift in Sources */,
 				B99DD37D5142E62BB5BCBF7D /* ReminderTests.swift in Sources */,
 				171F1940FE0A1247F1DE7EE1 /* SettingsScrollTests.swift in Sources */,
+				012794709D3B6D0707FCCC38 /* TimerButtonTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -642,7 +646,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 37;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -771,7 +775,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 37;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

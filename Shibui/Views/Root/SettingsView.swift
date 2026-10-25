@@ -16,6 +16,7 @@ struct SettingsView: View {
     @State private var showsTimePicker = false
     @State private var showsAppPicker = false
     @State private var guardState = ScreenGuard.shared
+    @AppStorage(FocusTimerView.shishiCycleKey) private var shishiCycle = 60.0
     @State private var newTime = Calendar.current.date(byAdding: .minute, value: 1, to: .now) ?? .now
     private let reminders = Reminders.shared
     @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
@@ -83,6 +84,15 @@ struct SettingsView: View {
                     set: { guardState.selection = $0; guardState.save(); if guardState.isOn { Task { await guardState.start() } } }
                 ))
                 Section {
+                    Stepper(value: $shishiCycle, in: 3...600, step: 1) {
+                        LabeledContent("ししおどしの間隔", value: String(format: "%d分%02d秒", Int(shishiCycle) / 60, Int(shishiCycle) % 60))
+                    }
+                } header: {
+                    Text("タイマー")
+                } footer: {
+                    Text("集中タイマー中に、ししおどしが傾いて「カコン」と鳴る間隔です(1秒きざみ。−/+ を押し続けると速く変わります)")
+                }
+                Section {
                     Toggle("振動", isOn: $hapticsOn)
                         .tint(Theme.Palette.matcha)
                 }
@@ -93,7 +103,7 @@ struct SettingsView: View {
                 } header: {
                     Text("音")
                 } footer: {
-                    Text("川・風・鳥の音量を、それぞれ決められます。点てるときは茶筅の音より小さく、ときどきししおどし。タイマー中は自然の音がずっと流れ、5分ごとにししおどしが鳴ります")
+                    Text("川・風・鳥の音量を、それぞれ決められます。点てるときは茶筅の音より小さく、ときどきししおどし。タイマー中は自然の音がずっと流れ、設定した間隔でししおどしが鳴ります")
                 }
                 Section {
                     Button("はじめの説明をもう一度見る", systemImage: "book") { showsOnboarding = true }
