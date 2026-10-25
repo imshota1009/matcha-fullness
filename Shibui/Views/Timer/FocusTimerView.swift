@@ -209,6 +209,14 @@ struct ShishiOdoshiPond: View {
         GeometryReader { geo in
             let w = geo.size.width, h = geo.size.height
             ZStack {
+                // 地面の枯山水(砂紋・石・苔)。水たまりと同じ平面に寝かせ、水たまりのまわりは同心円の筋
+                let pond = min(w * 0.9, 360)
+                let ground = pond * 3.2
+                KaresansuiGround(pondCenter: CGPoint(x: ground / 2, y: ground / 2), pondRadius: pond / 2)
+                    .frame(width: ground, height: ground)
+                    .rotation3DEffect(.degrees(62), axis: (x: 1, y: 0, z: 0), anchor: .center, perspective: 0.45)
+                    .position(x: w * 0.5, y: h * 0.66)
+                    .allowsHitTesting(false)
                 // 水たまり(地面の平面)。輪と文字も同じ平面
                 PondPlane(remainingFraction: remainingFraction, timeText: timeText, water: water)
                     .frame(width: min(w * 0.9, 360), height: min(w * 0.9, 360))

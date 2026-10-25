@@ -35,6 +35,7 @@
 		6C3EDB7CAF6E509FB10343D8 /* Pickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8844868F280DE82CE5C5B814 /* Pickers.swift */; };
 		6EE43B272095A54ED26EFAA1 /* chasen_thread.obj in Resources */ = {isa = PBXBuildFile; fileRef = 1E1C5545C96633203177CA3E /* chasen_thread.obj */; };
 		72A158DA9E079BDB9C124607 /* FocusTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71A1B44AE379668366256BA /* FocusTimerView.swift */; };
+		756385496BE476928982617E /* KaresansuiGround.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054A1131BF3E81C68FDDB236 /* KaresansuiGround.swift */; };
 		76139F034221DEDFC8903FA8 /* wind.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 23A863ABFEB7D40ECCAAA2DE /* wind.m4a */; };
 		7A7D472248FFCA7FECA1E8D4 /* shishi_water.obj in Resources */ = {isa = PBXBuildFile; fileRef = 561B9B0F5A35BF01E14E8D15 /* shishi_water.obj */; };
 		8553F1E705711DF9AB6FBEF4 /* chawan.obj in Resources */ = {isa = PBXBuildFile; fileRef = 68D816B2DD6715A530FF2740 /* chawan.obj */; };
@@ -75,6 +76,7 @@
 
 /* Begin PBXFileReference section */
 		00C0033341E695617BF50D58 /* Kouhyou.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kouhyou.swift; sourceTree = "<group>"; };
+		054A1131BF3E81C68FDDB236 /* KaresansuiGround.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KaresansuiGround.swift; sourceTree = "<group>"; };
 		0B3DE3DAB9D6556F6F596B35 /* rikyu.riv */ = {isa = PBXFileReference; path = rikyu.riv; sourceTree = "<group>"; };
 		175ED488074D9EC320169462 /* Rank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rank.swift; sourceTree = "<group>"; };
 		19794A5048322D5107B86A91 /* TeaArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaArt.swift; sourceTree = "<group>"; };
@@ -324,6 +326,7 @@
 			children = (
 				9F5D1B12429E623EE7B05B2D /* DurationDial.swift */,
 				E71A1B44AE379668366256BA /* FocusTimerView.swift */,
+				054A1131BF3E81C68FDDB236 /* KaresansuiGround.swift */,
 				5B2161FFE382713B1A97B738 /* ShishiOdoshi3D.swift */,
 			);
 			path = Timer;
@@ -454,6 +457,7 @@
 				32603C0A9E275A5622F489FB /* Fusuma.swift in Sources */,
 				E755B8DEFB38516A90EE9134 /* IppukuIntent.swift in Sources */,
 				2F62FAB594940440F866A95F /* IppukuView.swift in Sources */,
+				756385496BE476928982617E /* KaresansuiGround.swift in Sources */,
 				4CB28AA9288C520239AC87FC /* Kouhyou.swift in Sources */,
 				B9A31FA225363E29915757F4 /* LiquidShader.swift in Sources */,
 				01E17A6C98EA974C57049C90 /* MainTabView.swift in Sources */,
