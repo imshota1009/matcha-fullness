@@ -157,7 +157,7 @@ struct ResultView: View {
                         .font(.headline)
                         .foregroundStyle(Theme.Palette.shiro)
                         .frame(maxWidth: .infinity, minHeight: Theme.Size.primaryButton)
-                        .background(Theme.Palette.ai, in: .capsule)
+                        .background(Theme.Palette.matcha, in: .capsule)
                 }
                 .buttonStyle(PressScaleStyle())
             }
