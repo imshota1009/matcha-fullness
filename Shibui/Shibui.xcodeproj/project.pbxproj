@@ -24,6 +24,7 @@
 		3EE95BD613E009BFC690F78E /* NatureMixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570E7C1C60396A60C47A55C4 /* NatureMixer.swift */; };
 		41C9249353F1C67EBD995EAA /* shishi_nodes.obj in Resources */ = {isa = PBXBuildFile; fileRef = BDC942E45EF78DA7C5FE52E7 /* shishi_nodes.obj */; };
 		43A0F73DEF28312C28BDC789 /* Records.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242ECD94824029EA6F2F7C85 /* Records.swift */; };
+		4AFBBCBFB80C5A4E97AC337B /* ActivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528B5A9043661FF502B10ACE /* ActivityMonitor.swift */; };
 		4CB28AA9288C520239AC87FC /* Kouhyou.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C0033341E695617BF50D58 /* Kouhyou.swift */; };
 		4E8BAF01B55371002535256B /* chasen_handle.obj in Resources */ = {isa = PBXBuildFile; fileRef = D6085C317848DE5EF3811E52 /* chasen_handle.obj */; };
 		515C13F1C660C35C043DFD7B /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEE805E42620D02DC2C3931 /* Messages.swift */; };
@@ -48,6 +49,8 @@
 		B31498FF37C96116F118DE84 /* ShishiOdoshi3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2161FFE382713B1A97B738 /* ShishiOdoshi3D.swift */; };
 		B99DD37D5142E62BB5BCBF7D /* ReminderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B2FCA889D41046A8A6D5CB2 /* ReminderTests.swift */; };
 		B9A31FA225363E29915757F4 /* LiquidShader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E101ACD0D3A51C9E66C019E /* LiquidShader.swift */; };
+		BF2F999EB9D9BB3A11191610 /* ShibuiActivityMonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8FD8D477C837B4F44270DE32 /* ShibuiActivityMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C1AD849D859DB75253D42655 /* ScreenGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57B9E1432039FC29A35A58B /* ScreenGuard.swift */; };
 		C398012896ACFEE343B98226 /* TeaScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B1D0CA450A1A864D89FA0E /* TeaScene.swift */; };
 		C62C75D7BA235351798725F0 /* shishiodoshi.m4a in Resources */ = {isa = PBXBuildFile; fileRef = BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */; };
 		C668CC69836B916CE1B19961 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80D9182EA02986A07E8C589 /* SettingsView.swift */; };
@@ -72,7 +75,28 @@
 			remoteGlobalIDString = 991A478F781BCE46D1C1FB67;
 			remoteInfo = Shibui;
 		};
+		BFFB066F24C077ED6BE6FA5C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A97050C4493117BF6E6BCF3B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA0FBB48FBBA984A044E5221;
+			remoteInfo = ShibuiActivityMonitor;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		137EDDE1CDF5727C958F53E8 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				BF2F999EB9D9BB3A11191610 /* ShibuiActivityMonitor.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		00C0033341E695617BF50D58 /* Kouhyou.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kouhyou.swift; sourceTree = "<group>"; };
@@ -93,7 +117,9 @@
 		35D2A2CE20F21D8CEAADFB45 /* WhiteSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteSlider.swift; sourceTree = "<group>"; };
 		41F6E5D876C58859D10DFBDC /* Shibui.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shibui.entitlements; sourceTree = "<group>"; };
 		4765AD634CC4D538F24439CB /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
+		4917F535495E11108779A55C /* ActivityMonitorScreenTime.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ActivityMonitorScreenTime.entitlements; sourceTree = "<group>"; };
 		50CB0465C64339119845677E /* AddTimeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTimeTests.swift; sourceTree = "<group>"; };
+		528B5A9043661FF502B10ACE /* ActivityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityMonitor.swift; sourceTree = "<group>"; };
 		561B9B0F5A35BF01E14E8D15 /* shishi_water.obj */ = {isa = PBXFileReference; path = shishi_water.obj; sourceTree = "<group>"; };
 		570E7C1C60396A60C47A55C4 /* NatureMixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NatureMixer.swift; sourceTree = "<group>"; };
 		585E7A1B6C8B2A435EA215E1 /* shishi_tube.obj */ = {isa = PBXFileReference; path = shishi_tube.obj; sourceTree = "<group>"; };
@@ -107,19 +133,24 @@
 		8222BAE0B36963A54C3BE782 /* TemaeConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemaeConstants.swift; sourceTree = "<group>"; };
 		8843D1711B2BFB5AB74F45E6 /* birds.m4a */ = {isa = PBXFileReference; path = birds.m4a; sourceTree = "<group>"; };
 		8844868F280DE82CE5C5B814 /* Pickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pickers.swift; sourceTree = "<group>"; };
+		8E9D78F4AD6BAB1B25D2DB6B /* ShibuiScreenTime.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShibuiScreenTime.entitlements; sourceTree = "<group>"; };
+		8FD8D477C837B4F44270DE32 /* ShibuiActivityMonitor.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ShibuiActivityMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		917D32A39B6699F0F72A7CC7 /* WhiskHaptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiskHaptics.swift; sourceTree = "<group>"; };
 		9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundBank.swift; sourceTree = "<group>"; };
 		9E101ACD0D3A51C9E66C019E /* LiquidShader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidShader.swift; sourceTree = "<group>"; };
 		9F5D1B12429E623EE7B05B2D /* DurationDial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationDial.swift; sourceTree = "<group>"; };
 		A2E90426BF18D4E0860DA1FC /* river.m4a */ = {isa = PBXFileReference; path = river.m4a; sourceTree = "<group>"; };
 		A368E64CB76EBDFFF74C39A8 /* TemaeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemaeView.swift; sourceTree = "<group>"; };
+		A638EE05D94004EADDD9C0BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		AA0424EA8BFBAC796F58DF5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA6BDE7082D250853FA01848 /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
+		B466279D245B90EA97247C86 /* ActivityMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ActivityMonitor.entitlements; sourceTree = "<group>"; };
 		BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */ = {isa = PBXFileReference; path = chasen_tines_inner.obj; sourceTree = "<group>"; };
 		BC34B269E4B59E525AD55D80 /* shishiodoshi.m4a */ = {isa = PBXFileReference; path = shishiodoshi.m4a; sourceTree = "<group>"; };
 		BDC942E45EF78DA7C5FE52E7 /* shishi_nodes.obj */ = {isa = PBXFileReference; path = shishi_nodes.obj; sourceTree = "<group>"; };
 		BF36C1BEC8F23FBB4BFD248A /* Scoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scoring.swift; sourceTree = "<group>"; };
 		C1E46B566A7DEE89C3554B6E /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DesignSystem; path = ../DesignSystem; sourceTree = SOURCE_ROOT; };
+		C57B9E1432039FC29A35A58B /* ScreenGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenGuard.swift; sourceTree = "<group>"; };
 		C80D9182EA02986A07E8C589 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C81010B4BAACD399F17DFA61 /* shishi_posts.obj */ = {isa = PBXFileReference; path = shishi_posts.obj; sourceTree = "<group>"; };
 		CC09D44EEFF2D2BC8DC81F75 /* RikyuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RikyuView.swift; sourceTree = "<group>"; };
@@ -212,6 +243,7 @@
 		3A42E90B0B203772587A055D = {
 			isa = PBXGroup;
 			children = (
+				6ADE9D5D247391001DBAE249 /* ActivityMonitor */,
 				6B25D9F25F3644996A485CAA /* App */,
 				EAF2F3B5BB77D3562D7FED28 /* Models */,
 				10C415B6578ABC1C462D30FC /* Packages */,
@@ -249,6 +281,17 @@
 			path = Review;
 			sourceTree = "<group>";
 		};
+		6ADE9D5D247391001DBAE249 /* ActivityMonitor */ = {
+			isa = PBXGroup;
+			children = (
+				B466279D245B90EA97247C86 /* ActivityMonitor.entitlements */,
+				528B5A9043661FF502B10ACE /* ActivityMonitor.swift */,
+				4917F535495E11108779A55C /* ActivityMonitorScreenTime.entitlements */,
+				A638EE05D94004EADDD9C0BF /* Info.plist */,
+			);
+			path = ActivityMonitor;
+			sourceTree = "<group>";
+		};
 		6B25D9F25F3644996A485CAA /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -257,6 +300,7 @@
 				0B3DE3DAB9D6556F6F596B35 /* rikyu.riv */,
 				41F6E5D876C58859D10DFBDC /* Shibui.entitlements */,
 				7B80E52E95FBA7D3BCAFCEEA /* ShibuiApp.swift */,
+				8E9D78F4AD6BAB1B25D2DB6B /* ShibuiScreenTime.entitlements */,
 				01E7984660FBCD9C4AB2A8A6 /* Models3D */,
 				1682FF52BC135E5084AD16A7 /* Sounds */,
 			);
@@ -281,6 +325,7 @@
 				00C0033341E695617BF50D58 /* Kouhyou.swift */,
 				24C4AD58D13F998189C1CB78 /* MotionService.swift */,
 				AA6BDE7082D250853FA01848 /* Reminders.swift */,
+				C57B9E1432039FC29A35A58B /* ScreenGuard.swift */,
 				9CE4E4D00C0B06161B3F1971 /* SoundBank.swift */,
 				917D32A39B6699F0F72A7CC7 /* WhiskHaptics.swift */,
 			);
@@ -291,6 +336,7 @@
 			isa = PBXGroup;
 			children = (
 				FEE59A74ACD8615401187F4E /* Shibui.app */,
+				8FD8D477C837B4F44270DE32 /* ShibuiActivityMonitor.appex */,
 				F8F0B1D132D5CBB68297548F /* ShibuiUITests.xctest */,
 			);
 			name = Products;
@@ -360,10 +406,12 @@
 				0A7D8096E50412333113AAC5 /* Sources */,
 				B099C1B1964C7F60F61DA809 /* Resources */,
 				9CF5E7355B4954CEA4A1FB6F /* Frameworks */,
+				137EDDE1CDF5727C958F53E8 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				79AA3CA22EC126B210DC0BDE /* PBXTargetDependency */,
 			);
 			name = Shibui;
 			packageProductDependencies = (
@@ -373,6 +421,23 @@
 			productName = Shibui;
 			productReference = FEE59A74ACD8615401187F4E /* Shibui.app */;
 			productType = "com.apple.product-type.application";
+		};
+		AA0FBB48FBBA984A044E5221 /* ShibuiActivityMonitor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 175AF460A3B100FAA5EB027C /* Build configuration list for PBXNativeTarget "ShibuiActivityMonitor" */;
+			buildPhases = (
+				A52E50745EE72E884BEBF98D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShibuiActivityMonitor;
+			packageProductDependencies = (
+			);
+			productName = ShibuiActivityMonitor;
+			productReference = 8FD8D477C837B4F44270DE32 /* ShibuiActivityMonitor.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -389,6 +454,10 @@
 						TestTargetID = 991A478F781BCE46D1C1FB67;
 					};
 					991A478F781BCE46D1C1FB67 = {
+						DevelopmentTeam = XDBC5QYB9Y;
+						ProvisioningStyle = Automatic;
+					};
+					AA0FBB48FBBA984A044E5221 = {
 						DevelopmentTeam = XDBC5QYB9Y;
 						ProvisioningStyle = Automatic;
 					};
@@ -413,6 +482,7 @@
 			projectRoot = "";
 			targets = (
 				991A478F781BCE46D1C1FB67 /* Shibui */,
+				AA0FBB48FBBA984A044E5221 /* ShibuiActivityMonitor */,
 				72005B4D863686FDBEDB131B /* ShibuiUITests */,
 			);
 		};
@@ -472,6 +542,7 @@
 				254BC8A104C78A980716F0C1 /* ReviewView.swift in Sources */,
 				66C26DBE9748558AE67B0237 /* RikyuView.swift in Sources */,
 				D1B7C0F77E4727A6FBB4BBB4 /* Scoring.swift in Sources */,
+				C1AD849D859DB75253D42655 /* ScreenGuard.swift in Sources */,
 				C668CC69836B916CE1B19961 /* SettingsView.swift in Sources */,
 				E9800038EE98926552AB8CA3 /* ShibuiApp.swift in Sources */,
 				B31498FF37C96116F118DE84 /* ShishiOdoshi3D.swift in Sources */,
@@ -482,6 +553,14 @@
 				D120F3BDB60662A96AD513B5 /* TemaeView.swift in Sources */,
 				CD0CB5CC5F6524294F307D79 /* WhiskHaptics.swift in Sources */,
 				387D1D8EA0BB0326157B2F7F /* WhiteSlider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A52E50745EE72E884BEBF98D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4AFBBCBFB80C5A4E97AC337B /* ActivityMonitor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -499,6 +578,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		79AA3CA22EC126B210DC0BDE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA0FBB48FBBA984A044E5221 /* ShibuiActivityMonitor */;
+			targetProxy = BFFB066F24C077ED6BE6FA5C /* PBXContainerItemProxy */;
+		};
 		9ABDAD38DBFDBA4E9B582B6C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 991A478F781BCE46D1C1FB67 /* Shibui */;
@@ -507,6 +591,22 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		5EE32A8289AB7CE265886B72 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ActivityMonitor/ActivityMonitor.entitlements;
+				INFOPLIST_FILE = ActivityMonitor/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.imshota1009.spajam2026.shibui.activitymonitor;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		645DF1CD84ABF25C8B14DA1F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -542,7 +642,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 36;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -582,6 +682,22 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Shibui;
+			};
+			name = Debug;
+		};
+		899885B9BB736F5D764CD1C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ActivityMonitor/ActivityMonitorScreenTime.entitlements;
+				INFOPLIST_FILE = ActivityMonitor/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.imshota1009.spajam2026.shibui.activitymonitor;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -655,7 +771,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 36;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -693,7 +809,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
-				CODE_SIGN_ENTITLEMENTS = App/Shibui.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/ShibuiScreenTime.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -709,6 +825,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		175AF460A3B100FAA5EB027C /* Build configuration list for PBXNativeTarget "ShibuiActivityMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				899885B9BB736F5D764CD1C9 /* Debug */,
+				5EE32A8289AB7CE265886B72 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		188F7F28D19DDFD33E4E953F /* Build configuration list for PBXProject "Shibui" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -1,4 +1,5 @@
 import DesignSystem
+import FamilyControls
 import SwiftData
 import SwiftUI
 
@@ -13,6 +14,8 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var context
     @State private var showsOnboarding = false
     @State private var showsTimePicker = false
+    @State private var showsAppPicker = false
+    @State private var guardState = ScreenGuard.shared
     @State private var newTime = Calendar.current.date(byAdding: .minute, value: 1, to: .now) ?? .now
     private let reminders = Reminders.shared
     @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
@@ -49,6 +52,36 @@ struct SettingsView: View {
                 } footer: {
                     Text("決めた時刻に毎日お知らせします。タップすると点てる画面が開きます。左にスワイプで消せます")
                 }
+                // SNS を見すぎたら茶室へ(Screen Time API)
+                Section {
+                    Toggle("見すぎたら知らせる", isOn: Binding(
+                        get: { guardState.isOn },
+                        set: { on in Task { if on { await guardState.start() } else { guardState.stop() } } }
+                    ))
+                    .tint(Theme.Palette.matcha)
+                    Button {
+                        Task { if await guardState.requestAuthorization() { showsAppPicker = true } }
+                    } label: {
+                        LabeledContent("見張るアプリ", value: guardState.selectedCount == 0 ? "選ぶ" : "\(guardState.selectedCount)件")
+                    }
+                    Picker("知らせるまでの時間", selection: Binding(
+                        get: { guardState.minutes },
+                        set: { guardState.minutes = $0; guardState.save(); if guardState.isOn { Task { await guardState.start() } } }
+                    )) {
+                        ForEach([1, 5, 10, 15, 30, 60], id: \.self) { Text("\($0)分").tag($0) }
+                    }
+                    if let m = guardState.message {
+                        Text(m).font(.dsCaption).foregroundStyle(Theme.Palette.vermilion)
+                    }
+                } header: {
+                    Text("SNS を見すぎたら")
+                } footer: {
+                    Text("選んだアプリを決めた時間使うと「そろそろ一服しませんか」と通知します。タップすると点てる画面が開きます(Screen Time を使います)")
+                }
+                .familyActivityPicker(isPresented: $showsAppPicker, selection: Binding(
+                    get: { guardState.selection },
+                    set: { guardState.selection = $0; guardState.save(); if guardState.isOn { Task { await guardState.start() } } }
+                ))
                 Section {
                     Toggle("振動", isOn: $hapticsOn)
                         .tint(Theme.Palette.matcha)

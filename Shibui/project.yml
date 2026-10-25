@@ -14,7 +14,7 @@ settings:
     SWIFT_VERSION: "5.0"
     TARGETED_DEVICE_FAMILY: "1"
     MARKETING_VERSION: "1.0"
-    CURRENT_PROJECT_VERSION: "35"
+    CURRENT_PROJECT_VERSION: "36"
 packages:
   DesignSystem:
     path: ../DesignSystem
@@ -33,10 +33,7 @@ targets:
     dependencies:
       - package: DesignSystem
       - package: RiveRuntime
-    entitlements:
-      path: App/Shibui.entitlements
-      properties:
-        com.apple.security.application-groups: [group.com.imshota1009.spajam2026.shibui]
+      - target: ShibuiActivityMonitor
     info:
       path: App/Info.plist
       properties:
@@ -54,8 +51,34 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.imshota1009.spajam2026.shibui
+        CODE_SIGN_ENTITLEMENTS: App/Shibui.entitlements
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: ""
+      configs:
+        # Screen Time(Family Controls)の許可は、Xcode から入れる開発版(Debug)だけにつける。
+        # TestFlight 版(Release)につけると、Apple の承認がないため配布できない
+        Debug:
+          CODE_SIGN_ENTITLEMENTS: App/ShibuiScreenTime.entitlements
+  ShibuiActivityMonitor:
+    type: app-extension
+    platform: iOS
+    sources: [ActivityMonitor]
+    info:
+      path: ActivityMonitor/Info.plist
+      properties:
+        CFBundleDisplayName: 抹茶振るネス 見張り
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.deviceactivity.monitor-extension
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ActivityMonitor
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.imshota1009.spajam2026.shibui.activitymonitor
+        CODE_SIGN_ENTITLEMENTS: ActivityMonitor/ActivityMonitor.entitlements
+      configs:
+        Debug:
+          CODE_SIGN_ENTITLEMENTS: ActivityMonitor/ActivityMonitorScreenTime.entitlements
   ShibuiUITests:
     type: bundle.ui-testing
     platform: iOS
