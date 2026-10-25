@@ -16,6 +16,7 @@
 		21BE5DA3BA5CD8B443F3D3CA /* shishi_axle.obj in Resources */ = {isa = PBXBuildFile; fileRef = 667159C1532F648C33091383 /* shishi_axle.obj */; };
 		254BC8A104C78A980716F0C1 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D905260C023C259E8FED4969 /* ReviewView.swift */; };
 		27342E2854EC59C08CD6F18F /* chasen_tines_inner.obj in Resources */ = {isa = PBXBuildFile; fileRef = BC1CC124BD59A75AAF5264F1 /* chasen_tines_inner.obj */; };
+		284A2293DE8D19DC9B7F4F82 /* AddTimeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50CB0465C64339119845677E /* AddTimeTests.swift */; };
 		2F62FAB594940440F866A95F /* IppukuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29CD8030EDFE4B138CF0D65E /* IppukuView.swift */; };
 		32603C0A9E275A5622F489FB /* Fusuma.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FFC025933A196D0FD29EFF /* Fusuma.swift */; };
 		36CC081133F9E4DF3EF9D3F9 /* river.m4a in Resources */ = {isa = PBXBuildFile; fileRef = A2E90426BF18D4E0860DA1FC /* river.m4a */; };
@@ -90,6 +91,7 @@
 		35D2A2CE20F21D8CEAADFB45 /* WhiteSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteSlider.swift; sourceTree = "<group>"; };
 		41F6E5D876C58859D10DFBDC /* Shibui.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shibui.entitlements; sourceTree = "<group>"; };
 		4765AD634CC4D538F24439CB /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
+		50CB0465C64339119845677E /* AddTimeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTimeTests.swift; sourceTree = "<group>"; };
 		561B9B0F5A35BF01E14E8D15 /* shishi_water.obj */ = {isa = PBXFileReference; path = shishi_water.obj; sourceTree = "<group>"; };
 		570E7C1C60396A60C47A55C4 /* NatureMixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NatureMixer.swift; sourceTree = "<group>"; };
 		585E7A1B6C8B2A435EA215E1 /* shishi_tube.obj */ = {isa = PBXFileReference; path = shishi_tube.obj; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 		416A88F9093D5A3C6D790F38 /* UITests */ = {
 			isa = PBXGroup;
 			children = (
+				50CB0465C64339119845677E /* AddTimeTests.swift */,
 				4765AD634CC4D538F24439CB /* OnboardingTests.swift */,
 				2B2FCA889D41046A8A6D5CB2 /* ReminderTests.swift */,
 				D5690F6AA9C6DB755D8919EF /* SettingsScrollTests.swift */,
@@ -482,6 +485,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				284A2293DE8D19DC9B7F4F82 /* AddTimeTests.swift in Sources */,
 				877DF850A26B69616077A289 /* OnboardingTests.swift in Sources */,
 				B99DD37D5142E62BB5BCBF7D /* ReminderTests.swift in Sources */,
 				171F1940FE0A1247F1DE7EE1 /* SettingsScrollTests.swift in Sources */,
@@ -534,7 +538,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 34;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -647,7 +651,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 34;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = XDBC5QYB9Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

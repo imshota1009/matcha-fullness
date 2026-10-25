@@ -12,6 +12,7 @@ struct SettingsView: View {
 
     @Environment(\.modelContext) private var context
     @State private var showsOnboarding = false
+    @State private var showsTimePicker = false
     @State private var newTime = Calendar.current.date(byAdding: .minute, value: 1, to: .now) ?? .now
     private let reminders = Reminders.shared
     @AppStorage(ChawanStyle.storageKey) private var style = ChawanStyle.shino
@@ -38,9 +39,10 @@ struct SettingsView: View {
                         ), displayedComponents: .hourAndMinute)
                     }
                     .onDelete { idx in idx.map { reminders.times[$0] }.forEach(reminders.remove) }
+                    // 押すと時刻を選ぶ画面が開く(前は、選ぶ前に勝手な時刻が足されていた)
                     Button("時刻を追加", systemImage: "plus") {
-                        reminders.add(Self.minutes(newTime))
-                        newTime = newTime.addingTimeInterval(3600)
+                        newTime = Calendar.current.date(byAdding: .minute, value: 1, to: .now) ?? .now
+                        showsTimePicker = true
                     }
                 } header: {
                     Text("通知")
@@ -78,6 +80,30 @@ struct SettingsView: View {
             .background(Theme.Palette.background)
             .navigationTitle("設定")
             .navigationBarTitleDisplayMode(.inline)
+            // 通知の時刻を選ぶ(iOS 標準のドラム)。「追加」で足す、「やめる」なら何も足さない
+            .sheet(isPresented: $showsTimePicker) {
+                NavigationStack {
+                    DatePicker("通知の時刻", selection: $newTime, displayedComponents: .hourAndMinute)
+                        .datePickerStyle(.wheel)
+                        .labelsHidden()
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .navigationTitle("通知の時刻")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) { Button("やめる") { showsTimePicker = false } }
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("追加") {
+                                    reminders.add(Self.minutes(newTime))
+                                    showsTimePicker = false
+                                }
+                                .bold()
+                            }
+                        }
+                }
+                .presentationDetents([.height(340)])
+                .presentationDragIndicator(.visible)
+            }
             // はじめの説明は、この画面の上に全画面で開く(閉じると設定に戻る)
             .fullScreenCover(isPresented: $showsOnboarding) {
                 OnboardingView { showsOnboarding = false }
