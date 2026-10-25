@@ -69,7 +69,7 @@ struct FocusTimerView: View {
                             .font(.headline)
                             .foregroundStyle(Theme.Palette.shiro)
                             .frame(maxWidth: .infinity, minHeight: Theme.Size.primaryButton)
-                            .background(Theme.Palette.ai, in: .capsule)
+                            .background(Theme.Palette.matcha, in: .capsule)
                     }
                     .buttonStyle(PressScaleStyle())
                     Button("やめる") { onDone() }
@@ -130,7 +130,8 @@ struct FocusTimerView: View {
         Haptics.selection()
         // 自然の音がずっと流れる(ししおどしの「カコン」は、絵が傾くのに合わせて鳴らす)
         SoundBank.shared.startAmbient(shishiEvery: .infinity, forTimer: true)
-        // 終わる時刻に通知(アプリを閉じていても届く)
+        // 終わる時刻に通知(アプリを閉じていても届く)。画面確認の自動開始のときは、許可の画面を出さない
+        if UserDefaults.standard.bool(forKey: "timerAutostart") { return }
         Task {
             let center = UNUserNotificationCenter.current()
             _ = try? await center.requestAuthorization(options: [.alert, .sound])
@@ -184,6 +185,8 @@ struct ShishiOdoshiPond: View {
     private let bambooDark = Color(red: 0.45, green: 0.48, blue: 0.24)
     private let wood = Color(red: 0.42, green: 0.32, blue: 0.22)
     private let water = Color(red: 0.62, green: 0.74, blue: 0.84)
+    /// 水が水面に届く点(画面上)と、口から出てから届くまでの時間
+    @State private var landing: (point: CGPoint, time: Double)?
 
     var body: some View {
         // 1回のなかでの進み具合: 溜まる(〜最後の 2.4 秒手前)→ 傾いて落とす → 戻る
@@ -194,20 +197,49 @@ struct ShishiOdoshiPond: View {
         let pourT = pouring ? (t - (cycle - pourLength)) / pourLength : 0
         // 傾き: 0(水を受ける)→ 1(水を落とす)→ 0
         let tip = pouring ? sin(min(1, pourT) * .pi) : 0
-        // 水が落ちてからの時間(波紋に使う)。新しい回のはじめの 3 秒
-        let sinceDrop = t < 3 && elapsed > cycle ? t : (pouring && pourT > 0.45 ? 0 : -1)
+        // 水が水面に届いてからの時間(波紋に使う)。口から水が出はじめる(傾き 0.55 をこえる)時刻 + 落ちる時間
+        let emitStart = cycle - pourLength + pourLength * asin(0.55) / .pi
+        let drop = emitStart + (landing?.time ?? 0.4)
+        let sinceDrop: Double = {
+            if elapsed < drop { return -1 }
+            let since = t >= drop ? t - drop : t + cycle - drop
+            return since <= 3 ? since : -1
+        }()
 
         GeometryReader { geo in
             let w = geo.size.width, h = geo.size.height
             ZStack {
                 // 水たまり(地面の平面)。輪と文字も同じ平面
-                PondPlane(remainingFraction: remainingFraction, timeText: timeText, caption: caption, ripple: sinceDrop, water: water)
+                PondPlane(remainingFraction: remainingFraction, timeText: timeText, water: water)
                     .frame(width: min(w * 0.9, 360), height: min(w * 0.9, 360))
                     .rotation3DEffect(.degrees(62), axis: (x: 1, y: 0, z: 0), anchor: .center, perspective: 0.45)
                     .position(x: w * 0.5, y: h * 0.66)
+                // 水が落ちた場所の波紋(水面に寝かせた楕円)。場所は 3D の水の放物線から求めている
+                if sinceDrop >= 0, let p = landing?.point {
+                    ForEach(0..<3, id: \.self) { k in
+                        let r = max(0, sinceDrop - Double(k) * 0.35)
+                        Ellipse()
+                            .stroke(Color.white.opacity(max(0, 0.75 - r * 0.25)), lineWidth: 2)
+                            .frame(width: 24 + r * 80, height: (24 + r * 80) * 0.36)
+                            .position(p)
+                    }
+                    .allowsHitTesting(false)
+                }
+                // 時刻の数字は、水面の少し上に浮かべる(影は水面に映る。PondPlane)
+                VStack(spacing: 2) {
+                    Text(timeText)
+                        .font(.system(size: 60, weight: .semibold, design: .rounded).monospacedDigit())
+                        .foregroundStyle(Theme.Palette.text)
+                    Text(caption)
+                        .font(.dsCaption.weight(.semibold))
+                        .foregroundStyle(Theme.Palette.secondaryText)
+                }
+                .position(x: w * 0.5, y: h * 0.66 - 46)
+                .allowsHitTesting(false)
 
                 // ししおどし(Unity で作った 3D)。水たまりの左上に立ち、傾くと水たまりへ水を落とす
-                ShishiOdoshi3DView(fill: fill, tip: tip, pouring: pouring)
+                ShishiOdoshi3DView(fill: fill, tip: tip, pouring: pouring, waterY: h * 0.66 - 6,
+                                   onLanding: { p, time in if landing == nil { landing = (p, time) } })
                     .frame(width: w, height: h * 0.72)
                     .position(x: w * 0.5, y: h * 0.36)
                     .allowsHitTesting(false)
@@ -221,9 +253,6 @@ struct ShishiOdoshiPond: View {
 private struct PondPlane: View {
     let remainingFraction: Double
     let timeText: String
-    let caption: String
-    /// 水が落ちてからの秒(0〜3)。負なら波紋なし
-    let ripple: Double
     let water: Color
 
     var body: some View {
@@ -239,25 +268,11 @@ private struct PondPlane: View {
                 .stroke(Theme.Palette.ai, style: StrokeStyle(lineWidth: 12, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .padding(22)
-            // 落ちた水の波紋
-            if ripple >= 0 {
-                ForEach(0..<3, id: \.self) { k in
-                    let r = max(0, ripple - Double(k) * 0.35)
-                    Circle()
-                        .stroke(Color.white.opacity(max(0, 0.7 - r * 0.25)), lineWidth: 2)
-                        .frame(width: 30 + r * 70, height: 30 + r * 70)
-                        .offset(x: -70, y: -40)
-                }
-            }
-            // 文字も水面の平面に
-            VStack(spacing: 4) {
-                Text(timeText)
-                    .font(.system(size: 64, weight: .semibold, design: .rounded).monospacedDigit())
-                    .foregroundStyle(Theme.Palette.ai)
-                Text(caption)
-                    .font(.dsCaption.weight(.semibold))
-                    .foregroundStyle(Theme.Palette.ai.opacity(0.8))
-            }
+            // 浮かんだ数字の影が、いまの数字の位置で水面に映る(数字と同じ文字を、水面の平面に薄く)
+            Text(timeText)
+                .font(.system(size: 64, weight: .semibold, design: .rounded).monospacedDigit())
+                .foregroundStyle(Color.black.opacity(0.16))
+                .offset(y: 18)
         }
     }
 }

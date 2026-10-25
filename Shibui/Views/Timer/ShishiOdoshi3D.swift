@@ -81,7 +81,7 @@ final class ShishiScene {
         pourSystem.particleColor = waterColor
         pourSystem.acceleration = SCNVector3(0, -5.5, 0)
         pourSystem.particleVelocity = 1.0
-        pourSystem.particleVelocityVariation = 0.25
+        pourSystem.particleVelocityVariation = 0.1
         pourSystem.spreadingAngle = 12
         pourSystem.emitterShape = SCNSphere(radius: 0.04)
         pour.addParticleSystem(pourSystem)
@@ -95,10 +95,35 @@ final class ShishiScene {
         scene.rootNode.addChildNode(sun)
         camera.camera = SCNCamera()
         camera.camera?.fieldOfView = 38
-        camera.position = SCNVector3(0.75, 0.75, 6.2)
-        camera.look(at: SCNVector3(0.75, -0.25, 0))
+        // ししおどしを水たまりの左寄りに置く(水が落ちる場所が、浮かんだ数字と重ならないように)
+        camera.position = SCNVector3(1.2, 0.75, 6.2)
+        camera.look(at: SCNVector3(1.2, -0.25, 0))
         scene.rootNode.addChildNode(camera)
         scene.background.contents = UIColor.clear
+    }
+
+    /// 水が口から出る速さと重力(粒子の設定と同じ値)
+    private static let pourSpeed: Float = 1.0, gravity: Float = 5.5
+    /// 水が横へ飛ぶ割合(小さいほど口の真下に落ちる。水たまりの中に落ちるよう調整)
+    private static let pourSpread: Float = 0.25
+
+    /// 傾ききったときに口から出た水が、画面の高さ waterY(SCNView の座標)に届く点と、そこまでの時間(秒)。
+    /// 水の粒もこの時間で消すので、水が落ちた場所と波紋の場所がそろう
+    func landing(in view: SCNView, waterY: CGFloat) -> (point: CGPoint, time: Double)? {
+        let a = Self.pourAngle
+        let mouth = SIMD3<Float>(cos(a) * 0.92, sin(a) * 0.92 + 0.05, 0)
+        let dir = simd_normalize(SIMD3<Float>(cos(a) * Self.pourSpread, sin(a), 0)) * Self.pourSpeed
+        var t: Float = 0
+        while t < 2 {
+            let p = mouth + dir * t + SIMD3<Float>(0, -0.5 * Self.gravity * t * t, 0)
+            let s = view.projectPoint(SCNVector3(p.x, p.y, p.z))
+            if CGFloat(s.y) >= waterY {
+                pourSystem.particleLifeSpan = CGFloat(t)
+                return (CGPoint(x: CGFloat(s.x), y: CGFloat(s.y)), Double(t))
+            }
+            t += 0.01
+        }
+        return nil
     }
 
     /// fill: 中の水位(0〜1)、tip: 傾き(0=受ける〜1=落とす)、pouring: 水が口から落ちている
@@ -111,7 +136,7 @@ final class ShishiScene {
         // 口の位置(竹筒の先)から、口の向きへ落とす
         let mouth = SCNVector3(cos(angle) * 0.92, sin(angle) * 0.92 + 0.05, 0)
         pour.position = mouth
-        pourSystem.emittingDirection = SCNVector3(cos(angle) * 0.6, sin(angle), 0)
+        pourSystem.emittingDirection = SCNVector3(cos(angle) * Self.pourSpread, sin(angle), 0)
         pourSystem.birthRate = pouring && tip > 0.55 ? 220 : 0
     }
 }
@@ -120,6 +145,9 @@ struct ShishiOdoshi3DView: UIViewRepresentable {
     let fill: Double
     let tip: Double
     let pouring: Bool
+    /// 水面の高さ(このビューの座標)。水が届く点と時間を onLanding で返す
+    var waterY: CGFloat = 0
+    var onLanding: ((CGPoint, Double) -> Void)?
 
     func makeCoordinator() -> ShishiScene { ShishiScene() }
 
@@ -136,5 +164,8 @@ struct ShishiOdoshi3DView: UIViewRepresentable {
 
     func updateUIView(_ v: SCNView, context: Context) {
         context.coordinator.update(fill: fill, tip: tip, pouring: pouring)
+        if let onLanding, v.bounds.height > 0, let hit = context.coordinator.landing(in: v, waterY: waterY) {
+            DispatchQueue.main.async { onLanding(hit.point, hit.time) }
+        }
     }
 }
