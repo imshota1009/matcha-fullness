@@ -36,10 +36,7 @@ struct FocusTimerView: View {
                                      caption: finished ? "おつかれさまでした" : "集中しています",
                                      cycle: cycle, elapsed: finished ? 0 : elapsed)
                         .onChange(of: remaining == 0) { _, done in if done { complete() } }
-                        // 傾いて水を落とし、戻ったところで「カコン」。音は少し前から小さく鳴らしはじめる(kakonLead)
-                        .onChange(of: Int((elapsed + SoundBank.kakonLead) / cycle)) { old, new in
-                            if new > old, !finished { SoundBank.shared.kakon() }
-                        }
+                        // 竹筒が戻った瞬間の振動(音はししおどしの絵の側で、動きに合わせて鳴らす)
                         .onChange(of: Int(elapsed / cycle)) { old, new in
                             if new > old, !finished { Haptics.impact() }
                         }
@@ -212,6 +209,10 @@ struct ShishiOdoshiPond: View {
             return since <= 3 ? since : -1
         }()
 
+        // 音: 水が届く(drop)→ 竹筒が戻る(cycle)の長さに、録音の「落ちはじめ→カコン」を合わせる
+        let rate = min(3, max(0.5, (SoundBank.kakonOffset - SoundBank.pourOffset) / max(0.3, cycle - drop)))
+        let soundStart = drop - SoundBank.shishiLeadIn / rate
+        let soundCount = elapsed > 0 ? Int(floor((elapsed - soundStart) / cycle)) : -99
         GeometryReader { geo in
             let w = geo.size.width, h = geo.size.height
             ZStack {
@@ -254,6 +255,9 @@ struct ShishiOdoshiPond: View {
             }
         }
         .frame(height: 560)
+        .onChange(of: soundCount) { old, new in
+            if new > old, new >= 0 { SoundBank.shared.shishi(rate: rate) }
+        }
     }
 }
 

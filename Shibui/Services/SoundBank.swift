@@ -182,26 +182,41 @@ final class SoundBank {
         fade(birdNode, to: Nature.birds.volume * level * 0.55, seconds: birdsFade ?? seconds, gentle: birdsFade != nil)
     }
 
-    /// ししおどしの録音で「カコン」が鳴る位置(秒)。録音を調べて求めた値(8.70 秒)
-    static let kakonOffset = 8.70
-    /// 「カコン」の少し手前から鳴らす長さ(秒)。この分だけ早めに呼ぶと、音と動きがそろう
-    static let kakonPreroll = 0.12
+    /// ししおどしの録音の中身(録音の音の大きさを 0.1 秒ごとに調べて求めた値)
+    /// - 8.45 秒: 竹筒から水が流れ落ちはじめる
+    /// - 10.40 秒: 竹筒が戻って「カコン」(録音の中でいちばん大きい音)
+    static let pourOffset = 8.45, kakonOffset = 10.40
+    /// 水が落ちはじめる手前から、音を少しずつ大きくする長さ(録音の秒)
+    static let shishiLeadIn = 1.0
+    /// 録音を速めたり遅くしたりする部品(音の高さは変えない)
+    private let shishiSpeed = AVAudioUnitTimePitch()
+    private var shishiSpeedReady = false
 
-    /// 「カコン」の手前から、音を少しずつ大きくしていく時間(秒)。いきなり大きく鳴って驚かないように
-    static let kakonLead = 2.0
-
-    /// ししおどしの「カコン」(録音)。カコンの kakonLead 秒前から鳴らしはじめ、音量を右上がりに上げて、
-    /// カコンの瞬間にいつもの大きさにする。呼ぶのはカコンを鳴らしたい時刻の kakonLead 秒前
-    func kakon() {
+    /// ししおどしの音。画面で水が水たまりに届く瞬間に「水が落ちる音」、竹筒が戻る瞬間に「カコン」が鳴るよう、
+    /// 録音の速さを rate 倍にして鳴らす(rate = 録音の「落ちはじめ→カコン」の長さ ÷ 画面の「水が届く→戻る」の長さ)。
+    /// 呼ぶのは、水が届く時刻の shishiLeadIn / rate 秒前。その間に音を右上がりに大きくする
+    func shishi(rate: Double) {
         guard let buf = buffers["shishiodoshi"] else { return }
-        let start = AVAudioFramePosition(max(0, Self.kakonOffset - Self.kakonLead) * buf.format.sampleRate)
+        if !engine.isRunning { try? engine.start() }
+        if !shishiSpeedReady {
+            engine.disconnectNodeOutput(shishiNode)
+            engine.attach(shishiSpeed)
+            engine.connect(shishiNode, to: shishiSpeed, format: buf.format)
+            engine.connect(shishiSpeed, to: engine.mainMixerNode, format: buf.format)
+            shishiSpeedReady = true
+        }
+        let start = AVAudioFramePosition(max(0, Self.pourOffset - Self.shishiLeadIn) * buf.format.sampleRate)
         guard let seg = Self.slice(buf, from: start) else { return }
+        shishiSpeed.rate = Float(min(3, max(0.5, rate)))
         shishiNode.stop()
         shishiNode.volume = 0
         shishiNode.scheduleBuffer(seg, at: nil, options: .interrupts)
         shishiNode.play()
-        fade(shishiNode, to: 0.9 * level, seconds: Self.kakonLead, gentle: true)
+        fade(shishiNode, to: 0.9 * level, seconds: Self.shishiLeadIn / Double(shishiSpeed.rate), gentle: true)
     }
+
+    /// 点てるときの背景のししおどし(画面の動きはないので、ふつうの速さで鳴らす)
+    func kakon() { shishi(rate: 1) }
 
     // MARK: 道具
 
