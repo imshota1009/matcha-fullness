@@ -187,15 +187,20 @@ final class SoundBank {
     /// 「カコン」の少し手前から鳴らす長さ(秒)。この分だけ早めに呼ぶと、音と動きがそろう
     static let kakonPreroll = 0.12
 
-    /// ししおどしの「カコン」(録音)。録音の頭からではなく、カコンの直前から鳴らす(頭から鳴らすと 8.7 秒遅れる)
+    /// 「カコン」の手前から、音を少しずつ大きくしていく時間(秒)。いきなり大きく鳴って驚かないように
+    static let kakonLead = 2.0
+
+    /// ししおどしの「カコン」(録音)。カコンの kakonLead 秒前から鳴らしはじめ、音量を右上がりに上げて、
+    /// カコンの瞬間にいつもの大きさにする。呼ぶのはカコンを鳴らしたい時刻の kakonLead 秒前
     func kakon() {
         guard let buf = buffers["shishiodoshi"] else { return }
-        let start = AVAudioFramePosition((Self.kakonOffset - Self.kakonPreroll) * buf.format.sampleRate)
+        let start = AVAudioFramePosition(max(0, Self.kakonOffset - Self.kakonLead) * buf.format.sampleRate)
         guard let seg = Self.slice(buf, from: start) else { return }
         shishiNode.stop()
-        shishiNode.volume = 0.9 * level
+        shishiNode.volume = 0
         shishiNode.scheduleBuffer(seg, at: nil, options: .interrupts)
         shishiNode.play()
+        fade(shishiNode, to: 0.9 * level, seconds: Self.kakonLead, gentle: true)
     }
 
     // MARK: 道具

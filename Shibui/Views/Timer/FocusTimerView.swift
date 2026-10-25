@@ -36,9 +36,12 @@ struct FocusTimerView: View {
                                      caption: finished ? "おつかれさまでした" : "集中しています",
                                      cycle: cycle, elapsed: finished ? 0 : elapsed)
                         .onChange(of: remaining == 0) { _, done in if done { complete() } }
+                        // 傾いて水を落とし、戻ったところで「カコン」。音は少し前から小さく鳴らしはじめる(kakonLead)
+                        .onChange(of: Int((elapsed + SoundBank.kakonLead) / cycle)) { old, new in
+                            if new > old, !finished { SoundBank.shared.kakon() }
+                        }
                         .onChange(of: Int(elapsed / cycle)) { old, new in
-                            // 傾いて水を落とし、戻ったところで「カコン」
-                            if new > old, !finished { SoundBank.shared.kakon(); Haptics.impact() }
+                            if new > old, !finished { Haptics.impact() }
                         }
                 }
                 .accessibilityElement()
