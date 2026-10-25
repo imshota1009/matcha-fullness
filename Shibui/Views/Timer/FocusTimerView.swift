@@ -217,6 +217,11 @@ struct ShishiOdoshiPond: View {
                 let ground = pond * 3.2
                 KaresansuiGround(pondCenter: CGPoint(x: ground / 2, y: ground / 2), pondRadius: pond / 2)
                     .frame(width: ground, height: ground)
+                    // 枯山水は水たまりを中心にした円の中だけ(斜めに倒すと楕円に見える)。ふちはぼかして、地面になじませる
+                    // (開発者の指示: 赤線をふちに、境目はぼかす。ここだけ、ぼかしのためにグラデーションを使う)
+                    .mask(RadialGradient(stops: [.init(color: .black, location: 0), .init(color: .black, location: 0.82),
+                                                 .init(color: .clear, location: 1)],
+                                         center: .center, startRadius: 0, endRadius: pond * 1.28))
                     .rotation3DEffect(.degrees(62), axis: (x: 1, y: 0, z: 0), anchor: .center, perspective: 0.45)
                     .position(x: w * 0.5, y: h * 0.66)
                     .allowsHitTesting(false)
