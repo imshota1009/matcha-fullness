@@ -1,3 +1,43 @@
+# Matcha Fullness（抹茶振るネス）
+
+> A tiny tea ritual before you focus. Your iPhone becomes a tea bowl, and your finger becomes a whisk.
+
+Built in two days at **SPAJAM 2026 Tokyo Preliminary** (theme: **"Shibui"** — subdued, quietly cool, a little bitter) by team **Gonin Goshoku (五人五色)**, five friends from the same university.
+
+| Waiting | Whisking | Focus timer | Onboarding |
+| --- | --- | --- | --- |
+| ![Waiting](docs/screenshots/1-waiting.png) | ![Whisking](docs/screenshots/2-temae.png) | ![Focus timer](docs/screenshots/3-timer.png) | ![Onboarding](docs/screenshots/4-onboarding.png) |
+
+## Why
+Short videos and social feeds swallow hours. Research suggests that a short ritual before a task lowers anxiety and helps performance, so we turned the calm, deliberate motions of the Japanese tea ceremony into a pre-focus ritual. Instead of putting things off (*shiburu*), you start in a *shibui* way.
+
+## How it works
+1. Place the iPhone flat on the desk and whisk with your finger: straight strokes, front to back, at a steady rhythm.
+2. Finish with a small loop, then turn the bowl (the phone) 90° twice, as in the real ceremony.
+3. Your care becomes a focus score, and the foam gets finer the more carefully you whisk.
+4. A *shishi-odoshi* (bamboo water fountain) timer takes you into study or work.
+
+## Tech highlights
+- **Scoring:** focus = 0.7 × whisking + 0.15 × finish + 0.15 × turning; whisking = 0.45 × straightness + 0.35 × rhythm + 0.2 × strokes. Touches are sampled at up to 240 Hz with `coalescedTouches`.
+- **Metal:** the foam moved from the CPU to a GPU shader, cutting the surface update from about 9–24 ms to 1.4–2.5 ms per frame (measured in the simulator), so the whisk no longer lags behind the finger.
+- **Core Motion and Core Haptics:** detect the bowl turning, with a haptic tick at each mark and a continuous whisk texture.
+- **Unity:** 3D models of the tea bowls, whisk, shishi-odoshi and tea caddy.
+- **On-device AI (Foundation Models):** a short, "shibui" review of your whisking, with fixed phrases as a fallback.
+- **Also:** SwiftUI, SceneKit, SwiftData, App Intents (Action Button), and Rive for the guide character "Rikyu-san". Works fully offline; records stay on the device.
+
+## Team
+| Member | Role |
+| --- | --- |
+| 山脇翔太 | Team lead, iOS development |
+| 渡邊賢信 | Presentation, research |
+| 大村尚輝 | Persona analysis, ideation |
+| 冨樫颯太 | Design |
+| 前林慶敬 | Requirements document, ideation, part of the backend |
+
+Requires an iPhone with iOS 26 or later. Sound credits are listed in the app's Settings screen. The Japanese submission README follows below.
+
+---
+
 # 抹茶振るネス
 
 <!--
